@@ -168,8 +168,13 @@
       }
 
 .hero {
-  background: var(--accent);
-  color: #111;
+  /* Warm gradient: orange/red/yellow glow with cool blue-purple accent top-left */
+  background:
+    radial-gradient(ellipse 80% 70% at 30% 20%, rgba(93, 63, 211, 0.5) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 80% at 50% 40%, rgba(255, 215, 0, 0.4) 0%, rgba(255, 165, 0, 0.3) 35%, transparent 65%),
+    radial-gradient(ellipse 90% 70% at 75% 70%, rgba(178, 34, 34, 0.6) 0%, rgba(139, 0, 0, 0.5) 40%, transparent 70%),
+    radial-gradient(ellipse 120% 100% at 50% 50%, #e51f3f 0%, #c41e3a 30%, #8b0000 100%);
+  color: #fff;
   padding: 140px 0 120px;
 }
 
@@ -184,7 +189,7 @@
 .hero p {
   max-width: 52ch;
   font-size: 1.05rem;
-  color: #111;
+  color: rgba(255, 255, 255, 0.92);
 }
 
 
@@ -231,6 +236,10 @@
         margin: 24px 0 0;
       }
     }
+
+    .hero .eyebrow { color: rgba(255, 255, 255, 0.85); }
+
+    .hero .video-thumb { border-color: rgba(255, 255, 255, 0.6); }
 
     .hero-ctas { margin-top: 28px; }
 
