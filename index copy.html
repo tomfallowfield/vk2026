@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vanilla Killer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- WORKING STYLES: iterate safely here -->
+  <style>
+    :root {
+      --bg-main: #f7f7f6;
+      --bg-soft: #f1f1f0;
+      --card-bg: #ffffff;
+      --border: #e3e3e0;
+      --text-main: #111;
+      --text-muted: #555;
+      --text-subtle: #777;
+      --shadow-soft: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-card: 0 8px 30px rgba(17,17,17,0.06);
+      --accent: #ff4f9a; /* logo pink */
+      --video-placeholder: #ececeb;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 { line-height: 1.25; }
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.2rem; margin-bottom: 24px; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 5%;
+    }
+
+    /* HEADER */
+
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--bg-main);
+      border-bottom: 1px solid var(--border);
+      z-index: 30;
+    }
+
+    .header-inner {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 220px;
+    }
+
+    .logo { height: 60px; color: var(--accent); }
+
+    .tagline {
+      /* font-size: 0.8rem; */
+      color: #666;
+      white-space: nowrap;
+    }
+
+    .main-nav a {
+      margin-right: 20px;
+      text-decoration: none;
+      color: var(--text-muted);
+    }
+
+    .main-nav a:last-child { margin-right: 0; }
+
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 22px;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-secondary { border: 1px solid #111; color: #111; background: transparent; }
+
+    .header-cta { padding: 10px 18px; font-size: 0.9rem; }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 26px;
+      cursor: pointer;
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 1000px) {
+      .main-nav,
+      .header-cta,
+      .tagline { display: none; }
+      .hamburger { display: block; }
+    }
+
+    /* HERO */
+
+    .hero { padding: 90px 0; }
+
+    /* Desktop: text flows full width, video floats */
+    .hero-content {
+      max-width: 1200px;
+    }
+
+    .hero-video-float {
+      float: right;
+      width: 100%;
+      max-width: 480px;
+      margin: 0 0 24px 40px;
+    }
+
+    /* Clear float after hero */
+    .hero::after {
+      content: "";
+      display: block;
+      clear: both;
+    }
+
+    /* Mobile: stack normally */
+    @media (max-width: 900px) {
+      .hero-video-float {
+        float: none;
+        width: 100%;
+        max-width: none;
+        margin: 24px 0 0;
+      }
+    }
+
+    .hero-ctas { margin-top: 28px; }
+
+    .hero-ctas .btn { margin-right: 12px; }
+
+    .video-box {
+      background: var(--video-placeholder);
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      border: 1px solid rgba(17,17,17,0.08);
+      box-shadow: var(--shadow-soft);
+    }
+
+    /* SECTIONS */
+
+    section { padding: 80px 0; }
+    .section-muted { background: var(--bg-soft); }
+
+    /* Eyebrow */
+
+    .eyebrow {
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      color: var(--text-subtle);
+      margin-bottom: 12px;
+    }
+
+    /* TESTIMONIAL */
+
+    .testimonial-wrap {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      max-width: 920px;
+    }
+
+    .testimonial-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex: 0 0 auto;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .testimonial {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      margin: 0;
+      position: relative;
+    }
+
+    .testimonial::after {
+      content: "★★★★★";
+      display: block;
+      margin-top: 10px;
+      letter-spacing: 2px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      opacity: 0.85;
+    }
+
+    .testimonial strong { font-weight: 700; }
+
+    .testimonial strong { font-weight: 700; }
+
+    @media (max-width: 700px) {
+      .testimonial-wrap {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    /* SIGNS */
+
+    .signs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .sign-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .sign-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .sign-card p {
+      margin: 0;
+      color: #333;
+    }
+
+    @media (max-width: 900px) {
+      .signs-grid { grid-template-columns: 1fr; }
+    }
+
+    /* RESCUE SECTION (Vanilla Killer to the rescue) */
+
+    .rescue-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 44px;
+      align-items: center;
+      padding: 56px 0;
+      border-top: 1px solid rgba(17,17,17,0.08);
+    }
+
+    .rescue-block:first-of-type {
+      border-top: none;
+      padding-top: 24px;
+    }
+
+    .rescue-text h3 {
+      margin: 0 0 10px;
+      font-size: 1.6rem;
+      letter-spacing: -0.01em;
+    }
+
+    .rescue-sub {
+      margin: 0 0 18px;
+      color: #666;
+      font-size: 0.95rem;
+      max-width: 58ch;
+    }
+
+    .rescue-text p {
+      margin: 0 0 10px;
+      max-width: 62ch;
+      color: #333;
+    }
+
+    .rescue-block .video-box {
+      background: var(--video-placeholder);
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .rescue-block.reverse {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .rescue-block.reverse .rescue-text { order: 2; }
+    .rescue-block.reverse .video-box { order: 1; }
+
+    @media (max-width: 900px) {
+      .rescue-block {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 40px 0;
+      }
+
+      .rescue-block.reverse .rescue-text,
+      .rescue-block.reverse .video-box {
+        order: initial;
+      }
+    }
+      .rescue-block.reverse .rescue-text,
+      .rescue-block.reverse .video-box { order: initial; }
+    }
+
+    /* PRICING */
+
+    .subhead {
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .subhead.small {
+      font-size: 0.9rem;
+      margin-bottom: 28px;
+      color: #666;
+    }
+
+    .pricing-tabs {
+      display: inline-flex;
+      gap: 6px;
+      margin: 28px 0 40px;
+      background: #e8e4dd;
+      padding: 6px;
+      border-radius: 999px;
+    }
+
+    .pricing-tab {
+      background: transparent;
+      border: none;
+      padding: 10px 18px;
+      font-size: 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      color: #555;
+    }
+
+    .pricing-tab.active {
+      background: #111;
+      color: #fff;
+    }
+
+    .pricing-panel {
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      position: absolute;
+      width: 100%;
+    }
+
+    .pricing-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      position: relative;
+    }
+
+    .pricing-grid.three {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+
+    .pricing-grid.two {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .pricing-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 32px 28px 28px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+    .price-desc {
+      margin: 0 0 18px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .price {
+      font-size: 2.1rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .pricing-card .btn {
+      width: 100%;
+      text-align: center;
+      padding: 12px 18px;
+      font-size: 0.95rem;
+      margin-bottom: 18px;
+    }
+
+    .pricing-card hr {
+      border: none;
+      border-top: 1px solid #d6d2ca;
+      margin: 18px 0 20px;
+    }
+
+    .feature-list {
+      margin: 0;
+      padding: 0;
+    }
+
+    .feature-list li {
+      list-style: none;
+      position: relative;
+      padding-left: 26px;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+      color: #444;
+    }
+
+    .feature-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 6px;
+      width: 14px;
+      height: 14px;
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'><path d='M2 6l4 4 8-8' fill='none' stroke='%23777' stroke-width='2' stroke-linecap='round'/></svg>") no-repeat center;
+    }
+
+    .guarantee-box {
+      margin-top: 22px;
+      padding: 16px 18px;
+      background: #f4f4f2;
+      border: 1px dashed rgba(17,17,17,0.25);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .guarantee-box::before {
+      content: "★";
+      color: var(--accent);
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* FAQ */
+
+    .faq-intro {
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .faq {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .faq-trigger {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1rem;
+      cursor: pointer;
+      text-align: left;
+      gap: 16px;
+    }
+
+    .faq-trigger span:last-child {
+      font-size: 1.2rem;
+      color: #666;
+      flex: 0 0 auto;
+    }
+
+    .faq-panel {
+      max-height: 0;
+      opacity: 0;
+      padding: 0 22px;
+      transition: all 0.45s cubic-bezier(.4,0,.2,1);
+    }
+
+    .faq.open .faq-panel {
+      max-height: 260px;
+      opacity: 1;
+      padding-bottom: 22px;
+    }
+
+    /* HOW IT FEELS */
+
+    .feels-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .feels-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .feels-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .feels-card p {
+      margin: 0;
+      color: #333;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .pricing-grid.three,
+      .pricing-grid.two,
+      .feels-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 { font-size: 2.3rem; }
+    }
+
+    /* FOOTER */
+
+    footer {
+      background: #0f0f0f;
+      color: rgba(255,255,255,0.86);
+      padding: 70px 0;
+    }
+
+    footer a {
+      color: rgba(255,255,255,0.86);
+      text-decoration: none;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr 0.8fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .footer-title {
+      font-size: 1.25rem;
+      margin: 0 0 10px;
+      color: #fff;
+    }
+
+    .footer-sub {
+      margin: 0 0 18px;
+      color: rgba(255,255,255,0.72);
+      max-width: 60ch;
+    }
+
+    .footer-ctas .btn { margin-right: 10px; }
+
+    .footer-ctas .btn-secondary {
+      border-color: rgba(255,255,255,0.7);
+      color: rgba(255,255,255,0.92);
+      background: transparent;
+    }
+
+    .footer-links {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .footer-links li { margin-bottom: 10px; }
+
+    .footer-meta {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.14);
+      color: rgba(255,255,255,0.62);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-ctas .btn { display: inline-block; margin-bottom: 10px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="container header-inner">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg" aria-label="Vanilla Killer logo" role="img">
+  <title>Vanilla Killer</title>
+  <g fill="currentColor">
+    <!-- NOTE: placeholder paths – replace with exact paths from logo-pink.svg if needed -->
+    <text x="0" y="55" font-size="48" font-weight="800">Vanilla</text>
+    <text x="140" y="55" font-size="48" font-weight="800">Killer</text>
+  </g>
+</svg>
+      <span class="tagline">Generate BAZILLIONS of Enquiries</span>
+    </div>
+
+    <nav class="main-nav">
+      <a href="#rescue">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faqs">FAQs</a>
+    </nav>
+
+    <a href="#contact" class="btn btn-primary header-cta">Book a call</a>
+    <button class="hamburger" aria-label="Open menu">☰</button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="container">
+
+
+    <div class="hero-content">
+      <h1>Is confusing website messaging costing you BAZILLIONS of enquiries?</h1>
+
+          <div class="hero-video-float">
+      <div class="video-box">Landscape video placeholder</div>
+    </div>
+
+      <p>You might have the snazziest website in town, but if you can’t articulate a <strong>KILLER argument</strong> why people should buy from you, then no amount of traffic will save your business.</p>
+      <p>Vanilla Killer will help you to formulate the <strong>“what’s in it for me”</strong> thinking behind your entire business. We’ll rewrite your website into the bargain.</p>
+      <p>… And if it doesn’t hit a pre‑agreed performance target, then we’ll do it all again. <strong>Guaranteed.</strong></p>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn btn-primary">Book a call</a>
+        <a href="#contact" class="btn btn-secondary">Free website review</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TESTIMONIAL (1) -->
+<section class="section-muted" id="testimonial-1">
+  <div class="container">
+    <div class="testimonial-wrap">
+      <img src="images/mike.png" alt="Mike Hill" class="testimonial-avatar" />
+      <blockquote class="testimonial">“Vanilla Killer created language for our website which has given everyone renewed clarity about what we do. We can approach the market now with total confidence — on all channels.”<br><strong>Mike Hill, CEO, Total Ticketing</strong></blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- SIGNS -->
+<section id="signs">
+  <div class="container">
+    <p class="eyebrow">The problem</p>
+
+    <h2>Signs your messaging might be … a bit crap</h2>
+
+    <div class="signs-grid">
+      <div class="sign-card">
+        <h3>It talks about you, not them</h3>
+        <p>Your website announces what you do and leans on vague self-compliments like “cutting edge solutions”.</p>
+      </div>
+
+      <div class="sign-card">
+        <h3>You can’t explain it simply</h3>
+        <p>You struggle to explain, in one clear sentence, how you help clients move from A to B.</p>
+      </div>
+
+      <div class="sign-card">
+        <h3>It all looks the same</h3>
+        <p>You cringe when sharing your site or LinkedIn because it blends into a sea of sameness.</p>
+      </div>
+    </div>
+      </div>
+  </div>
+</section>
+
+<!-- VANILLA KILLER TO THE RESCUE -->
+<section class="section-muted" id="rescue">
+  <div class="container">
+    <p class="eyebrow">What we can do to help</p>
+
+    <h2>Vanilla Killer to the rescue</h2>
+
+    <!-- Block 1 -->
+    <div class="rescue-block">
+      <div class="rescue-text">
+        <h3>Overhaul your messaging</h3>
+        <p class="rescue-sub">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation.</p>
+      </div>
+      <div class="video-box">Video placeholder</div>
+    </div>
+
+    <!-- Block 2 -->
+    <div class="rescue-block">
+      <div class="video-box">Video placeholder</div>
+      <div class="rescue-text">
+        <h3>Build a lead magnet people want</h3>
+        <p class="rescue-sub">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation.</p>
+      </div>
+    </div>
+
+    <!-- Block 3 -->
+    <div class="rescue-block">
+      <div class="rescue-text">
+        <h3>Messaging review (free)</h3>
+        <p class="rescue-sub">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        <p>Ut enim ad minim veniam, quis nostrud exercitation.</p>
+      </div>
+      <div class="video-box">Video placeholder</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+
+    <p class="eyebrow">Pricing</p>
+    <h2>A suite of services of grow your business</h2>
+    <p class="subhead">Our services are available either individually – or as part of a combo package</p>
+
+    <div class="pricing-tabs">
+      <button class="pricing-tab active" data-target="combo">Combo packages</button>
+      <button class="pricing-tab" data-target="single">Individual services</button>
+    </div>
+
+    <!-- COMBO PACKAGES -->
+    <div class="pricing-panel active" id="combo">
+      <p class="subhead small">Messaging Overhaul + Lead Magnets · Performance guaranteed</p>
+
+      <div class="pricing-grid three">
+        <div class="pricing-card">
+          <h3>Thriving Boutique</h3>
+          <p class="price-desc">A complete overhaul for complex businesses.</p>
+          <div class="price">£12,250</div>
+          <a href="#contact" class="btn btn-primary">Book a call</a>
+          <hr />
+          <ul class="feature-list">
+            <li>Full Ideal Client Profile definition</li>
+            <li>Deep competitor messaging analysis</li>
+            <li>Objections and belief-building work</li>
+            <li>Complete multi-page website rewrite</li>
+            <li>Clear, reusable core messaging framework</li>
+            <li>Multiple lead magnets (idea, structure, copy)</li>
+            <li>Landing pages for lead magnets</li>
+            <li>Follow-up email sequences</li>
+            <li>Messaging reusable across website, email and LinkedIn</li>
+            <li>Conversion tracking and agreed performance targets</li>
+            <li>Iteration until targets are met</li>
+          </ul>
+          <div class="guarantee-box">Conversion target guaranteed or we redo the work.</div>
+        </div>
+
+        <div class="pricing-card">
+          <h3>Growing Team</h3>
+          <p class="price-desc">Unified messaging across team and website.</p>
+          <div class="price">£5,250</div>
+          <a href="#contact" class="btn btn-primary">Book a call</a>
+          <hr />
+          <ul class="feature-list">
+            <li>Ideal Client Profile definition</li>
+            <li>Competitive messaging analysis</li>
+            <li>Objection handling and belief-building</li>
+            <li>Homepage and key service page rewrite</li>
+            <li>Clear transformation statement</li>
+            <li>One lead magnet (idea, structure, copy)</li>
+            <li>Landing page copy for the lead magnet</li>
+            <li>Messaging usable across website and LinkedIn</li>
+          </ul>
+          <div class="guarantee-box">Performance guaranteed.</div>
+        </div>
+
+        <div class="pricing-card">
+          <h3>Solo Business</h3>
+          <p class="price-desc">Messaging plus a high-converting lead magnet.</p>
+          <div class="price">£3,250</div>
+          <a href="#contact" class="btn btn-primary">Book a call</a>
+          <hr />
+          <ul class="feature-list">
+            <li>Clear Ideal Client Profile</li>
+            <li>Strong “what’s in it for me” positioning</li>
+            <li>Homepage rewrite focused on conversion</li>
+            <li>One lead magnet (idea, structure, copy)</li>
+            <li>Landing page copy for the lead magnet</li>
+            <li>Simple, reusable messaging framework</li>
+          </ul>
+          <div class="guarantee-box">Conversion guaranteed.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INDIVIDUAL SERVICES -->
+    <div class="pricing-panel" id="single">
+      <p class="subhead small">Performance guaranteed</p>
+
+      <div class="pricing-grid two">
+        <div class="pricing-card">
+          <h3>Standalone Messaging</h3>
+          <p class="price-desc">Fix your pitch, fast.</p>
+          <div class="price">From £2,250</div>
+          <a href="#contact" class="btn btn-primary">Book a call</a>
+          <hr />
+          <ul class="feature-list">
+            <li>Ideal Client Profile clarity</li>
+            <li>Clear transformation statement</li>
+            <li>Homepage rewrite</li>
+            <li>Messaging focused on conversion</li>
+            <li>Clear calls to action</li>
+          </ul>
+          <div class="guarantee-box">Guaranteed uplift.</div>
+        </div>
+
+        <div class="pricing-card">
+          <h3>Standalone Lead Magnet</h3>
+          <p class="price-desc">Create a magnet people actually want.</p>
+          <div class="price">£1,500</div>
+          <a href="#contact" class="btn btn-primary">Book a call</a>
+          <hr />
+          <ul class="feature-list">
+            <li>Lead magnet ideation and angle</li>
+            <li>Title, structure and content plan</li>
+            <li>Copy for the lead magnet itself</li>
+            <li>Landing page copy</li>
+            <li>Clear call to action</li>
+          </ul>
+          <div class="guarantee-box">30 qualified downloads guaranteed.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TESTIMONIAL (2) -->
+<section class="section-muted" id="testimonial-2">
+  <div class="container">
+    <div class="testimonial-wrap">
+      <img src="images/mike.png" alt="Mike Hill" class="testimonial-avatar" />
+      <blockquote class="testimonial">“Vanilla Killer created language for our website which has given everyone renewed clarity about what we do. We can approach the market now with total confidence — on all channels.”<br><strong>Mike Hill, CEO, Total Ticketing</strong></blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faqs">
+  <div class="container">
+    <p class="eyebrow">FAQs</p>
+    <h2>People often ask</h2>
+
+    <div class="faq">
+      <button class="faq-trigger"><span>Do I need a new website?</span><span>+</span></button>
+      <div class="faq-panel"><p>It depends, but often not. New messaging on an old website is frequently far more effective than a shiny new website with badly considered messaging.</p></div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger"><span>Can you make me a new website?</span><span>+</span></button>
+      <div class="faq-panel"><p>We’re not designers, but we can happily recommend someone excellent if a rebuild is genuinely needed.</p></div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger"><span>Can I just do all this myself?</span><span>+</span></button>
+      <div class="faq-panel"><p>Absolutely. In fact, our LinkedIn content should help you on your way. And if you decide you want help later, you know where we are.</p></div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger"><span>Can you help implement the new messaging?</span><span>+</span></button>
+      <div class="faq-panel"><p>Yes. Our team works with Webflow, Framer, Wix, Squarespace, Shopify, Mailchimp, ConvertKit, HubSpot, WordPress, Drupal, Laravel, and even Joomla. Just ask for a quote.</p></div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger"><span>Can I resell this service to my clients?</span><span>+</span></button>
+      <div class="faq-panel"><p>Yes. We love working this way and will do what we can to make it commercially viable. Get in touch to discuss options.</p></div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger"><span>What happens if your changes make things worse?</span><span>+</span></button>
+      <div class="faq-panel"><p>This has never happened. But if it did, we would immediately restore the original messaging, revisit the research, and rewrite the faulty sections. No excuses.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT FEELS -->
+<section class="section-muted" id="how-it-feels">
+  <div class="container">
+    <h2>Imagine how good would it feel to have great messaging</h2>
+
+    <div class="feels-grid">
+      <div class="feels-card">
+        <h3>1. You’re proud to send people to your site</h3>
+        <p>It finally reflects the quality of your work — and so does its conversion rate.</p>
+      </div>
+
+      <div class="feels-card">
+        <h3>2. You sound clear and confident, everywhere</h3>
+        <p>On calls, on socials, in outreach — you know what to say and how to say it. You’re excited to talk about what you do!</p>
+      </div>
+
+      <div class="feels-card">
+        <h3>3. You’ve got a lead magnet you actually want to share</h3>
+        <p>It’s valuable, and aligned with your offer. It gives people a reason to visit your site — and gives you a reason to start more conversations.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL (3) -->
+<section id="testimonial-3">
+  <div class="container">
+    <div class="testimonial-wrap">
+      <img src="images/mike.png" alt="Mike Hill" class="testimonial-avatar" />
+      <blockquote class="testimonial">“Vanilla Killer created language for our website which has given everyone renewed clarity about what we do. We can approach the market now with total confidence — on all channels.”<br><strong>Mike Hill, CEO, Total Ticketing</strong></blockquote>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <p class="footer-title">Vanilla Killer</p>
+        <p class="footer-sub">Messaging that turns polite interest into enquiries. Book a call, or request a free website review.</p>
+        <div class="footer-ctas">
+          <a href="#contact" class="btn btn-primary">Book a call</a>
+          <a href="#contact" class="btn btn-secondary">Free website review</a>
+        </div>
+      </div>
+
+      <div>
+        <p class="footer-title">Links</p>
+        <ul class="footer-links">
+          <li><a href="#rescue">How it works</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#faqs">FAQs</a></li>
+          <li><a href="#how-it-feels">How it feels</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-title">Contact</p>
+        <ul class="footer-links">
+          <li><a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a></li>
+          <li><a href="tel:+447415120378">+44 7415 120378</a></li>
+          <li><a href="#">LinkedIn</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-meta">© <span id="year"></span> Vanilla Killer. All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  // Pricing tabs
+  const tabs = document.querySelectorAll('.pricing-tab');
+  const panels = document.querySelectorAll('.pricing-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.target;
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(target).classList.add('active');
+    });
+  });
+
+  // FAQ
+  document.querySelectorAll('.faq-trigger').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      trigger.parentElement.classList.toggle('open');
+    });
+  });
+
+  // Footer year
+  document.getElementById('year').textContent = new Date().getFullYear();
+  
+  // Animated rainbow accent (global)
+  const rainbow = [
+    '#ff0000', // red
+    '#ff7f00', // orange
+    '#ffff00', // yellow
+    '#00ff00', // green
+    '#0000ff', // blue
+    '#4b0082', // indigo
+    '#8f00ff'  // violet
+  ];
+
+  let hueIndex = 0;
+  const cycleAccent = () => {
+    document.documentElement.style.setProperty('--accent', rainbow[hueIndex]);
+    hueIndex = (hueIndex + 1) % rainbow.length;
+  };
+
+  cycleAccent();
+  setInterval(cycleAccent, 4000);
+
+</script>
+
+</body>
+</html>

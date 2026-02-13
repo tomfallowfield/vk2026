@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vanilla Killer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- WORKING STYLES: iterate safely here -->
+  <style>
+    @property --accent-hue {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 330;
+}
+
+:root {
+
+      --bg-main: #f7f7f6;
+      --bg-soft: #f1f1f0;
+      --card-bg: #ffffff;
+      --border: #e3e3e0;
+      --text-main: #111;
+      --text-muted: #555;
+      --text-subtle: #777;
+      --shadow-soft: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-card: 0 8px 30px rgba(17,17,17,0.06);
+      --accent-hue: 330;
+
+/*      --accent: hsl(var(--accent-hue), 85%, 55%);*/
+      --video-placeholder: #ececeb;
+    
+  --ink: #111111;
+  --paper: #f7f3ea;
+  --accent: #e51f3f; /* book red analogue */
+  --accent-soft: #f4b3c0;
+  --muted: #666666;
+
+
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+/*      background: var(--bg-main);
+      color: var(--text-main);*/
+  background: var(--paper);
+  color: var(--ink);
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 { line-height: 1.25; }
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.2rem; margin-bottom: 44px; margin-top: 10px;}
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 5%;
+    }
+
+    /* HEADER */
+
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--bg-main);
+      border-bottom: 1px solid var(--border);
+      z-index: 30;
+    }
+
+    .header-inner {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 220px;
+    }
+
+    .logo { height: 60px; color: var(--accent); }
+
+    .tagline {
+      /* font-size: 0.8rem; */
+      color: #666;
+      white-space: nowrap;
+    }
+
+    header .container {
+      display: flex;
+      align-items: center;
+    }
+
+    .main-nav {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .main-nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .header-cta {
+      margin-left: 20px;
+    }
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 22px;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-secondary { border: 1px solid #111; color: #111; background: transparent; }
+
+    .header-cta { padding: 10px 18px; font-size: 0.9rem; }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 26px;
+      cursor: pointer;
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 1000px) {
+      .main-nav,
+      .header-cta,
+      .tagline { display: none; }
+      .hamburger { display: block; }
+    }
+
+    /* HERO */
+
+/*    .hero { padding: 90px 0; }*/
+
+      .hero {
+        position: relative;
+        padding: 120px 0 50px;
+        overflow: hidden;
+      }
+
+.hero {
+  background: var(--accent);
+  color: #111;
+  padding: 140px 0 120px;
+}
+
+.hero h1 {
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+/*  max-width: 16ch;*/
+}
+
+.hero p {
+  max-width: 52ch;
+  font-size: 1.05rem;
+  color: #111;
+}
+
+
+
+
+    .hero > .container {
+    position: relative;
+    z-index: 1;
+    }
+
+
+    /* Desktop: text flows full width, video floats */
+    .hero-content {
+      max-width: 1200px;
+    }
+
+.video-thumb {
+  border-radius: 0;
+  box-shadow: none;
+  border: 2px solid #111;
+}
+
+
+    .hero-video-float {
+      float: right;
+      max-width: 480px;
+      width: min(480px, 100%);
+      margin: 0 0 24px 40px;
+    }
+
+    /* Clear float after hero */
+    .hero::after {
+      content: "";
+      display: block;
+      clear: both;
+    }
+
+    /* Mobile: stack normally */
+    @media (max-width: 900px) {
+      .hero-video-float {
+        float: none;
+        width: 100%;
+        max-width: none;
+        margin: 24px 0 0;
+      }
+    }
+
+    .hero-ctas { margin-top: 28px; }
+
+    .hero-ctas .btn { margin-right: 12px; }
+
+    .video-box {
+      background: var(--video-placeholder);
+      aspect-ratio: 16 / 9;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      border: 1px solid rgba(17,17,17,0.08);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .video-thumb {
+      all: unset;
+      cursor: pointer;
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--video-placeholder);
+      border-radius: 12px;
+      border: 1px solid rgba(17,17,17,0.08);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .play-icon {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      color: #fff;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.35);
+      pointer-events: none;
+    }
+
+    .video-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .video-modal.active { display: flex; }
+
+    .video-dialog {
+      background: #000;
+      max-width: 980px;
+      width: 92%;
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .video-dialog video {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+    }
+
+    .video-close {
+      position: absolute;
+      top: -44px;
+      right: 0;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    /* SECTIONS */
+
+    section { padding: 80px 0; }
+    .section-muted { background: var(--bg-soft); }
+
+    /* Eyebrow */
+
+.eyebrow {
+  background: none;
+  padding: 0;
+  color: rgba(0,0,0,0.6);
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  font-weight: 600;
+}
+
+
+    /* TESTIMONIAL */
+
+    .testimonial-wrap {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      max-width: 920px;
+    }
+
+    .testimonial-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex: 0 0 auto;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .testimonial {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      margin: 0;
+      position: relative;
+    }
+
+    .testimonial::after {
+      content: "★★★★★";
+      display: block;
+      margin-top: 10px;
+      letter-spacing: 2px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      opacity: 0.85;
+    }
+
+    .testimonial strong { font-weight: 700; }
+
+    .testimonial strong { font-weight: 700; }
+
+    @media (max-width: 700px) {
+      .testimonial-wrap {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    /* SIGNS */
+
+    .signs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .sign-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .sign-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .sign-card p {
+      margin: 0;
+      color: #333;
+    }
+
+    @media (max-width: 900px) {
+      .signs-grid { grid-template-columns: 1fr; }
+    }
+
+    /* RESCUE SECTION (Vanilla Killer to the rescue) */
+
+    .rescue-block {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 44px;
+      align-items: center;
+      padding: 56px 0;
+      border-top: 1px solid rgba(17,17,17,0.08);
+    }
+
+    .rescue-block:first-of-type {
+      border-top: none;
+      padding-top: 24px;
+    }
+
+    .rescue-text h3 {
+      margin: 0 0 10px;
+      font-size: 1.6rem;
+      letter-spacing: -0.01em;
+    }
+
+    .rescue-sub {
+      margin: 0 0 18px;
+      color: #666;
+      font-size: 0.95rem;
+      max-width: 58ch;
+    }
+
+    .rescue-text p {
+      margin: 0 0 10px;
+      max-width: 62ch;
+      color: #333;
+    }
+
+    .rescue-block .video-box {
+      background: var(--video-placeholder);
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .rescue-block.reverse {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .rescue-block.reverse .rescue-text { order: 2; }
+    .rescue-block.reverse .video-box { order: 1; }
+
+    @media (max-width: 900px) {
+      .rescue-block {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding: 40px 0;
+      }
+
+      .rescue-block.reverse .rescue-text,
+      .rescue-block.reverse .video-box {
+        order: initial;
+      }
+    }
+ 
+
+    /* PRICING */
+
+    .subhead {
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .subhead.small {
+      font-size: 0.9rem;
+      margin-bottom: 28px;
+      color: #666;
+    }
+
+    .pricing-tabs {
+      display: inline-flex;
+      gap: 6px;
+      margin: 28px 0 40px;
+      background: #e8e4dd;
+      padding: 6px;
+      border-radius: 999px;
+    }
+
+    .pricing-tab {
+      background: transparent;
+      border: none;
+      padding: 10px 18px;
+      font-size: 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      color: #555;
+    }
+
+    .pricing-tab.active {
+      background: #111;
+      color: #fff;
+    }
+
+    .pricing-panel {
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      position: absolute;
+      width: 100%;
+    }
+
+    .pricing-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      position: relative;
+    }
+
+    .pricing-grid.three {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 64px;
+    }
+
+    .pricing-grid.two {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .pricing-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 32px 28px 28px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pricing-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+    .price-desc {
+      margin: 0 0 18px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .price {
+      font-size: 2.1rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .pricing-card .btn {
+      width: 100%;
+      text-align: center;
+      padding: 12px 18px;
+      font-size: 0.95rem;
+      margin-bottom: 18px;
+    }
+
+    .pricing-card hr {
+      border: none;
+      border-top: 1px solid #d6d2ca;
+      margin: 18px 0 20px;
+    }
+
+    .feature-list {
+      margin: 0;
+      padding: 0;
+    }
+
+    .feature-list li {
+      list-style: none;
+      position: relative;
+      padding-left: 26px;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+      color: #444;
+    }
+
+
+
+    .guarantee-box {
+      margin-top: 22px;
+      padding: 16px 18px;
+      background: #f4f4f2;
+      border: 1px dashed rgba(17,17,17,0.25);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .guarantee-box::before {
+      content: "★";
+      color: var(--accent);
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* FAQ */
+
+    .faq-intro {
+      color: var(--text-muted);
+      margin-bottom: 18px;
+    }
+
+    .faq {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .faq-trigger {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1rem;
+      cursor: pointer;
+      text-align: left;
+      gap: 16px;
+    }
+
+    .faq-trigger span:last-child {
+      font-size: 1.2rem;
+      color: #666;
+      flex: 0 0 auto;
+    }
+
+    .faq-panel {
+      max-height: 0;
+      opacity: 0;
+      padding: 0 22px;
+      transition: all 0.45s cubic-bezier(.4,0,.2,1);
+    }
+
+    .faq.open .faq-panel {
+      max-height: 260px;
+      opacity: 1;
+      padding-bottom: 22px;
+    }
+
+    /* HOW IT FEELS */
+
+    .feels-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .feels-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .feels-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+
+    .feels-card p {
+      margin: 0;
+      color: #333;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .pricing-grid.three,
+      .pricing-grid.two,
+      .feels-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 { 
+        font-size: 2.3rem; 
+      }
+    }
+
+    /* FOOTER */
+
+/* FOOTER */
+
+footer {
+  background: #000;
+  color: rgba(255,255,255,0.85);
+  padding: 80px 0 40px;
+}
+
+footer a {
+  color: rgba(255,255,255,0.85);
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.footer-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 14px;
+  color: #fff;
+}
+
+.footer-sub {
+  margin: 0 0 22px;
+  max-width: 46ch;
+  color: rgba(255,255,255,0.65);
+}
+
+.footer-links {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-links li {
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  color: rgba(255,255,255,0.75);
+}
+
+.footer-links a:hover {
+  color: #fff;
+}
+
+.footer-ctas .btn {
+  margin-right: 12px;
+  margin-bottom: 10px;
+}
+
+.footer-ctas .btn-secondary {
+  border-color: rgba(255,255,255,0.6);
+  color: #fff;
+  background: transparent;
+}
+
+.footer-meta {
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.55);
+}
+
+/* Mobile */
+
+@media (max-width: 900px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .footer-ctas .btn {
+    display: inline-block;
+  }
+}
+
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="container header-inner">
+    <div class="brand">
+<svg id="Layer_1" class="logo" width="160" height="52" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 225.71 74.55">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: currentColor;
+      }
+
+      .cls-2 {
+        fill: #383838;
+      }
+    </style>
+  </defs>
+  <g>
+    <g>
+      <path class="cls-2" d="M47.08,18.35c.27,0,6.01-.37,6.01-.37l1.25,22.82.78-22.82h5.15l-2.5,34.6-7.18,1.79s-3.78-36.01-3.51-36.01Z"/>
+      <path class="cls-2" d="M73.03,41.69c-.26,0-5.79.24-5.79.24l-1.24-6.72-.71,6.72h-4.96l2.41-22.59,6.92-1.17s3.65,23.52,3.38,23.52ZM67.5,31.3l-1.09-7.13-1.32,7.33,2.41-.2Z"/>
+      <path class="cls-2" d="M78.96,17.08l2.42,14.77,1.31-12.67,6.74-.44-3.01,26.26h-3.92l-3.61-12.82.91,14.18-6.7.07-1.51-29.1,7.37-.26Z"/>
+      <path class="cls-2" d="M103.53,16.94l-.35,7.95-3.77.08-.97,14.22,2.8.16-.66,6.14-10.57-.12-.35-6.03h3.5l.82-14.65-3.42-.51,1.05-7.44,11.93.2Z"/>
+      <path class="cls-2" d="M104.38,17.85l7.29-.35-2.45,21.6,5.17-.85s.5,7.13.2,7.13c-.27,0-10.18-.31-10.18-.31l-.03-27.22Z"/>
+      <path class="cls-2" d="M117.78,18.08l7.29-.35-2.45,21.6,5.17-.85s.5,7.13.2,7.13c-.27,0-10.18-.31-10.18-.31l-.03-27.22Z"/>
+      <path class="cls-2" d="M141.35,42.62c-.28,0-6.26.26-6.26.26l-1.34-7.26-.77,7.26h-5.37l2.6-24.4,7.48-1.26s3.94,25.4,3.66,25.4ZM135.37,31.41l-1.18-7.7-1.42,7.91,2.6-.22Z"/>
+    </g>
+    <g>
+      <path class="cls-1" d="M154.5,37.09l6.46,18.51-7.45,2.09-3.57-15.67-.65,10.19-6.37-.42,1.06-34.36h7.28l-.36,14.32,4.59-10.33,5.92,2.91-6.91,12.77Z"/>
+      <path class="cls-1" d="M172.44,17.23l-.36,8.07-3.84.08-.99,14.43,2.85.16-.67,6.23-10.78-.12-.36-6.11h3.57l.83-14.87-3.49-.52,1.07-7.55,12.16.2Z"/>
+      <path class="cls-1" d="M171.06,21.23l8.69-.35-2.92,21.92,6.16-.87s.59,7.24.24,7.24c-.32,0-12.13-.32-12.13-.32l-.04-27.62Z"/>
+      <path class="cls-1" d="M184.74,21.24l8.71-.36-2.93,21.98,6.18-.87s.59,7.26.24,7.26c-.32,0-12.15-.32-12.15-.32l-.04-27.7Z"/>
+      <path class="cls-1" d="M221.95,37.16s3.65-.95,3.65-6.46.04-11.1-7.65-11.1c-3.88,0-6.18.12-6.18.12l-.54,12.04-7.46-.06.16-3.57,5.75.99.4-7.89-11.18.12-.32,10.27h-4.61l-.2,6.06,4.22.2-.16,8.68,10.31.32,1.11-5.71-5.87-.55.12-2.66,7.45.1-.41,9.13,5.83.36.59-8.6,2.42,11.14,6.34-2.3-3.77-10.62ZM217.67,32.22l.16-6.22s3.01,0,3.01,3.09c0,3.37-3.17,3.13-3.17,3.13Z"/>
+    </g>
+  </g>
+  <g>
+    <path class="cls-1" d="M50.74,66.78c-1.47.93-3.5,1.28-5.2,1.6-.87.19-1.62.33-1.84.83-.15.96,2.33,1.43,2.89,1.93,1.5,1.06-.6,1.62-1.66,1.77-.89.16-1.83.35-2.63.49-1.07.2-2.44.39-3.7.51-9.61,1.09-14.04-2.47-20.67-.39-1.23.38-2.46.81-3.86.97-1.31.14-2.59.03-3.69-.22-1.32-.32-4.12-1.17-3.1-2.3.91-1.02,3.48-1.01,4.13-1.58.2-.16.17-.41-.03-.58-1.16-.95-3.33-.41-4.74-.11-1.52.33-3.55.45-4.99.02-.63-.21-2.08-.71-1.53-1.51.88-1.37,7.94-.41,7.9-1.62-.4-.67-3.31-1.04-3.71-2v-.02c0-1.52,5.38-1.48,6.71-1.6,3.74-.12,6.92-.63,10.39-1.11,2.6,5.24,4.76,8.34,5.6,6.8.61-1.1,1.35-3.78,2.15-7.34,2.93.17,5.88.72,8.63.75,2.06.02,4.35-.17,6.35.36,1.69.46,2.36,1.23.26,1.58-.51.13-4.36.34-2.48.9,1.66.43,5.39.2,7.53.36.98.01,2.7.53,1.29,1.51Z"/>
+    <g>
+      <path class="cls-2" d="M24.73,54.77c-.18.26-.11.62.15.8,1.48,1,3.16,1.91,4.93,2.71-.22,1.07-.44,2.09-.65,3.04-.8,3.56-1.54,6.24-2.15,7.34-.84,1.54-3-1.56-5.6-6.8-.94-1.9-1.95-4.09-2.96-6.44,2.83-1.31,5.6-3.01,7.8-4.86.24-.2.28-.56.07-.81-.2-.24-.57-.27-.81-.07-2.09,1.76-4.77,3.4-7.51,4.67-.93-2.17-1.86-4.46-2.77-6.78,2.99-1.08,6.21-2.83,9-4.88,1.3.96,2.69,1.85,4.11,2.63-.47.34-.93.64-1.39.91-.27.16-.37.52-.2.79.1.18.29.28.49.28.1,0,.2-.02.29-.08.64-.37,1.29-.81,1.94-1.29.82.42,1.65.8,2.46,1.14-.62,3.49-1.25,6.94-1.88,10.04-1.63-.74-3.18-1.59-4.52-2.5-.27-.18-.62-.11-.8.16Z"/>
+      <path class="cls-2" d="M35.91,22.26v.05s-.21,1.44-.57,3.83c-1.33,3.43-3.16,6.71-5.07,8.9-.2.24-.18.6.06.81.11.1.24.15.38.15.16,0,.32-.07.43-.2,1.26-1.44,2.47-3.3,3.53-5.35-.49,3.12-1.09,6.87-1.75,10.79-1.15,1.23-2.36,2.36-3.56,3.32-1.43-.77-2.85-1.65-4.16-2.6.83-.66,1.62-1.34,2.33-2.04.23-.22.23-.58.01-.81-.22-.23-.58-.23-.81-.01-.75.73-1.6,1.45-2.5,2.14-.9-.69-1.74-1.41-2.5-2.14-.23-.22-.59-.22-.81.01-.22.23-.22.59.01.81.72.7,1.5,1.38,2.34,2.04-2.65,1.9-5.68,3.53-8.45,4.54-1.59-4.1-3.08-8.25-4.31-11.95,1.05-.42,2.05-.87,2.99-1.36.28-.15.39-.5.24-.78-.15-.28-.5-.39-.78-.24-.87.46-1.82.89-2.81,1.28-.45-1.37-.85-2.67-1.21-3.87.41-.61.42-1.74,1.48-1.65.78.07.33,2.53,2.02,2.53,1.95,0,.84-2.4,2.27-2.34,1.24.06.77,2.47,2.79,2.54,1.49.04.45-3.57,2.66-4.74,1.87-.99,3.77,1.53,6.67,1.3,4.19-.33,7.18-2.3,9.08-4.96Z"/>
+      <path class="cls-2" d="M32.13,45.9c.15-.88.31-1.77.45-2.65-.69.67-1.4,1.31-2.1,1.89.55.27,1.1.53,1.65.76Z"/>
+    </g>
+    <path class="cls-1" d="M17.5,33.6c-.7-.02-1.64,1.49-1.2,2.63.24.64.96,1.25,1.53,1.09.66-.18.84-1.29.77-1.97-.08-.76-.54-1.74-1.09-1.75Z"/>
+    <path class="cls-1" d="M15.01,37.87c-.54-.01-1.26.83-.92,1.46.19.35.74.69,1.18.61.51-.1.64-.72.59-1.09-.06-.42-.42-.96-.84-.97Z"/>
+    <path class="cls-1" d="M36.24,6.59C30.53-.81,16.48-1.55,9.52,2.24c-7.14,3.9-2.94,10.77-4.93,11.42-2.6.84-2.77,2.78-2.86,5.19-.15,4.03,1.69,6.81,3.63,6.29,1.3-.34,1,.62,1.11,2.66.13,2.47,1.12,2.19,1.88,2.14.28-.02.46-.16.59-.36.41-.61.42-1.74,1.48-1.65.78.07.33,2.53,2.02,2.53,1.95,0,.84-2.4,2.27-2.34,1.24.06.77,2.47,2.79,2.54,1.49.04.45-3.57,2.66-4.74,1.87-.99,3.77,1.53,6.67,1.3,4.19-.33,7.18-2.3,9.08-4.96.42-.58.78-1.2,1.09-1.84.16-.32.31-.65.44-.98,1.75-4.42,1.24-9.68-1.2-12.85ZM15.5,13.34c.18-.34.57-.61.87-.84.39-.3.71-.67,1.12-.95-.51-.5-1.05-1.02-1.72-1.39-.62-.36.03-.98.65-.6.14.08.86.62.97.71.12.1.74.72.86.82.46-.28.93-.58,1.43-.8.26-.14.54-.25.78-.41.37-.23.93.02.87.39-.05.26-.8.59-1.11.72-.2.08-1.13.63-1.33.74.11,0,1.81,2.26,1.89,2.56.07.25-.28.4-.47.4-.38.01-.52-.3-.72-.57-.49-.63-.99-1.25-1.45-1.91-.02,0-1.78,1.65-2.02,1.7-.27.05-.81-.21-.62-.57ZM6.73,12.4c.09-.21,1.81-1.79,1.99-1.79-.52-.51-1.04-1.02-1.71-1.39-.62-.36.04-.98.65-.6.14.08.86.62.97.72.12.09.74.71.85.81.47-.28.94-.57,1.44-.8.26-.13.54-.24.78-.4.37-.23.93.02.87.39-.05.26-.81.59-1.11.71-.2.09-1.13.64-1.33.74.03,0,1.86,2.22,1.88,2.57.02.29-.31.42-.55.4-.35-.04-.48-.36-.67-.61-.47-.63-.97-1.23-1.42-1.88-.02,0-1.79,1.66-2.03,1.7-.3.04-.76-.21-.61-.57ZM13.55,22.65c-.37.12-.96-1.52-2.36-1.64-1.18-.1-1.89.96-2.23.76-.2-.11-.19-.6-.04-1.24.38-1.61,1.66-4.18,2.79-4.1.81.06,1.43,1.47,1.77,2.94.36,1.56.41,3.17.07,3.28Z"/>
+  </g>
+</svg>
+    </div>
+
+    <nav class="main-nav">
+      <a href="#rescue">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faqs">FAQs</a>
+    </nav>
+
+    <a href="#contact" class="btn btn-primary header-cta">Book a call</a>
+    <button class="hamburger" aria-label="Open menu">☰</button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="container">
+
+
+    <div class="hero-content">
+      <span class="eyebrow hero-eyebrow">Generate BAZILLIONS of enquiries</span>
+      <h1>Is bad messaging costing you BAZILLIONS of enquiries?</h1>
+
+          <div class="hero-video-float">
+      <button class="video-thumb" data-video="vids/hero-video.mp4">
+        <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
+        <span class="play-icon">▶</span>
+      </button>
+</div>
+    </div>
+
+      <p>You might have the snazziest website in town, but if you can’t articulate a <strong>KILLER argument</strong> why people should buy from you, then no amount of traffic will save your business.</p>
+      <p>Vanilla Killer will help you to formulate the <strong>“what’s in it for me”</strong> thinking behind your entire business. We’ll rewrite your website into the bargain.</p>
+      <p>… And if it doesn’t hit a pre‑agreed performance target, then we’ll do it all again. <strong>Guaranteed.</strong></p>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn btn-primary">Book a call</a>
+        <a href="#contact" class="btn btn-secondary">Free website review</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TESTIMONIAL (1) -->
+<section class="section-muted">
+  <div class="container">
+    <div class="testimonial-wrap">
+      <img src="images/oakleigh.jpg" alt="Oakleigh Wood" class="testimonial-avatar" />
+      <blockquote class="testimonial">
+        "The handbook Tom delivered encapsulates the entire purpose behind our operation, our values, and – most importantly – how to sell that purpose, both online and in person."
+        <br>
+        <strong>Oakleigh Wood MBA FIMI, Director, Bristol Caravans</strong>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+
+<!-- SIGNS -->
+<!--<section id="signs">
+  <div class="container">
+    <p class="eyebrow">The problem</p>
+
+    <h2>Signs your messaging might be a bit crap...</h2>
+
+    <div class="signs-grid">
+      <div class="sign-card">
+        <h3>It talks about you, not them</h3>
+        <p>Your website announces what you do and leans on vague self-compliments like “cutting edge solutions”.</p>
+      </div>
+
+      <div class="sign-card">
+        <h3>You can’t explain it simply</h3>
+        <p>You struggle to explain, in one clear sentence, how you help clients move from A to B.</p>
+      </div>
+
+      <div class="sign-card">
+        <h3>It all looks the same</h3>
+        <p>You cringe when sharing your site or LinkedIn because it blends into a sea of sameness.</p>
+      </div>
+      </div>
+  </div>
+</section> -->
+
+<section id="problem">
+  <div class="container">
+    <p class="eyebrow">The real problem</p>
+
+    <h2>Your website is fine. It's your messaging that needs work.</h2>
+
+    <p class="subhead">
+      Displaying a detailed list of your services doesn't give anyone a good reason to buy.
+    </p>
+
+    <div class="signs-grid">
+      <div class="sign-card">
+        <h3>Your message sounds fine… but forgettable</h3>
+        <p>
+          The words are polite, professional, and technically accurate.
+          They just don’t give anyone a strong reason to choose you over the next option.
+        </p>
+      </div>
+
+      <div class="sign-card">
+        <h3>You talk about what you do, not what changes</h3>
+        <p>
+          Features, services, credentials.
+          Very little about how life is better after working with you.
+        </p>
+      </div>
+
+      <div class="sign-card">
+        <h3>You rely on explanation instead of clarity</h3>
+        <p>
+          If someone needs a call to understand your value, your website isn’t doing its job.
+          It should pre-sell the conversation.
+        </p>
+      </div>
+    </div>
+
+    <p style="max-width: 62ch; margin-top: 36px;">
+      The result is lost attention, weak enquiries, and a nagging sense that your business
+      deserves better than the words representing it.
+    </p>
+  </div>
+</section>
+
+<!-- VANILLA KILLER TO THE RESCUE -->
+<section class="section-muted" id="rescue">
+  <div class="container">
+
+
+    <p class="eyebrow">VANILLA KILLER TO THE RESCUE</p>
+    <h2>... And what we will do about it</h2>
+
+
+<div class="rescue-block">
+  <div class="rescue-text">
+    <h3>Build an argument why people should buy</h3>
+
+    <p class="rescue-sub">
+      Get clear on the real reason someone should choose your services.
+    </p>
+
+    <p>
+      This is where the core argument gets defined. Who the service is for, the problem it solves, and why your approach makes sense now.
+    </p>
+
+    <p>
+      We will carry out a detailed analysis of your competitors, define your brand's tone of voice, and brainstorm every possible objection buyers may raise to your offer. 
+    </p>
+
+    <p>
+      The output is the very reason your business exists – distilled. 
+    </p>
+  </div>
+
+  <button class="video-thumb" data-video="vids/hero-video.mp4">
+    <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
+    <span class="play-icon">▶</span>
+  </button>
+</div>
+
+
+<div class="rescue-block">
+  <button class="video-thumb" data-video="vids/hero-video.mp4">
+    <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
+    <span class="play-icon">▶</span>
+  </button>
+
+  <div class="rescue-text">
+    <h3>Deveop and launch the perfect lead magnet</h3>
+
+    <p class="rescue-sub">
+      Grab attention and convert it into an email list of future buyers.
+    </p>
+
+    <p>
+      Create something genuinely useful for the right people, not a generic freebie that gets ignored.
+    </p>
+
+    <p>
+      Use it to generate interest on social media, capture email addresses, and follow up with a simple automated sequence that moves people closer to buying.
+    </p>
+
+    <p>
+      The aim is to solve a specific problem, for a specific audience, and stay top of mind.
+    </p>
+  </div>
+</div>
+
+
+<div class="rescue-block">
+  <div class="rescue-text">
+    <h3>Rewrite your website – and measure its performance</h3>
+
+    <p class="rescue-sub">
+      Put the argument to work where it matters most.
+    </p>
+
+    <p>
+      Use the new core message to inform a focused rewrite of your website and LinkedIn presence.
+    </p>
+
+    <p>
+      Headlines, structure, calls to action, and proof all aligned to the same idea.
+    </p>
+
+    <p>
+      Then measure the effect on enquiries and conversion rate, and iterate if needed until it performs properly.
+    </p>
+  </div>
+
+  <button class="video-thumb" data-video="vids/hero-video.mp4">
+    <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
+    <span class="play-icon">▶</span>
+  </button>
+</div>
+
+
+  </div>
+</section>
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+
+    <p class="eyebrow">Our fees</p>
+    <h2>Services GUARANTEED* to grow your business</h2>
+    <p class="subhead">*Each of these services is covered by a watertight performance guarantee.</p>
+
+    <div class="pricing-tabs">
+      <button class="pricing-tab active" data-target="combo">Combo packages</button>
+      <button class="pricing-tab" data-target="single">Individual services</button>
+    </div>
+
+    <!-- COMBO PACKAGES -->
+    <div class="pricing-panel active" id="combo">
+      <p class="subhead small">Messaging Overhaul + Lead Magnets · Performance guaranteed</p>
+
+      <div class="pricing-grid three">
+        <div class="pricing-card">
+          <h3>Thriving Boutique</h3>
+          <p class="price-desc">A complete overhaul for complex businesses.</p>
+          <div class="price">£12,250</div>
+          <a href="#contact" class="btn btn-primary">Book a call</a>
+          <hr />
+          <ul class="feature-list">
+            <li>Full Ideal Client Profile definition</li>
+            <li>Deep competitor messaging analysis</li>
+            <li>Objections and belief-building work</li>
+            <li>Complete multi-page website rewrite</li>
+            <li>Clear, reusable core messaging framework</li>
+            <li>Multiple lead magnets (idea, structure, copy)</li>
+            <li>Landing pages for lead magnets</li>
+            <li>Follow-up email sequences</li>
+            <li>Messaging reusable across website, email and LinkedIn</li>
+            <li>Conversion tracking and agreed performance targets</li>
+            <li>Iteration until targets are met</li>
+          </ul>
+          <div class="guarantee-box">Conversion target guaranteed or we redo the work.</div>
+        </div>
+
+        <div class="pricing-card">
+          <h3>Growing Team</h3>
+          <p class="price-desc">Unified messaging across team and website.</p>
+          <div class="price">£5,250</div>
+          <a href="#contact" class="btn btn-primary">Book a call</a>
+          <hr />
+          <ul class="feature-list">
+            <li>Ideal Client Profile definition</li>
+            <li>Competitive messaging analysis</li>
+            <li>Objection handling and belief-building</li>
+            <li>Homepage and key service page rewrite</li>
+            <li>Clear transformation statement</li>
+            <li>One lead magnet (idea, structure, copy)</li>
+            <li>Landing page copy for the lead magnet</li>
+            <li>Messaging usable across website and LinkedIn</li>
+          </ul>
+          <div class="guarantee-box">Performance guaranteed.</div>
+        </div>
+
+        <div class="pricing-card">
+          <h3>Solo Business</h3>
+          <p class="price-desc">Messaging plus a high-converting lead magnet.</p>
+          <div class="price">£3,250</div>
+          <a href="#contact" class="btn btn-primary">Book a call</a>
+          <hr />
+          <ul class="feature-list">
+            <li>Clear Ideal Client Profile</li>
+            <li>Strong “what’s in it for me” positioning</li>
+            <li>Homepage rewrite focused on conversion</li>
+            <li>One lead magnet (idea, structure, copy)</li>
+            <li>Landing page copy for the lead magnet</li>
+            <li>Simple, reusable messaging framework</li>
+          </ul>
+          <div class="guarantee-box">Conversion guaranteed.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INDIVIDUAL SERVICES -->
+    <div class="pricing-panel" id="single">
+      <p class="subhead small">Performance guaranteed</p>
+
+      <div class="pricing-grid two">
+        <div class="pricing-card">
+          <h3>Standalone Messaging</h3>
+          <p class="price-desc">Fix your pitch, fast.</p>
+          <div class="price">From £2,250</div>
+          <a href="#contact" class="btn btn-primary">Book a call</a>
+          <hr />
+          <ul class="feature-list">
+            <li>Ideal Client Profile clarity</li>
+            <li>Clear transformation statement</li>
+            <li>Homepage rewrite</li>
+            <li>Messaging focused on conversion</li>
+            <li>Clear calls to action</li>
+          </ul>
+          <div class="guarantee-box">Guaranteed uplift.</div>
+        </div>
+
+        <div class="pricing-card">
+          <h3>Standalone Lead Magnet</h3>
+          <p class="price-desc">Create a magnet people actually want.</p>
+          <div class="price">£1,500</div>
+          <a href="#contact" class="btn btn-primary">Book a call</a>
+          <hr />
+          <ul class="feature-list">
+            <li>Lead magnet ideation and angle</li>
+            <li>Title, structure and content plan</li>
+            <li>Copy for the lead magnet itself</li>
+            <li>Landing page copy</li>
+            <li>Clear call to action</li>
+          </ul>
+          <div class="guarantee-box">30 qualified downloads guaranteed.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TESTIMONIAL (2) -->
+<section class="section-muted" id="testimonial-2">
+  <div class="container">
+    <div class="testimonial-wrap">
+      <img src="images/mike.png" alt="Mike Hill" class="testimonial-avatar" />
+      <blockquote class="testimonial">“Vanilla Killer created language for our website which has given everyone renewed clarity about what we do. We can approach the market now with total confidence — on all channels.”<br><strong>Mike Hill, CEO, Total Ticketing</strong></blockquote>
+    </div>
+  </div>
+</section>
+
+
+<section class="section-muted" id="guide">
+  <div class="container">
+
+    <p class="eyebrow">Your guide</p>
+    <h2>About Tom Fallowfield</h2>
+
+    <div style="display: grid; grid-template-columns: 160px 1fr; gap: 32px; align-items: start; margin-top: 36px;">
+
+      <img 
+        src="images/tom.jpg" 
+        alt="Tom Fallowfield" 
+        style="width: 160px; height: 160px; border-radius: 50%; object-fit: cover; box-shadow: var(--shadow-soft);" 
+      />
+
+      <div>
+<!--         <p style="font-size: 1.3rem; font-weight: 600; line-height: 1.4; margin-top: 0; margin-bottom: 24px;">
+          “You can't read the label from inside the bottle”
+        </p>
+ -->
+        <p>
+          After studying philosophy, Tom Fallowfield spent 25 fairly unhappy years as a generalist web designer, doing what clients told him to, and building websites which looked… like websites.
+        </p>
+
+        <p>
+          Then came the realisation: we have been doing this wrong. Pretty design is not the central issue. Most small businesses exist with very little thought given to the most important question of all, why on earth should anyone buy their stuff?
+        </p>
+
+        <p>
+          Vanilla Killer came into being to fix this, by helping businesses step outside their own thinking and construct a clear, logical argument for why they deserve to win.
+        </p>
+
+        <p>
+          These days Tom can be found on 
+          <a href="https://www.linkedin.com/in/tom-fallowfield/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          talking endlessly about how to improve your messaging.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- FAQ -->
+<section id="faqs">
+  <div class="container">
+    <p class="eyebrow">FAQs</p>
+    <h2>People often ask</h2>
+
+    <div class="faq">
+      <button class="faq-trigger">
+        <span>What are you doing in my garden?</span>
+        <span>+</span>
+      </button>
+      <div class="faq-panel">
+        <p>This one is just a little joke.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger">
+        <span>Do I need a new website?</span>
+        <span>+</span>
+      </button>
+      <div class="faq-panel">
+        <p>It depends, but often not. New messaging on an old website is usually far more effective than a shiny new website with badly considered messaging.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger">
+        <span>Can you make me a new website?</span>
+        <span>+</span>
+      </button>
+      <div class="faq-panel">
+        <p>We are not designers, but we can happily recommend someone excellent if a rebuild is genuinely needed.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger">
+        <span>Can I just do all this myself?</span>
+        <span>+</span>
+      </button>
+      <div class="faq-panel">
+        <p>Absolutely. Knock yourself out. In fact, our LinkedIn content should help you on your way.</p>
+        <p>If you decide you would like some help later, do not hesitate to get in touch.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger">
+        <span>Can you help put the new messaging onto my website?</span>
+        <span>+</span>
+      </button>
+      <div class="faq-panel">
+        <p>Yes. Our in-house team has experience with Webflow, Framer, Wix, Squarespace, Shopify, Mailchimp, ConvertKit, HubSpot, WordPress, Drupal, Laravel, and even Joomla.</p>
+        <p>Share a few details and ask us for a quote.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger">
+        <span>This service looks fantastic. Can I resell it to my clients?</span>
+        <span>+</span>
+      </button>
+      <div class="faq-panel">
+        <p>Yes. We love working this way and will do what we can to make it commercially viable. Get in touch for details.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger">
+        <span>What happens if your changes make things worse?</span>
+        <span>+</span>
+      </button>
+      <div class="faq-panel">
+        <p>This has never happened. But if it does, we will immediately restore the original messaging, revisit the research, speak to customers again, and rewrite what did not work.</p>
+        <p>No questions asked. No excuses.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+
+
+<!-- HOW IT FEELS -->
+<section class="section-muted" id="how-it-feels">
+  <div class="container">
+    <h2>Imagine how good would it feel to have great messaging</h2>
+
+    <div class="feels-grid">
+      <div class="feels-card">
+        <h3>You’re proud to send people to your site</h3>
+        <p>It finally reflects the quality of your work — and so does its conversion rate.</p>
+      </div>
+
+      <div class="feels-card">
+        <h3>You sound clear and confident, everywhere</h3>
+        <p>On calls, on socials, in outreach — you know what to say and how to say it. You’re excited to talk about what you do!</p>
+      </div>
+
+      <div class="feels-card">
+        <h3>You’ve got a lead magnet you actually want to share</h3>
+        <p>It’s valuable, and aligned with your offer. It gives people a reason to visit your site — and gives you a reason to start more conversations.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL (3) -->
+<section class="section-muted">
+  <div class="container">
+    <div class="testimonial-wrap">
+      <img src="images/charlie.jpg" alt="Charlie Mulraine" class="testimonial-avatar" />
+      <blockquote class="testimonial">
+        "The self-proclaimed Vanilla Killer took me from feeling stuck with my marketing and how to present myself to having a shiny new website complete with a lead magnet – and now feeling very confident about taking my business to the next stages.
+        <br><br>
+        I highly recommend working with him and his killer messaging service."
+        <br>
+        <strong>Charlie Mulraine, Career Coach</strong>
+      </blockquote>
+    </div>
+  </div>
+</section>
+
+
+<footer id="contact">
+  <div class="container">
+    <div class="footer-grid">
+
+      <div>
+        <p class="footer-title">Vanilla Killer</p>
+        <p class="footer-sub">Messaging that turns polite interest into enquiries. Book a call, or request a free website review.</p>
+        <div class="footer-ctas">
+          <a href="#" class="btn btn-primary">Book a call</a>
+          <a href="#" class="btn btn-secondary">Free website review</a>
+        </div>
+      </div>
+
+      <div>
+        <p class="footer-title">Links</p>
+        <ul class="footer-links">
+          <li><a href="#">How it works</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">FAQs</a></li>
+          <li><a href="#">How it feels</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="footer-title">Contact</p>
+        <ul class="footer-links">
+          <li><a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a></li>
+          <li><a href="tel:+447415120378">+44 7415 120378</a></li>
+          <li><a href="#">LinkedIn</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-meta">© <span id="year"></span> Vanilla Killer. All rights reserved.</div>
+  </div>
+</footer>
+
+
+<div class="video-modal" id="videoModal" aria-modal="true" role="dialog">
+  <div class="video-dialog">
+    <button class="video-close">Close</button>
+    <video id="modalVideo" controls playsinline preload="metadata"></video>
+  </div>
+</div>
+
+<script>
+  // Pricing tabs
+  const tabs = document.querySelectorAll('.pricing-tab');
+  const panels = document.querySelectorAll('.pricing-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.target;
+
+      tabs.forEach(t => t.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+
+      tab.classList.add('active');
+      document.getElementById(target).classList.add('active');
+    });
+  });
+
+  // Video lightbox
+  const modal = document.getElementById('videoModal');
+  const video = document.getElementById('modalVideo');
+  const closeBtn = modal.querySelector('.video-close');
+
+  document.querySelectorAll('.video-thumb').forEach(button => {
+    button.addEventListener('click', () => {
+      video.src = button.dataset.video;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      video.currentTime = 0;
+      video.play();
+    });
+  });
+
+  function closeModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+    video.pause();
+    video.src = '';
+  }
+
+  closeBtn.addEventListener('click', closeModal);
+
+  modal.addEventListener('click', e => {
+    if (e.target === modal) closeModal();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) {
+      closeModal();
+    }
+  });
+</script>
+
+
+</body>
+</html>
