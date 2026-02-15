@@ -2045,7 +2045,7 @@ footer a:hover {
   inset: 0;
   z-index: 9998;
   background: rgba(0, 0, 0, 0.5);
-  pointer-events: none;
+  /* Blocks clicks so the page can't be used until they Accept or Decline */
 }
 .cookie-bar-backdrop[hidden] {
   display: none !important;
