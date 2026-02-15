@@ -2039,7 +2039,17 @@ footer a:hover {
   }
 }
 
-/* Cookie consent bar */
+/* Cookie consent: backdrop + bar */
+.cookie-bar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+.cookie-bar-backdrop[hidden] {
+  display: none !important;
+}
 .cookie-bar {
   position: fixed;
   bottom: 0;

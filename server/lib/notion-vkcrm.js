@@ -62,23 +62,119 @@ function wrvTitle(payload, submittedAt) {
  * @param {object} payload - submission payload
  * @param {'wrv_request'|'call_booking'} submissionType
  * @param {string} submittedAt - ISO datetime
- * @param {object} [context] - optional _context (utm, referrer, etc.)
+ * @param {object} [context] - optional _context (utm, referrer, buttons_clicked, videos_watched, etc.)
  * @param {boolean} [includeRawPayload] - include Raw payload JSON
+ * @param {boolean} [isUpdate] - true if this submission updated an existing record
+ * @param {string} [matchedBy] - how we matched: 'website_url' | 'linkedin_url' | 'wrv_title'
  */
-function buildGeneralNotes(payload, submissionType, submittedAt, context = {}, includeRawPayload = false) {
-  const lines = [
-    'Source: Website',
-    submissionType === 'call_booking' ? 'Submission type: Call booking' : 'Submission type: WRV request',
-    `Submitted at: ${submittedAt || new Date().toISOString()}`,
-    `Name: ${(payload.full_name || payload.name || '').trim() || '—'}`,
-    `Email: ${(payload.email || '').trim() || '—'}`,
-    `Company: ${(payload.company_name || payload.company || '').trim() || '—'}`,
-    `Website: ${(payload.website || '').trim() || '—'}`,
-    `LinkedIn: ${(payload.linkedin_url || '').trim() || '—'}`
-  ];
+function formatTs(ts) {
+  if (ts == null) return '—';
+  const d = new Date(typeof ts === 'number' && ts < 1e12 ? ts : ts);
+  if (isNaN(d.getTime())) return String(ts);
+  return d.toISOString().replace('T', ' ').slice(0, 19);
+}
+
+function buildSessionTimeline(context, submittedAt, submissionType) {
+  const events = [];
+  const firstVisit = context.first_visit_ts;
+  if (firstVisit != null) {
+    const ref = (context.first_referrer || '').trim() || 'direct';
+    events.push({ ts: typeof firstVisit === 'number' ? firstVisit : new Date(firstVisit).getTime(), line: `First visit to website (from: ${ref})` });
+  }
+  const buttons = context.buttons_clicked;
+  if (buttons && Array.isArray(buttons)) {
+    buttons.forEach(b => {
+      const ts = b.ts != null ? (typeof b.ts === 'number' ? b.ts : new Date(b.ts).getTime()) : null;
+      if (ts == null) return;
+      const id = (b.id || '').trim() || '—';
+      const modal = (b.modal || '').trim() || '—';
+      events.push({ ts, line: `Clicked ${id} (opened ${modal})` });
+    });
+  }
+  const videos = context.videos_watched;
+  if (videos && Array.isArray(videos) && videos.length > 0) {
+    videos.forEach(v => {
+      const name = v.name || v.src || '—';
+      const evs = v.events && Array.isArray(v.events) ? v.events : [];
+      evs.forEach(ev => {
+        const ts = ev.ts != null ? (typeof ev.ts === 'number' ? ev.ts : new Date(ev.ts).getTime()) : null;
+        if (ts == null) return;
+        const pct = ev.pct != null ? ev.pct + '%' : '—';
+        if (ev.type === 'start') {
+          events.push({ ts, line: `Started ${name}` });
+        } else if (ev.type === 'pause') {
+          events.push({ ts, line: `Paused ${name} at ${pct}` });
+        } else if (ev.type === 'ended') {
+          events.push({ ts, line: `Finished ${name} (${pct})` });
+        }
+      });
+      if (evs.length === 0 && (v.max_pct != null || v.progress_pct != null)) {
+        const pct = (v.max_pct != null ? v.max_pct : v.progress_pct) + '%';
+        const subMs = submittedAt ? new Date(submittedAt).getTime() : Date.now();
+        events.push({ ts: subMs, line: `Watched ${name}: ${pct}` });
+      }
+    });
+  }
+  const subTs = submittedAt ? new Date(submittedAt).getTime() : Date.now();
+  const subLabel = submissionType === 'call_booking' ? 'Book a call form submitted' : 'WRV requested';
+  events.push({ ts: subTs, line: subLabel });
+  events.sort((a, b) => a.ts - b.ts);
+  return events.map(e => `[${formatTs(e.ts)}] ${e.line}`);
+}
+
+function buildGeneralNotes(payload, submissionType, submittedAt, context = {}, includeRawPayload = false, isUpdate = false, matchedBy = '') {
+  const lines = [];
+  if (isUpdate && matchedBy) {
+    const label = matchedBy === 'website_url' ? 'Website URL' : matchedBy === 'linkedin_url' ? 'LinkedIn URL' : 'WRV (name)';
+    lines.push(`Record: update (matched existing by ${label}).`);
+    lines.push('');
+  }
+  const timeline = buildSessionTimeline(context, submittedAt, submissionType);
+  if (timeline.length > 0) {
+    lines.push('Session timeline:');
+    timeline.forEach(t => lines.push('  ' + t));
+    lines.push('');
+  }
+  lines.push('Source: Website');
+  lines.push(submissionType === 'call_booking' ? 'Submission type: Call booking' : 'Submission type: WRV request');
+  lines.push(`Submitted at: ${submittedAt || new Date().toISOString()}`);
+  lines.push(`Form ID: ${(payload.form_id || '').trim() || '—'}`);
+  lines.push(`Trigger button ID: ${(payload.trigger_button_id || '').trim() || '—'}`);
+  lines.push(`Modal trigger type: ${(payload.modal_trigger_type || '').trim() || '—'}`);
+  if (context.buttons_clicked && Array.isArray(context.buttons_clicked) && context.buttons_clicked.length > 0) {
+    lines.push('Buttons clicked this session: ' + context.buttons_clicked.map(b => (b.id || b.modal || '') + (b.modal ? ' (' + b.modal + ')' : '')).filter(Boolean).join(', ') || '—');
+  }
+  lines.push(`Name: ${(payload.full_name || payload.name || '').trim() || '—'}`);
+  lines.push(`Email: ${(payload.email || '').trim() || '—'}`);
+  lines.push(`Company: ${(payload.company_name || payload.company || '').trim() || '—'}`);
+  lines.push(`Website: ${(payload.website || '').trim() || '—'}`);
+  lines.push(`LinkedIn: ${(payload.linkedin_url || '').trim() || '—'}`);
   const utm = context.utm_source || context.utm_medium || context.utm_campaign || context.utm_term || context.utm_content;
   if (utm || (context.utm_source && Object.keys(context).some(k => k.startsWith('utm_')))) {
-    lines.push(`UTM: ${[context.utm_source, context.utm_medium, context.utm_campaign, context.utm_term, context.utm_content].filter(Boolean).join(', ') || '—'}`);
+    lines.push(`UTM (this page): ${[context.utm_source, context.utm_medium, context.utm_campaign, context.utm_term, context.utm_content].filter(Boolean).join(', ') || '—'}`);
+  }
+  const firstUtm = context.first_visit_utm;
+  if (firstUtm && typeof firstUtm === 'object') {
+    const parts = [firstUtm.utm_source, firstUtm.utm_medium, firstUtm.utm_campaign, firstUtm.utm_term, firstUtm.utm_content].filter(Boolean);
+    if (parts.length > 0) {
+      lines.push(`First visit UTM: ${parts.join(', ')}`);
+    }
+  }
+  if (context.videos_watched && Array.isArray(context.videos_watched) && context.videos_watched.length > 0) {
+    lines.push('Videos watched (play history):');
+    context.videos_watched.forEach(v => {
+      const name = v.name || v.src || '—';
+      const maxPct = v.max_pct != null ? v.max_pct + '%' : (v.progress_pct != null ? v.progress_pct + '%' : '—');
+      lines.push(`  ${name}: max ${maxPct}`);
+      const evs = v.events && Array.isArray(v.events) ? v.events : [];
+      evs.forEach(ev => {
+        const ts = formatTs(ev.ts);
+        const pct = ev.pct != null ? ev.pct + '%' : '—';
+        if (ev.type === 'start') lines.push(`    start ${ts}`);
+        else if (ev.type === 'pause') lines.push(`    pause at ${pct} ${ts}`);
+        else if (ev.type === 'ended') lines.push(`    finished ${ts}`);
+      });
+    });
   }
   if (submissionType === 'call_booking') {
     if (payload.event) lines.push(`Event: ${payload.event}`);
@@ -88,7 +184,7 @@ function buildGeneralNotes(payload, submissionType, submittedAt, context = {}, i
     if (payload.booking_id) lines.push(`Booking ID: ${payload.booking_id}`);
   }
   lines.push('Form fields:');
-  const omit = new Set(['submission_type', 'submitted_at', 'full_name', 'name', 'email', 'company_name', 'company', 'website', 'linkedin_url', 'event', 'start_time', 'timezone', 'meeting_link', 'booking_id', '_context', '_server']);
+  const omit = new Set(['submission_type', 'submitted_at', 'full_name', 'name', 'email', 'company_name', 'company', 'website', 'linkedin_url', 'event', 'start_time', 'timezone', 'meeting_link', 'booking_id', 'form_id', 'trigger_button_id', 'modal_trigger_type', '_context', '_server']);
   for (const [k, v] of Object.entries(payload)) {
     if (omit.has(k) || k.startsWith('_')) continue;
     if (v !== undefined && v !== null && String(v).trim() !== '') {
@@ -113,7 +209,7 @@ function richTextToPlain(prop) {
 
 /**
  * Find an existing page by Website URL, then LinkedIn URL, then WRV (title) case-insensitive.
- * @returns {Promise<string|null>} page id or null
+ * @returns {Promise<{ id: string, matchedBy: string }|null>} page id and match reason, or null
  */
 async function findExistingPage(normalisedWebsiteUrl, normalisedLinkedInUrl, wrvTitleValue) {
   if (!client || !NOTION_DATABASE_ID) return null;
@@ -124,7 +220,7 @@ async function findExistingPage(normalisedWebsiteUrl, normalisedLinkedInUrl, wrv
       filter: { property: 'Website URL', url: { equals: normalisedWebsiteUrl } },
       page_size: 1
     });
-    if (res.results && res.results.length > 0) return res.results[0].id;
+    if (res.results && res.results.length > 0) return { id: res.results[0].id, matchedBy: 'website_url' };
   }
 
   if (normalisedLinkedInUrl) {
@@ -133,7 +229,7 @@ async function findExistingPage(normalisedWebsiteUrl, normalisedLinkedInUrl, wrv
       filter: { property: 'LinkedIn URL', url: { equals: normalisedLinkedInUrl } },
       page_size: 1
     });
-    if (res.results && res.results.length > 0) return res.results[0].id;
+    if (res.results && res.results.length > 0) return { id: res.results[0].id, matchedBy: 'linkedin_url' };
   }
 
   if (wrvTitleValue) {
@@ -149,8 +245,8 @@ async function findExistingPage(normalisedWebsiteUrl, normalisedLinkedInUrl, wrv
         const title = (t && t[0] && (t[0].plain_text || t[0].text?.content)) || '';
         return title.toLowerCase() === lower;
       });
-      if (match) return match.id;
-      return res.results[0].id;
+      const page = match || res.results[0];
+      return { id: page.id, matchedBy: 'wrv_title' };
     }
   }
 
@@ -188,8 +284,17 @@ async function createOrUpdateVkCrmPage(payload, context = {}) {
   const normalisedWebsite = normaliseUrl(payload.website);
   const normalisedLinkedIn = normaliseUrl(payload.linkedin_url);
 
-  const existingId = await findExistingPage(normalisedWebsite, normalisedLinkedIn, title);
-  let generalNotes = buildGeneralNotes(payload, submissionType, submittedAt, context, false);
+  const existing = await findExistingPage(normalisedWebsite, normalisedLinkedIn, title);
+  const existingId = existing ? existing.id : null;
+  const isUpdate = !!existingId;
+  const matchedBy = existing ? existing.matchedBy : '';
+  const payloadWithTrigger = {
+    ...payload,
+    form_id: payload.form_id || context.form_id,
+    trigger_button_id: payload.trigger_button_id || context.trigger_button_id,
+    modal_trigger_type: payload.modal_trigger_type || context.modal_trigger_type
+  };
+  let generalNotes = buildGeneralNotes(payloadWithTrigger, submissionType, submittedAt, context, false, isUpdate, matchedBy);
   if (existingId) {
     const existingNotes = await getCurrentGeneralNotes(existingId);
     if (existingNotes.trim()) {

@@ -61,6 +61,26 @@ router.post('/book-a-call', async (req, res) => {
   }
   const payload = enrichPayload(req, data, 'book-a-call', 'book-a-call');
   logSubmission('book-a-call', payload);
+  console.log('Book a call received:', data.name || '(no name)');
+  const vkcrmPayload = {
+    submission_type: 'call_booking',
+    submitted_at: payload._server?.timestamp || new Date().toISOString(),
+    form_id: payload.form_id,
+    trigger_button_id: payload.trigger_button_id,
+    modal_trigger_type: payload.modal_trigger_type,
+    name: data.name,
+    email: data.email,
+    website: data.website,
+    linkedin_url: data.linkedin_url,
+    company_name: data.company,
+    phone: data.phone,
+    message: data.message,
+    notes: data.message
+  };
+  const notionResult = await createOrUpdateVkCrmPage(vkcrmPayload, payload._context || {});
+  if (!notionResult.success) {
+    console.error('Notion VKCRM book-a-call:', notionResult.error);
+  }
   const response = { message: 'Thanks — we\'ll be in touch soon.' };
   if (key) {
     idempotencyCache.set(key, { response, expiry: Date.now() + IDEMPOTENCY_WINDOW_MS });
@@ -90,6 +110,9 @@ router.post('/website-review', async (req, res) => {
   const vkcrmPayload = {
     submission_type: 'wrv_request',
     submitted_at: payload._server?.timestamp || new Date().toISOString(),
+    form_id: payload.form_id,
+    trigger_button_id: payload.trigger_button_id,
+    modal_trigger_type: payload.modal_trigger_type,
     name: data.name,
     website: data.website,
     linkedin_url: data.linkedin_url,

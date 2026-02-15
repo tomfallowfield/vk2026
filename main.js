@@ -93,11 +93,16 @@ function getOrCreateVisitor() {
       first_referrer: referrer,
       referrers: referrer ? [referrer] : [],
       past_form_submissions: [],
-      utm: utm
+      buttons_clicked: [],
+      videos_watched: {},
+      utm: utm,
+      first_utm: utm
     };
   } else {
     data.visit_count = (data.visit_count || 0) + 1;
     data.last_activity_ts = now;
+    data.buttons_clicked = data.buttons_clicked || [];
+    data.videos_watched = data.videos_watched || {};
     if (referrer && data.referrers && data.referrers.indexOf(referrer) === -1) {
       data.referrers = (data.referrers || []).slice(-4).concat(referrer);
     }
@@ -115,6 +120,19 @@ function getContextForSubmit(triggerButtonId) {
     setCookie(COOKIE_VISITOR_NAME, JSON.stringify(v), COOKIE_VISITOR_DAYS);
   }
   const params = new URLSearchParams(window.location.search);
+  const buttons_clicked = (v && v.buttons_clicked && Array.isArray(v.buttons_clicked)) ? v.buttons_clicked : [];
+  const videosObj = (v && v.videos_watched && typeof v.videos_watched === 'object') ? v.videos_watched : {};
+  const videos_watched = Object.entries(videosObj).map(function (entry) {
+    var src = entry[0];
+    var val = entry[1];
+    if (typeof val === 'number') {
+      return { src: src, name: src, max_pct: val, events: [] };
+    }
+    var max_pct = (val && typeof val.max_pct === 'number') ? val.max_pct : 0;
+    var events = (val && Array.isArray(val.events)) ? val.events : [];
+    return { src: src, name: src, max_pct: max_pct, events: events };
+  });
+  var firstVisitUtm = (v && v.first_utm && typeof v.first_utm === 'object') ? v.first_utm : null;
   return {
     visitor_id: v ? v.visitor_id : null,
     visit_count: v ? v.visit_count : null,
@@ -123,6 +141,9 @@ function getContextForSubmit(triggerButtonId) {
     first_referrer: v ? v.first_referrer : (document.referrer || null),
     referrers: v ? v.referrers : null,
     past_form_submissions: v ? v.past_form_submissions : null,
+    buttons_clicked: buttons_clicked,
+    videos_watched: videos_watched,
+    first_visit_utm: firstVisitUtm,
     utm_source: params.get('utm_source') || null,
     utm_medium: params.get('utm_medium') || null,
     utm_campaign: params.get('utm_campaign') || null,
@@ -146,27 +167,43 @@ function recordFormSubmission(formId) {
 // Cookie bar UI (only when cookie_consent_enabled is true)
 (function () {
   const bar = document.getElementById('cookie-bar');
+  const backdrop = document.getElementById('cookie-bar-backdrop');
   const acceptBtn = document.getElementById('cookie-accept');
   const declineBtn = document.getElementById('cookie-decline');
   if (!bar || !acceptBtn || !declineBtn) return;
   if (!getSettings().cookie_consent_enabled) {
     bar.hidden = true;
+    if (backdrop) backdrop.hidden = true;
     return;
   }
   const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
   if (consent === 'accept' || consent === 'decline') {
     bar.hidden = true;
+    if (backdrop) backdrop.hidden = true;
     return;
   }
-  bar.hidden = false;
-  acceptBtn.addEventListener('click', function () {
+  function showBar() {
+    bar.hidden = false;
+    if (backdrop) backdrop.hidden = false;
+  }
+  function acceptAndHide() {
     localStorage.setItem(COOKIE_CONSENT_KEY, 'accept');
     getOrCreateVisitor();
     bar.hidden = true;
-  });
-  declineBtn.addEventListener('click', function () {
+    if (backdrop) backdrop.hidden = true;
+  }
+  function declineAndHide() {
     localStorage.setItem(COOKIE_CONSENT_KEY, 'decline');
     bar.hidden = true;
+    if (backdrop) backdrop.hidden = true;
+  }
+  showBar();
+  acceptBtn.addEventListener('click', acceptAndHide);
+  declineBtn.addEventListener('click', declineAndHide);
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' || bar.hidden) return;
+    e.preventDefault();
+    acceptAndHide();
   });
 })();
 
@@ -245,6 +282,46 @@ const modal = document.getElementById('videoModal');
 const video = document.getElementById('modalVideo');
 const closeBtn = modal.querySelector('.video-close');
 
+var videoProgressThrottle = null;
+var MAX_VIDEO_EVENTS_PER_SRC = 30;
+
+function ensureVideoEntry(v, src) {
+  v.videos_watched = v.videos_watched || {};
+  var entry = v.videos_watched[src];
+  if (typeof entry === 'number') {
+    entry = { max_pct: entry, events: [] };
+    v.videos_watched[src] = entry;
+  } else if (!entry || typeof entry !== 'object' || !Array.isArray(entry.events)) {
+    entry = { max_pct: entry && typeof entry.max_pct === 'number' ? entry.max_pct : 0, events: [] };
+    v.videos_watched[src] = entry;
+  }
+  return entry;
+}
+
+function recordVideoEvent(src, type, pct) {
+  if (!src || !type) return;
+  if (!hasAcceptedCookies()) return;
+  var v = getOrCreateVisitor();
+  if (!v) return;
+  var entry = ensureVideoEntry(v, src);
+  var pctNum = typeof pct === 'number' ? Math.round(Math.min(100, Math.max(0, pct))) : 0;
+  if (pctNum > entry.max_pct) entry.max_pct = pctNum;
+  entry.events.push({ type: type, ts: Date.now(), pct: pctNum });
+  if (entry.events.length > MAX_VIDEO_EVENTS_PER_SRC) entry.events = entry.events.slice(-MAX_VIDEO_EVENTS_PER_SRC);
+  setCookie(COOKIE_VISITOR_NAME, JSON.stringify(v), COOKIE_VISITOR_DAYS);
+}
+
+function recordVideoProgressMax(src, progressPct) {
+  if (!src || typeof progressPct !== 'number') return;
+  if (!hasAcceptedCookies()) return;
+  var v = getOrCreateVisitor();
+  if (!v) return;
+  var entry = ensureVideoEntry(v, src);
+  var pct = Math.round(Math.min(100, progressPct));
+  if (pct > entry.max_pct) entry.max_pct = pct;
+  setCookie(COOKIE_VISITOR_NAME, JSON.stringify(v), COOKIE_VISITOR_DAYS);
+}
+
 document.querySelectorAll('.video-thumb').forEach(button => {
   button.addEventListener('click', () => {
     video.src = button.dataset.video;
@@ -254,6 +331,45 @@ document.querySelectorAll('.video-thumb').forEach(button => {
     video.play();
   });
 });
+
+function getVideoLabel(src) {
+  if (!src) return '';
+  try {
+    var path = src.indexOf('://') !== -1 ? new URL(src).pathname : src;
+    return path.replace(/^\/+/, '').split('/').pop() || path;
+  } catch {
+    return src.replace(/^.*\//, '');
+  }
+}
+
+if (video) {
+  video.addEventListener('play', function () {
+    if (!video.src) return;
+    var label = getVideoLabel(video.src);
+    var pct = (video.duration > 0 && !isNaN(video.duration)) ? (video.currentTime / video.duration) * 100 : 0;
+    recordVideoEvent(label, 'start', pct);
+  });
+  video.addEventListener('timeupdate', function () {
+    if (videoProgressThrottle) return;
+    videoProgressThrottle = setTimeout(function () {
+      videoProgressThrottle = null;
+      if (!video.src || video.duration <= 0) return;
+      var pct = (video.currentTime / video.duration) * 100;
+      recordVideoProgressMax(getVideoLabel(video.src), pct);
+    }, 2000);
+  });
+  video.addEventListener('pause', function () {
+    if (!video.src) return;
+    var label = getVideoLabel(video.src);
+    var pct = (video.duration > 0 && !isNaN(video.duration)) ? (video.currentTime / video.duration) * 100 : 0;
+    recordVideoEvent(label, 'pause', pct);
+  });
+  video.addEventListener('ended', function () {
+    if (!video.src) return;
+    var label = getVideoLabel(video.src);
+    recordVideoEvent(label, 'ended', 100);
+  });
+}
 
 function closeVideoModal() {
   modal.classList.remove('active');
@@ -317,6 +433,16 @@ function closeAppModal() {
   lastAppModalTrigger = null;
 }
 
+function recordButtonClick(buttonId, modalPanelId) {
+  if (!hasAcceptedCookies()) return;
+  const v = getOrCreateVisitor();
+  if (!v) return;
+  v.buttons_clicked = v.buttons_clicked || [];
+  v.buttons_clicked.push({ id: buttonId || '', modal: modalPanelId || '', ts: Date.now() });
+  if (v.buttons_clicked.length > 30) v.buttons_clicked = v.buttons_clicked.slice(-30);
+  setCookie(COOKIE_VISITOR_NAME, JSON.stringify(v), COOKIE_VISITOR_DAYS);
+}
+
 document.addEventListener('click', e => {
   const trigger = e.target.closest('[data-modal]');
   if (trigger) {
@@ -325,6 +451,7 @@ document.addEventListener('click', e => {
     lastModalTriggerType = 'button';
     lastTriggerButtonId = trigger.id || null;
     const panelId = trigger.getAttribute('data-modal');
+    recordButtonClick(trigger.id || null, panelId || null);
     if (panelId) openAppModal(panelId);
   }
 });
