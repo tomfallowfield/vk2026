@@ -19,6 +19,8 @@ function getSettings() {
     show_pricing: s.show_pricing !== false,
     cookie_consent_enabled: s.cookie_consent_enabled !== false,
     show_email: s.show_email !== false,
+    cta_primary_black: s.cta_primary_black === true,
+    rescue_section_show_videos: s.rescue_section_show_videos === true,
     ga_id: typeof s.ga_id === 'string' ? s.ga_id.trim() : '',
     maintenance_mode: s.maintenance_mode === true,
     maintenance_message: typeof s.maintenance_message === 'string' ? s.maintenance_message : 'We\'ll be back shortly. Thanks for your patience.',
@@ -655,9 +657,13 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
   if (mobileCalLink) mobileCalLink.href = url;
 })();
 
-// Show/hide contact email sitewide (footer, modals, mobile menu)
+// Show/hide contact email; CTA style; rescue section layout
 (function () {
-  document.body.classList.toggle('show-email', getSettings().show_email);
+  const g = getSettings();
+  document.body.classList.toggle('show-email', g.show_email);
+  document.body.classList.toggle('cta-primary-black', g.cta_primary_black);
+  var rescue = document.getElementById('rescue');
+  if (rescue) rescue.classList.toggle('rescue-no-videos', !g.rescue_section_show_videos);
 })();
 
 // Maintenance mode overlay

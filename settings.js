@@ -55,6 +55,10 @@
     cookie_consent_enabled: true,
     // Show contact email sitewide (footer, modals, mobile menu). false = hide everywhere.
     show_email: true,
+    // Primary CTA: true = black button, secondary = white with black border. false = original pink primary.
+    cta_primary_black: true,
+    // How it works (rescue) section: true = show video placeholders, false = 3 boxes with icon + title + blurb only.
+    rescue_section_show_videos: false,
 
     // --- Analytics ---
     // Google Analytics measurement ID (e.g. G-XXXXXXXXXX). Leave empty to disable.
