@@ -67,7 +67,7 @@
       <a href="#faqs">FAQs</a>
     </nav>
 
-    <a href="#" class="btn btn-primary header-cta" data-modal="book-call">Book a call</a>
+    <a href="#" id="button-book-call-header" class="btn btn-primary header-cta" data-modal="book-call">Book a call</a>
     <button class="hamburger" aria-label="Open menu">☰</button>
   </div>
 </header>
@@ -77,23 +77,17 @@
 
 
     <div class="hero-content">
-      <span class="eyebrow hero-eyebrow">
-        <svg class="eyebrow-megaphone" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M3 11l18-5v12L3 14v-3z"/>
-          <path d="M11 6v12"/>
-        </svg>
-        For founder-led businesses sick of stagnant growth 
-      </span>
+      <span class="eyebrow hero-eyebrow">For founder-led businesses sick of stagnant growth</span>
       <h1>Bad messaging is costing you BAZILLIONS* of enquiries<span>*ish</span></h1>
     
       <p class="hero-lead">Without a <strong>KILLER ARGUMENT</strong> why people should buy your service, you're wasting time and money getting people onto your website.</p>
 
       <div class="hero-ctas">
-        <a href="#" class="btn btn-primary" data-modal="book-call">
+        <a href="#" id="button-book-call-hero" class="btn btn-primary" data-modal="book-call">
           <span class="btn-text">Stop losing enquiries</span>
           <span class="btn-tooltip" role="tooltip">Book a free discovery call</span>
         </a>
-        <a href="#" class="btn btn-secondary" data-modal="website-review">
+        <a href="#" id="button-website-review-hero" class="btn btn-secondary" data-modal="website-review">
           <span class="btn-text">Steal our ideas!</span>
           <span class="btn-tooltip" role="tooltip">Request a free website review</span>
         </a>
@@ -115,7 +109,7 @@
         <span class="hero-feature"><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Messaging & Website Copy</span>
         <span class="hero-feature"><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Lead Magnets</span>
         <span class="hero-feature"><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Social Proof</span>
-        <span class="hero-feature"><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> LinkedIn Profils</span>
+        <span class="hero-feature"><svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> LinkedIn Profiles</span>
       </div>
     </div>
 
@@ -136,12 +130,14 @@
           "Placeholder testimonial — replace with a short client quote that speaks to results or confidence."
         </blockquote>
       </div>
+      <div class="hero-guarantee">
+        <span class="hero-guarantee-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+        </span>
+        Performance guaranteed. All our work is backed by a 100% no-bullshit guarantee. If agreed performance targets are not met, we refine the messaging until they are.
+      </div>
     </div>
     
-  <p>Your website might look snazzy, but if you don't have a <strong>KILLER ARGUMENT</strong> why people should buy your thing, then more traffic isn't going to save your business.</p>
-    <h3>"What's in it for me?"</h3>
-      <p>We will rewrite your entire website to answer this one crucial question.</p>
-      <p>… And if it doesn’t bring you more leads, then we’ll do it all again. And again. Until it does. <strong>That's our guarantee.</strong></p>
       </div>
       <div class="hero-video-wrap">
         <div class="mac-window-stack">
@@ -210,7 +206,6 @@
           <p>
           Maybe you're already paying for ads – or maybe you're thinking about it – but you're not convinced the website actually persuades anyone to take the next step.
           </p>
-        </p>
       </div>
       <div class="problem-card">
         <h2 class="problem-title">
@@ -228,7 +223,6 @@
           <p>
           The website exists, but people have no reason to go there.
           </p>
-        </p>
       </div>
       <div class="problem-card">
         <h2 class="problem-title">
@@ -249,8 +243,6 @@
           <p>
           And that was the last time you thought about it.
           </p>
-
-        </p>
       </div>
     </div>
 
@@ -284,8 +276,9 @@
 <section class="section-muted" id="rescue">
   <div class="container">
 
-    <p class="eyebrow">The Vanilla Killer escape plan</p>
-    <h2>Here's what we'll do</h2>
+    <p class="eyebrow">The Vanilla Killer rescue kit</p>
+    <h2>Here's what we'll do to stop the bleeding</h2>
+    
 
     <div class="rescue-block">
       <div class="rescue-text">
@@ -308,17 +301,45 @@
           The output is the very reason your business exists, distilled into a messaging handbook.
         </p>
       </div>
-      <button class="video-thumb" data-video="vids/hero-video.mp4">
-        <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
-        <span class="play-icon">▶</span>
-      </button>
+      <div class="rescue-mac-wrap">
+        <div class="mac-window mac-window-front">
+          <div class="mac-window-titlebar">
+            <span class="mac-traffic">
+              <span class="mac-traffic-close"></span>
+              <span class="mac-traffic-min"></span>
+              <span class="mac-traffic-max"></span>
+            </span>
+            <span class="mac-window-meta">First we clarify the argument</span>
+          </div>
+          <div class="mac-window-body">
+            <button class="video-thumb mac-window-video" data-video="vids/hero-video.mp4">
+              <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
+              <span class="play-icon">▶</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="rescue-block">
-      <button class="video-thumb" data-video="vids/hero-video.mp4">
-        <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
-        <span class="play-icon">▶</span>
-      </button>
+      <div class="rescue-mac-wrap">
+        <div class="mac-window mac-window-front">
+          <div class="mac-window-titlebar">
+            <span class="mac-traffic">
+              <span class="mac-traffic-close"></span>
+              <span class="mac-traffic-min"></span>
+              <span class="mac-traffic-max"></span>
+            </span>
+            <span class="mac-window-meta">Then we attract the right people</span>
+          </div>
+          <div class="mac-window-body">
+            <button class="video-thumb mac-window-video" data-video="vids/hero-video.mp4">
+              <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
+              <span class="play-icon">▶</span>
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="rescue-text">
         <h2 class="rescue-title">
           <span class="rescue-icon rescue-icon--2" aria-hidden="true">
@@ -366,13 +387,27 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
             </svg>
           </span>
-          After deployment, we measure the effect it has on enquiries and conversion rate. If needed we will then keep iterating the messaging until it performs properly.
+          After deployment, we measure the effect it has on enquiries and conversion rate. If needed, we will then keep iterating the messaging until it performs properly.
         </div>
       </div>
-      <button class="video-thumb" data-video="vids/hero-video.mp4">
-        <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
-        <span class="play-icon">▶</span>
-      </button>
+      <div class="rescue-mac-wrap">
+        <div class="mac-window mac-window-front">
+          <div class="mac-window-titlebar">
+            <span class="mac-traffic">
+              <span class="mac-traffic-close"></span>
+              <span class="mac-traffic-min"></span>
+              <span class="mac-traffic-max"></span>
+            </span>
+            <span class="mac-window-meta">Then we rewrite your website</span>
+          </div>
+          <div class="mac-window-body">
+            <button class="video-thumb mac-window-video" data-video="vids/hero-video.mp4">
+              <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
+              <span class="play-icon">▶</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -381,8 +416,9 @@
 <section id="pricing">
   <div class="container">
 
-    <p class="eyebrow">Our fees</p>
-
+    <p class="eyebrow">Investment</p>
+    <h2>Our tried and tested process</h2>
+    <p class="subhead">Imagine life six months from now, if you keep doing what you're doing, vs. six months from now with help from Vanilla Killer.</p>
     <section class="pricing-core">
       <div class="pricing-product pricing-product--core">
         <div class="pricing-panel pricing-panel--core">
@@ -635,6 +671,21 @@
       </div>
     </section>
 
+    <div class="imagine-ctas">
+      <a href="#" id="button-book-call-imagine-1" class="btn btn-primary" data-modal="book-call">
+        <span class="btn-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        Let's grow your business
+      </a>
+      <a href="#" id="button-website-review-imagine-1" class="btn btn-secondary" data-modal="website-review">
+        <span class="btn-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+        </span>
+        Request a free website review
+      </a>
+    </div>
+
   </div>
 </section>
 
@@ -655,25 +706,21 @@
     <p class="eyebrow">Your guide</p>
     <h2>About Tom Fallowfield</h2>
 
-    <div style="display: grid; grid-template-columns: 160px 1fr; gap: 32px; align-items: start; margin-top: 36px;">
+    <div style="display: grid; grid-template-columns: 260px 1fr; gap: 40px; align-items: start; margin-top: 36px;">
 
       <img 
         src="images/tom.jpg" 
         alt="Tom Fallowfield" 
-        style="width: 160px; height: 160px; border-radius: 50%; object-fit: cover; box-shadow: var(--shadow-soft);" 
+        style="width: 260px; height: 260px; border-radius: 50%; object-fit: cover; box-shadow: var(--shadow-soft);" 
       />
 
       <div>
-<!--         <p style="font-size: 1.3rem; font-weight: 600; line-height: 1.4; margin-top: 0; margin-bottom: 24px;">
-          “You can't read the label from inside the bottle”
-        </p>
- -->
         <p>
-          After studying philosophy, Tom Fallowfield spent 25 fairly unhappy years as a generalist web designer, doing what clients told him to, and building websites which looked… like websites.
+          After graduating philosophy from Durham, Tom spent 25 fairly unhappy years as a generalist web designer, doing what clients told him to, and building websites which looked… like websites.
         </p>
 
         <p>
-          Then came the realisation: we have been doing this wrong. Pretty design is not the central issue. Most small businesses exist with very little thought given to the most important question of all, why on earth should anyone buy their stuff?
+          Then came a blinding realisation: we have been doing this wrong! Pretty design is not the central issue. Most small businesses exist with very little thought given to the most important question of all, why on earth should anyone buy their stuff?
         </p>
 
         <p>
@@ -710,6 +757,29 @@
 
     <div class="faq">
       <button class="faq-trigger">
+        <span>Can I just do this myself?</span>
+        <span>+</span>
+      </button>
+      <div class="faq-panel">
+        <p>Absolutely. Knock yourself out. In fact, our <a href="https://www.linkedin.com/in/tom-fallowfield/" target="_blank" rel="noopener noreferrer">LinkedIn</a> content should help you on your way.</p>
+        <p>If you decide you would like some help later, you know where to find us.</p>
+      </div>
+    </div>
+
+
+    <div class="faq">
+      <button class="faq-trigger">
+        <span>Why is it SO HARD to do this myself?</span>
+        <span>+</span>
+      </button>
+      <div class="faq-panel">
+        <p>Don't beat yourself up. It's not your fault. As I always say, "You can't read the label from inside the jar." When you're living and breathing your own business, it's almost impossible to get the necessary perspective.</p>
+        <p>Writing this site – which I'm doing right now - was actually extremely difficult and took me much longer than expected.</p>
+      </div>
+    </div>
+
+    <div class="faq">
+      <button class="faq-trigger">
         <span>Do I need a new website?</span>
         <span>+</span>
       </button>
@@ -728,16 +798,7 @@
       </div>
     </div>
 
-    <div class="faq">
-      <button class="faq-trigger">
-        <span>Can I just do all this myself?</span>
-        <span>+</span>
-      </button>
-      <div class="faq-panel">
-        <p>Absolutely. Knock yourself out. In fact, our LinkedIn content should help you on your way.</p>
-        <p>If you decide you would like some help later, do not hesitate to get in touch.</p>
-      </div>
-    </div>
+
 
     <div class="faq">
       <button class="faq-trigger">
@@ -777,24 +838,24 @@
 <!-- RESOURCES -->
 <section id="resources">
   <div class="container">
-    <p class="eyebrow">Free Tools &amp; Thinking</p>
-    <h2>Sharpen Your Message Before You Spend Another Pound on Marketing</h2>
-    <p class="subhead">If your positioning is vague, no amount of traffic will save you. These resources help you tighten your argument, clarify your value, and uncover opportunities hiding in plain sight.</p>
+    <p class="eyebrow">Free Tools</p>
+    <h2>If you want to do it yourself, this might help.</h2>
+    <p class="subhead">The following tools will help you tighten your argument and clarify your value.</p>
 
     <div class="resources-grid">
-      <a href="#" class="resource-card" data-modal="lead-50things">
+      <a href="#" id="button-lead-50things-resources" class="resource-card" data-modal="lead-50things">
         <h3>50 Things You Can Fix on Your Website Today</h3>
         <p>A practical checklist to help you spot weak messaging, missed conversion opportunities, and unclear positioning. Use it to stress-test your homepage, sharpen your offer, and increase enquiries without touching your ad budget.</p>
         <span class="btn btn-primary">Download the Checklist</span>
       </a>
 
-      <a href="#" class="resource-card" data-modal="lead-offboarding">
+      <a href="#" id="button-lead-offboarding-resources" class="resource-card" data-modal="lead-offboarding">
         <h3>The Offboarding Goldmine</h3>
         <p>Most businesses treat client offboarding as admin. It is actually a research lab. This guide shows you how to extract testimonials, sharpen your messaging, surface objections, and unlock referrals before the relationship closes.</p>
         <span class="btn btn-primary">Get the Offboarding Guide</span>
       </a>
 
-      <a href="#" class="resource-card" data-modal="lead-socialproof">
+      <a href="#" id="button-lead-socialproof-resources" class="resource-card" data-modal="lead-socialproof">
         <h3>The Social Proof Advantage</h3>
         <p>A short email course on how to collect, shape, and deploy social proof so it actually persuades. Learn how to turn vague praise into belief-shifting evidence that moves people from sceptical to ready.</p>
         <span class="btn btn-primary">Join the Email Course</span>
@@ -806,7 +867,7 @@
 <!-- HOW IT FEELS -->
 <section class="section-muted" id="how-it-feels">
   <div class="container">
-    <h2>Imagine how good would it feel to have great messaging</h2>
+    <h2>Imagine how good it would feel to have great messaging</h2>
 
     <div class="feels-grid">
       <div class="feels-card">
@@ -823,6 +884,21 @@
         <h3>You’ve got a lead magnet you actually want to share</h3>
         <p>It’s valuable, and aligned with your offer. It gives people a reason to visit your site — and gives you a reason to start more conversations.</p>
       </div>
+    </div>
+
+    <div class="imagine-ctas">
+      <a href="#" id="button-book-call-imagine-2" class="btn btn-primary" data-modal="book-call">
+        <span class="btn-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        Let's grow your business
+      </a>
+      <a href="#" id="button-website-review-imagine-2" class="btn btn-secondary" data-modal="website-review">
+        <span class="btn-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+        </span>
+        Request a free website review
+      </a>
     </div>
   </div>
 </section>
@@ -850,21 +926,7 @@
 
       <div>
         <p class="footer-title">Vanilla Killer</p>
-        <p class="footer-sub">Messaging that turns polite interest into enquiries. Book a call, or request a free website review.</p>
-        <div class="footer-ctas">
-          <a href="#" class="btn btn-primary" data-modal="book-call">
-            <span class="btn-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            </span>
-            Let's grow your business
-          </a>
-          <a href="#" class="btn btn-secondary" data-modal="website-review">
-            <span class="btn-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
-            </span>
-            Request a free website review
-          </a>
-        </div>
+        <p class="footer-sub">Generate BAZILLIONS of enquiries.</p>
       </div>
 
       <div>
@@ -881,8 +943,7 @@
         <p class="footer-title">Contact</p>
         <ul class="footer-links">
           <li><a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a></li>
-          <li><a href="tel:+447415120378">+44 7415 120378</a></li>
-          <li><a href="#">LinkedIn</a></li>
+          <li><a href="https://www.linkedin.com/in/tom-fallowfield/" target="_blank" rel="noopener noreferrer">Tom's LinkedIn Profile</a></li>
         </ul>
       </div>
 
@@ -909,6 +970,7 @@
 
     <!-- Panel: Book a call -->
     <div class="app-modal__panel" data-panel="book-call" aria-hidden="true">
+      <p class="app-modal__eyebrow">Let's talk</p>
       <h2 class="app-modal__title" id="app-modal-title">Book a call</h2>
       <div class="app-modal__book-call">
         <div class="app-modal__book-call-form-wrap">
@@ -919,10 +981,11 @@
               <a href="#" id="app-modal-calendar-link">Book via calendar</a>
             </p>
             <form id="form-book-call" class="app-modal__form" action="#" method="post" novalidate>
+              <input type="text" name="_hp" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
               <input type="hidden" name="phone" value="" />
               <div class="form-group">
                 <label for="book-call-name">Name</label>
-                <input type="text" id="book-call-name" name="name" placeholder="Your name" />
+                <input type="text" id="book-call-name" name="name" placeholder="e.g. Jennifer Coolidge" />
               </div>
               <div class="form-group">
                 <label for="book-call-email">Email <span class="required">*</span></label>
@@ -938,9 +1001,10 @@
                 <label for="book-call-message">Message</label>
                 <textarea id="book-call-message" name="message" rows="4" placeholder="Tell us a bit about your business and what you'd like to achieve"></textarea>
               </div>
-              <button type="submit" class="btn btn-primary">Send</button>
+              <button type="submit" id="button-submit-book-call" class="btn btn-primary">Send</button>
             </form>
           </div>
+          <div class="app-modal__success" id="book-call-success" aria-live="polite" hidden></div>
           <div class="app-modal__panel-message" id="book-call-message-box" aria-live="polite" hidden></div>
         </div>
         <div class="app-modal__book-call-testimonial">
@@ -954,22 +1018,38 @@
 
     <!-- Panel: Website review (form) -->
     <div class="app-modal__panel" data-panel="website-review" aria-hidden="true">
-      <h2 class="app-modal__title">Free website review</h2>
-      <p class="app-modal__subtitle">Share your details and we’ll send you a short, personalised review.</p>
-      <div class="app-modal__panel-form">
+      <div class="app-modal__two-col">
+        <div class="app-modal__two-col-left">
+          <p class="app-modal__eyebrow">Steal our ideas for free</p>
+          <h2 class="app-modal__title">Request website review video</h2>
+          <p class="app-modal__blurb">Share your details and we'll send you a short, personalised review of your website – with clear ideas on how to improve your messaging and conversion.</p>
+          <div class="app-modal__testimonials">
+            <div class="app-modal__testimonial-item">
+              <img src="images/charlie.jpg" alt="" class="app-modal__testimonial-avatar" />
+              <div class="app-modal__testimonial-content">
+                <p class="app-modal__testimonial-name">Charlie Mulraine</p>
+                <p class="app-modal__testimonial-org">Career Coach</p>
+                <blockquote class="app-modal__testimonial-quote">"The self-proclaimed Vanilla Killer took me from feeling stuck with my marketing to having a shiny new website complete with a lead magnet – and now feeling very confident about taking my business to the next stages."</blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="app-modal__two-col-right">
+          <div class="app-modal__panel-form">
         <form id="form-website-review" class="app-modal__form" action="#" method="post" novalidate>
+          <input type="text" name="_hp" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <div class="form-group">
             <label for="website-review-name">Name</label>
-            <input type="text" id="website-review-name" name="name" placeholder="e.g. Jane Smith" required aria-describedby="website-review-name-error" />
+            <input type="text" id="website-review-name" name="name" placeholder="e.g. Jennifer Coolidge" required aria-describedby="website-review-name-error" />
             <p class="error-message" id="website-review-name-error"></p>
           </div>
           <div class="form-group">
-            <label for="website-review-website">Website</label>
+            <label for="website-review-website">Website URL</label>
             <input type="url" id="website-review-website" name="website" placeholder="https://yoursite.com" aria-describedby="website-review-website-error" />
             <p class="error-message" id="website-review-website-error"></p>
           </div>
           <div class="form-group">
-            <label for="website-review-linkedin">LinkedIn URL</label>
+            <label for="website-review-linkedin">LinkedIn Profile URL</label>
             <input type="url" id="website-review-linkedin" name="linkedin_url" placeholder="https://linkedin.com/in/yourprofile" aria-describedby="website-review-linkedin-error" />
             <p class="error-message" id="website-review-linkedin-error"></p>
           </div>
@@ -977,18 +1057,37 @@
             <label for="website-review-comments">Comments</label>
             <textarea id="website-review-comments" name="comments" rows="4" placeholder="Anything you’d like us to look at first, or any specific pages?"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary">Request free review</button>
+          <button type="submit" id="button-submit-website-review" class="btn btn-primary">Request free review</button>
         </form>
+          </div>
+          <div class="app-modal__success" id="website-review-success" aria-live="polite" hidden></div>
+          <div class="app-modal__panel-message" id="website-review-message-box" aria-live="polite" hidden></div>
+        </div>
       </div>
-      <div class="app-modal__panel-message" id="website-review-message-box" aria-live="polite" hidden></div>
     </div>
 
     <!-- Panel: Lead magnet – 50 Things -->
     <div class="app-modal__panel" data-panel="lead-50things" aria-hidden="true">
-      <h2 class="app-modal__title">50 Things You Can Fix on Your Website Today</h2>
-      <p class="app-modal__subtitle">A practical checklist to spot weak messaging and increase enquiries.</p>
-      <div class="app-modal__panel-form">
+      <div class="app-modal__two-col">
+        <div class="app-modal__two-col-left">
+          <p class="app-modal__eyebrow">Free Download</p>
+          <h2 class="app-modal__title">50 Things You Can Fix on Your Website Today</h2>
+          <p class="app-modal__blurb">A practical checklist to spot weak messaging, missed conversion opportunities, and unclear positioning. Use it to stress-test your homepage, sharpen your offer, and increase enquiries without touching your ad budget.</p>
+          <div class="app-modal__testimonials">
+            <div class="app-modal__testimonial-item">
+              <img src="images/oakleigh.jpg" alt="" class="app-modal__testimonial-avatar" />
+              <div class="app-modal__testimonial-content">
+                <p class="app-modal__testimonial-name">Oakleigh Wood</p>
+                <p class="app-modal__testimonial-org">Bristol Caravans</p>
+                <blockquote class="app-modal__testimonial-quote">"The handbook Tom delivered encapsulates the entire purpose behind our operation, our values, and – most importantly – how to sell that purpose, both online and in person."</blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="app-modal__two-col-right">
+          <div class="app-modal__panel-form">
         <form id="form-lead-50things" class="app-modal__form" action="#" method="post" data-source="lead-50things" novalidate>
+          <input type="text" name="_hp" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <div class="form-group">
             <label for="lead-50things-email">Email <span class="required">*</span></label>
             <input type="email" id="lead-50things-email" name="email" placeholder="you@company.com" required aria-describedby="lead-50things-email-error" />
@@ -996,20 +1095,39 @@
           </div>
           <div class="form-group">
             <label for="lead-50things-name">Name</label>
-            <input type="text" id="lead-50things-name" name="name" placeholder="Your name" />
+            <input type="text" id="lead-50things-name" name="name" placeholder="e.g. Jennifer Coolidge" />
           </div>
-          <button type="submit" class="btn btn-primary">Download the Checklist</button>
+          <button type="submit" id="button-submit-lead-50things" class="btn btn-primary">Download the Checklist</button>
         </form>
+          </div>
+          <div class="app-modal__success" id="lead-50things-success" aria-live="polite" hidden></div>
+          <div class="app-modal__panel-message" id="lead-50things-message-box" aria-live="polite" hidden></div>
+        </div>
       </div>
-      <div class="app-modal__panel-message" id="lead-50things-message-box" aria-live="polite" hidden></div>
     </div>
 
     <!-- Panel: Lead magnet – Offboarding -->
     <div class="app-modal__panel" data-panel="lead-offboarding" aria-hidden="true">
-      <h2 class="app-modal__title">The Offboarding Goldmine</h2>
-      <p class="app-modal__subtitle">Extract testimonials, sharpen messaging, and unlock referrals before the relationship closes.</p>
-      <div class="app-modal__panel-form">
+      <div class="app-modal__two-col">
+        <div class="app-modal__two-col-left">
+          <p class="app-modal__eyebrow">Free Guide</p>
+          <h2 class="app-modal__title">The Offboarding Goldmine</h2>
+          <p class="app-modal__blurb">Most businesses treat client offboarding as admin. It is actually a research lab. This guide shows you how to extract testimonials, sharpen your messaging, surface objections, and unlock referrals before the relationship closes.</p>
+          <div class="app-modal__testimonials">
+            <div class="app-modal__testimonial-item">
+              <img src="images/mike.png" alt="" class="app-modal__testimonial-avatar" />
+              <div class="app-modal__testimonial-content">
+                <p class="app-modal__testimonial-name">Mike Hill</p>
+                <p class="app-modal__testimonial-org">Total Ticketing</p>
+                <blockquote class="app-modal__testimonial-quote">"Vanilla Killer created language for our website which has given everyone renewed clarity about what we do. We can approach the market now with total confidence — on all channels."</blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="app-modal__two-col-right">
+          <div class="app-modal__panel-form">
         <form id="form-lead-offboarding" class="app-modal__form" action="#" method="post" data-source="lead-offboarding" novalidate>
+          <input type="text" name="_hp" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <div class="form-group">
             <label for="lead-offboarding-email">Email <span class="required">*</span></label>
             <input type="email" id="lead-offboarding-email" name="email" placeholder="you@company.com" required aria-describedby="lead-offboarding-email-error" />
@@ -1017,20 +1135,39 @@
           </div>
           <div class="form-group">
             <label for="lead-offboarding-name">Name</label>
-            <input type="text" id="lead-offboarding-name" name="name" placeholder="Your name" />
+            <input type="text" id="lead-offboarding-name" name="name" placeholder="e.g. Jennifer Coolidge" />
           </div>
-          <button type="submit" class="btn btn-primary">Get the Offboarding Guide</button>
+          <button type="submit" id="button-submit-lead-offboarding" class="btn btn-primary">Get the Offboarding Guide</button>
         </form>
+          </div>
+          <div class="app-modal__success" id="lead-offboarding-success" aria-live="polite" hidden></div>
+          <div class="app-modal__panel-message" id="lead-offboarding-message-box" aria-live="polite" hidden></div>
+        </div>
       </div>
-      <div class="app-modal__panel-message" id="lead-offboarding-message-box" aria-live="polite" hidden></div>
     </div>
 
     <!-- Panel: Lead magnet – Social Proof -->
     <div class="app-modal__panel" data-panel="lead-socialproof" aria-hidden="true">
-      <h2 class="app-modal__title">The Social Proof Advantage</h2>
-      <p class="app-modal__subtitle">A short email course on how to collect, shape, and deploy social proof that persuades.</p>
-      <div class="app-modal__panel-form">
+      <div class="app-modal__two-col">
+        <div class="app-modal__two-col-left">
+          <p class="app-modal__eyebrow">Free Email Course</p>
+          <h2 class="app-modal__title">The Social Proof Advantage</h2>
+          <p class="app-modal__blurb">A short email course on how to collect, shape, and deploy social proof so it actually persuades. Learn how to turn vague praise into belief-shifting evidence that moves people from sceptical to ready.</p>
+          <div class="app-modal__testimonials">
+            <div class="app-modal__testimonial-item">
+              <img src="images/charlie.jpg" alt="" class="app-modal__testimonial-avatar" />
+              <div class="app-modal__testimonial-content">
+                <p class="app-modal__testimonial-name">Charlie Mulraine</p>
+                <p class="app-modal__testimonial-org">Career Coach</p>
+                <blockquote class="app-modal__testimonial-quote">"I highly recommend working with him and his killer messaging service."</blockquote>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="app-modal__two-col-right">
+          <div class="app-modal__panel-form">
         <form id="form-lead-socialproof" class="app-modal__form" action="#" method="post" data-source="lead-socialproof" novalidate>
+          <input type="text" name="_hp" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <div class="form-group">
             <label for="lead-socialproof-email">Email <span class="required">*</span></label>
             <input type="email" id="lead-socialproof-email" name="email" placeholder="you@company.com" required aria-describedby="lead-socialproof-email-error" />
@@ -1038,15 +1175,29 @@
           </div>
           <div class="form-group">
             <label for="lead-socialproof-name">Name</label>
-            <input type="text" id="lead-socialproof-name" name="name" placeholder="Your name" />
+            <input type="text" id="lead-socialproof-name" name="name" placeholder="e.g. Jennifer Coolidge" />
           </div>
-          <button type="submit" class="btn btn-primary">Join the Email Course</button>
+          <button type="submit" id="button-submit-lead-socialproof" class="btn btn-primary">Join the Email Course</button>
         </form>
+          </div>
+          <div class="app-modal__success" id="lead-socialproof-success" aria-live="polite" hidden></div>
+          <div class="app-modal__panel-message" id="lead-socialproof-message-box" aria-live="polite" hidden></div>
+        </div>
       </div>
-      <div class="app-modal__panel-message" id="lead-socialproof-message-box" aria-live="polite" hidden></div>
     </div>
   </div>
 </div>
+
+<!-- Cookie consent bar -->
+<aside id="cookie-bar" class="cookie-bar" aria-label="Cookie consent" hidden>
+  <div class="cookie-bar__inner">
+    <p class="cookie-bar__text">Since tracking conversions is the lifeblood of our work, tracking them makes a lot of sense. We use a small cookie to understand how visitors use the site and to improve your experience.</p>
+    <div class="cookie-bar__actions">
+      <button type="button" id="cookie-accept" class="btn btn-primary cookie-bar__btn">Accept</button>
+      <button type="button" id="cookie-decline" class="btn btn-secondary cookie-bar__btn">Decline</button>
+    </div>
+  </div>
+</aside>
 
 <script src="main.js"></script>
 

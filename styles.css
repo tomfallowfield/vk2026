@@ -28,6 +28,8 @@
   --brand-grey: #383838;
   --accent: #FE5EB6;
   --accent-soft: #ffb8e0;
+  --focus-orange: #e67e22;
+  --focus-orange-soft: rgba(230, 126, 34, 0.28);
   --muted: #666666;
 
 
@@ -629,6 +631,25 @@
       line-height: 1.6;
     }
 
+    .hero-guarantee {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border: 1px solid #22c55e;
+      border-radius: 10px;
+      background: rgba(34, 197, 94, 0.12);
+      font-weight: 600;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero-guarantee-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      color: #22c55e;
+    }
+
     .video-box {
       background: var(--video-placeholder);
       aspect-ratio: 16 / 9;
@@ -734,7 +755,7 @@
       background: var(--card-bg);
       border-radius: 10px;
       box-shadow: var(--shadow-card);
-      max-width: 900px;
+      max-width: 980px;
       width: 100%;
       max-height: 90vh;
       overflow-y: auto;
@@ -798,6 +819,93 @@
       font-size: 1rem;
     }
 
+    .app-modal__two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+      margin-top: 24px;
+    }
+
+    .app-modal__two-col-left {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Modal eyebrow: match section eyebrow e.g. "Free Tools & Thinking", width of text only */
+    .app-modal__eyebrow {
+      display: inline-block;
+      width: fit-content;
+      margin: 0 0 0.5em;
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: #f0f0ef;
+      border: 1px solid #e2e2e0;
+      color: var(--brand-grey);
+      font-size: 0.9rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .app-modal__blurb {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .app-modal__testimonials {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .app-modal__testimonial-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .app-modal__testimonial-item .app-modal__testimonial-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .app-modal__testimonial-item .app-modal__testimonial-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .app-modal__testimonial-item .app-modal__testimonial-name {
+      margin: 0 0 2px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .app-modal__testimonial-item .app-modal__testimonial-org {
+      margin: 0 0 8px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .app-modal__testimonial-item .app-modal__testimonial-quote {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--text-main);
+      font-style: italic;
+    }
+
+    .app-modal__two-col-right {
+      display: flex;
+      flex-direction: column;
+    }
+
     .app-modal__book-call {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -827,7 +935,7 @@
 
     .app-modal__form label {
       display: block;
-      margin: 0 0 6px;
+      margin: 0 0 2px;
       font-size: 0.9rem;
       font-weight: 500;
     }
@@ -837,20 +945,20 @@
     }
 
     .form-group {
-      margin-bottom: 1.25rem;
+      margin-bottom: 0.6rem;
     }
 
     .app-modal__form input,
     .app-modal__form textarea {
       width: 100%;
       margin-bottom: 0;
-      padding: 12px 14px;
+      padding: 8px 10px;
       font-size: 1rem;
       font-family: inherit;
       border: 1px solid var(--border);
       border-radius: 6px;
       box-sizing: border-box;
-      min-height: 44px;
+      min-height: 38px;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -862,8 +970,8 @@
     .app-modal__form input:focus,
     .app-modal__form textarea:focus {
       outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-soft);
+      border-color: var(--focus-orange);
+      box-shadow: 0 0 0 3px var(--focus-orange-soft);
     }
 
     .app-modal__form input.invalid,
@@ -879,7 +987,7 @@
     }
 
     .app-modal__form textarea {
-      min-height: 100px;
+      min-height: 88px;
       resize: vertical;
     }
 
@@ -956,6 +1064,11 @@
       .app-modal__close {
         top: 12px;
         right: 12px;
+      }
+
+      .app-modal__two-col {
+        grid-template-columns: 1fr;
+        gap: 28px;
       }
 
       .app-modal__book-call {
@@ -1077,8 +1190,12 @@
       }
     }
 
-    section#resources { background: #fff; }
+    /* Zebra stripes: rescue = white, pricing = muted (tiers on muted) */
     .section-muted { background: #f7f3ea; }
+    section#rescue { background: #fff; }
+    section#pricing { background: #f7f3ea; }
+    section#faqs { background: #fff; }
+    section#resources { background: #f7f3ea; }
 
     /* Testimonial sections: orange squares background (same style as previous hero) */
     .testimonial-section {
@@ -1148,6 +1265,8 @@ section#how-it-feels .eyebrow {
       align-items: center;
       gap: 24px;
       max-width: 920px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .testimonial-avatar {
@@ -1170,8 +1289,8 @@ section#how-it-feels .eyebrow {
       content: "★★★★★";
       display: block;
       margin-top: 10px;
-      letter-spacing: 2px;
-      font-size: 0.85rem;
+      letter-spacing: 3px;
+      font-size: 1.5rem;
       color: var(--accent);
       opacity: 0.85;
     }
@@ -1319,6 +1438,14 @@ section#how-it-feels .eyebrow {
       box-shadow: var(--shadow-soft);
     }
 
+    .rescue-mac-wrap {
+      position: relative;
+      padding-bottom: 8px;
+    }
+    .rescue-mac-wrap .mac-window-video {
+      border: none;
+    }
+
     .rescue-block.reverse {
       grid-template-columns: 1fr 1fr;
     }
@@ -1382,7 +1509,7 @@ section#how-it-feels .eyebrow {
 
     /* Pricing: core offer + feature list + add-ons */
     .pricing-core {
-      max-width: 960px;
+      max-width: 1440px;
       margin: 0 auto;
       text-align: left;
     }
@@ -1670,18 +1797,19 @@ section#how-it-feels .eyebrow {
     }
 
     .faq {
-      border: 1px solid var(--border);
+      border: none;
       border-radius: 12px;
       margin-bottom: 16px;
       overflow: hidden;
-      background: #fff;
+      background: transparent;
     }
 
     .faq-trigger {
       width: 100%;
-      background: none;
+      background: var(--brand-grey);
+      color: #fff;
       border: none;
-      padding: 22px;
+      padding: 14px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -1689,25 +1817,42 @@ section#how-it-feels .eyebrow {
       cursor: pointer;
       text-align: left;
       gap: 16px;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .faq.open .faq-trigger {
+      border-radius: 12px 12px 0 0;
     }
 
     .faq-trigger span:last-child {
       font-size: 1.2rem;
-      color: #666;
+      color: rgba(255,255,255,0.9);
       flex: 0 0 auto;
     }
 
     .faq-panel {
       max-height: 0;
+      overflow: hidden;
       opacity: 0;
-      padding: 0 22px;
-      transition: all 0.45s cubic-bezier(.4,0,.2,1);
+      padding: 0 18px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      transition: max-height 0.35s ease, opacity 0.25s ease, padding 0.25s ease;
+    }
+
+    .faq-panel p {
+      margin: 0 0 10px;
+    }
+    .faq-panel p:last-child {
+      margin-bottom: 0;
     }
 
     .faq.open .faq-panel {
-      max-height: 260px;
+      max-height: 400px;
       opacity: 1;
-      padding-bottom: 22px;
+      padding: 14px 18px 16px;
     }
 
     /* HOW IT FEELS */
@@ -1736,6 +1881,18 @@ section#how-it-feels .eyebrow {
       color: #333;
     }
 
+    .imagine-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+
+    .imagine-ctas .btn {
+      margin: 0;
+    }
+
     /* RESOURCES */
     .resources-grid {
       display: grid;
@@ -1746,19 +1903,19 @@ section#how-it-feels .eyebrow {
 
     .resource-card {
       display: block;
-      background: var(--card-bg);
+      background: var(--bg-main);
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 28px;
       box-shadow: var(--shadow-soft);
       text-decoration: none;
       color: inherit;
-      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+      transition: box-shadow 0.2s ease, background 0.2s ease;
     }
 
     .resource-card:hover {
       box-shadow: var(--shadow-card);
-      border-color: var(--accent);
+      background: #fff;
     }
 
     .resource-card h3 {
@@ -1793,7 +1950,7 @@ section#how-it-feels .eyebrow {
 /* FOOTER */
 
 footer {
-  background: #000;
+  background: #383838;
   color: rgba(255,255,255,0.85);
   padding: 80px 0 40px;
 }
@@ -1880,5 +2037,82 @@ footer a:hover {
   .footer-ctas .btn {
     display: inline-block;
   }
+}
+
+/* Cookie consent bar */
+.cookie-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: #2d2d2d;
+  color: #f5f5f5;
+  padding: 16px 24px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+}
+.cookie-bar[hidden] {
+  display: none !important;
+}
+.cookie-bar__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  justify-content: space-between;
+}
+.cookie-bar__text {
+  flex: 1 1 280px;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  opacity: 0.95;
+}
+.cookie-bar__actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.cookie-bar__btn {
+  padding: 10px 18px;
+  font-size: 0.9rem;
+}
+
+/* Success screen (replaces form in modal) */
+.app-modal__success {
+  padding: 32px 24px;
+  text-align: center;
+}
+.app-modal__success[hidden] {
+  display: none !important;
+}
+.app-modal__success-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: #2e7d32;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: successPop 0.4s ease-out;
+}
+@keyframes successPop {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.app-modal__success-icon svg {
+  width: 32px;
+  height: 32px;
+}
+.app-modal__success-message {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #1a1a1a;
+  margin: 0;
 }
 

@@ -1,3 +1,130 @@
+// API base URL (same origin: /vk2026/api)
+window.API_BASE = typeof window.API_BASE !== 'undefined' ? window.API_BASE : '/vk2026/api';
+
+// Cookie consent & visitor context (graceful degradation if declined)
+const COOKIE_CONSENT_KEY = 'vk_cookie_consent';
+const COOKIE_VISITOR_NAME = 'vk_visitor';
+const COOKIE_VISITOR_DAYS = 365;
+
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return m ? decodeURIComponent(m[2]) : null;
+}
+
+function setCookie(name, value, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = name + '=' + encodeURIComponent(value) + ';path=/;SameSite=Lax;expires=' + d.toUTCString();
+}
+
+function hasAcceptedCookies() {
+  return localStorage.getItem(COOKIE_CONSENT_KEY) === 'accept';
+}
+
+function getOrCreateVisitor() {
+  if (!hasAcceptedCookies()) return null;
+  let raw = getCookie(COOKIE_VISITOR_NAME);
+  let data;
+  try {
+    data = raw ? JSON.parse(raw) : null;
+  } catch {
+    data = null;
+  }
+  const now = Date.now();
+  const referrer = document.referrer || '';
+  const params = new URLSearchParams(window.location.search);
+  const utm = {
+    utm_source: params.get('utm_source') || '',
+    utm_medium: params.get('utm_medium') || '',
+    utm_campaign: params.get('utm_campaign') || '',
+    utm_term: params.get('utm_term') || '',
+    utm_content: params.get('utm_content') || ''
+  };
+  if (!data) {
+    data = {
+      visitor_id: 'v_' + Math.random().toString(36).slice(2) + Date.now().toString(36),
+      visit_count: 1,
+      first_visit_ts: now,
+      last_activity_ts: now,
+      first_referrer: referrer,
+      referrers: referrer ? [referrer] : [],
+      past_form_submissions: [],
+      utm: utm
+    };
+  } else {
+    data.visit_count = (data.visit_count || 0) + 1;
+    data.last_activity_ts = now;
+    if (referrer && data.referrers && data.referrers.indexOf(referrer) === -1) {
+      data.referrers = (data.referrers || []).slice(-4).concat(referrer);
+    }
+    if (params.has('utm_source') || params.has('utm_medium')) data.utm = utm;
+  }
+  setCookie(COOKIE_VISITOR_NAME, JSON.stringify(data), COOKIE_VISITOR_DAYS);
+  return data;
+}
+
+function getContextForSubmit(triggerButtonId) {
+  const v = getOrCreateVisitor();
+  const now = Date.now();
+  if (v) {
+    v.last_activity_ts = now;
+    setCookie(COOKIE_VISITOR_NAME, JSON.stringify(v), COOKIE_VISITOR_DAYS);
+  }
+  const params = new URLSearchParams(window.location.search);
+  return {
+    visitor_id: v ? v.visitor_id : null,
+    visit_count: v ? v.visit_count : null,
+    first_visit_ts: v ? v.first_visit_ts : null,
+    last_activity_ts: now,
+    first_referrer: v ? v.first_referrer : (document.referrer || null),
+    referrers: v ? v.referrers : null,
+    past_form_submissions: v ? v.past_form_submissions : null,
+    utm_source: params.get('utm_source') || null,
+    utm_medium: params.get('utm_medium') || null,
+    utm_campaign: params.get('utm_campaign') || null,
+    utm_term: params.get('utm_term') || null,
+    utm_content: params.get('utm_content') || null,
+    current_url: window.location.href
+  };
+}
+
+function recordFormSubmission(formId) {
+  if (!hasAcceptedCookies()) return;
+  const raw = getCookie(COOKIE_VISITOR_NAME);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    data.past_form_submissions = (data.past_form_submissions || []).concat({ formId, submittedAt: Date.now() }).slice(-20);
+    setCookie(COOKIE_VISITOR_NAME, JSON.stringify(data), COOKIE_VISITOR_DAYS);
+  } catch (_) {}
+}
+
+// Cookie bar UI
+(function () {
+  const bar = document.getElementById('cookie-bar');
+  const acceptBtn = document.getElementById('cookie-accept');
+  const declineBtn = document.getElementById('cookie-decline');
+  if (!bar || !acceptBtn || !declineBtn) return;
+  const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
+  if (consent === 'accept' || consent === 'decline') {
+    bar.hidden = true;
+    return;
+  }
+  bar.hidden = false;
+  acceptBtn.addEventListener('click', function () {
+    localStorage.setItem(COOKIE_CONSENT_KEY, 'accept');
+    getOrCreateVisitor();
+    bar.hidden = true;
+  });
+  declineBtn.addEventListener('click', function () {
+    localStorage.setItem(COOKIE_CONSENT_KEY, 'decline');
+    bar.hidden = true;
+  });
+})();
+
+// Which button opened the modal (for trigger_button_id)
+let lastTriggerButtonId = null;
+
 // Header: hide on scroll down, show on scroll up
 (function () {
   const header = document.querySelector('header');
@@ -15,6 +142,21 @@
     }
     lastScrollY = scrollY;
   }, { passive: true });
+})();
+
+// FAQ toggles
+(function () {
+  const faqs = document.querySelectorAll('.faq');
+  faqs.forEach((faq) => {
+    const trigger = faq.querySelector('.faq-trigger');
+    const panel = faq.querySelector('.faq-panel');
+    if (!trigger || !panel) return;
+    trigger.addEventListener('click', () => {
+      const isOpen = faq.classList.contains('open');
+      faqs.forEach((f) => f.classList.remove('open'));
+      if (!isOpen) faq.classList.add('open');
+    });
+  });
 })();
 
 // Pricing feature toggles (click to expand/collapse, one open at a time per list)
@@ -129,6 +271,7 @@ document.addEventListener('click', e => {
   const trigger = e.target.closest('[data-modal]');
   if (trigger) {
     e.preventDefault();
+    lastTriggerButtonId = trigger.id || null;
     const panelId = trigger.getAttribute('data-modal');
     if (panelId) openAppModal(panelId);
   }
@@ -154,6 +297,29 @@ document.addEventListener('keydown', e => {
     closeAppModal();
   }
 });
+
+// Open modal from URL (e.g. ?modal=website-review for shared links)
+const VALID_MODAL_IDS = new Set([
+  'book-call',
+  'website-review',
+  'lead-50things',
+  'lead-offboarding',
+  'lead-socialproof'
+]);
+
+function openModalFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const panelId = params.get('modal');
+  if (!panelId || !VALID_MODAL_IDS.has(panelId)) return;
+  setTimeout(() => {
+    openAppModal(panelId);
+    if (panelId === 'website-review') {
+      sessionStorage.setItem('appModalExitIntentShown', '1');
+    }
+  }, 0);
+}
+
+openModalFromUrl();
 
 // Exit intent: show website review modal once per session (desktop only)
 function isTouchDevice() {
@@ -246,25 +412,68 @@ function clearFieldError() {
   }
 }
 
-// Form submit: AJAX and show success/error in modal
-function showPanelMessage(panel, isSuccess, text) {
+// Success: replace form area with animated success screen
+function showSuccessScreen(panel, message) {
   const formWrap = panel.querySelector('.app-modal__panel-form');
   const messageBox = panel.querySelector('.app-modal__panel-message');
-  if (!messageBox) return;
-  messageBox.textContent = text;
-  messageBox.className = 'app-modal__panel-message ' + (isSuccess ? 'success' : 'error');
-  messageBox.hidden = false;
+  const successEl = panel.querySelector('.app-modal__success');
   if (formWrap) formWrap.hidden = true;
+  if (messageBox) messageBox.hidden = true;
+  if (successEl) {
+    successEl.innerHTML = '<div class="app-modal__success-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="app-modal__success-message">' + escapeHtml(message) + '</p>';
+    successEl.hidden = false;
+  }
+}
+
+function showPanelError(panel, text) {
+  const formWrap = panel.querySelector('.app-modal__panel-form');
+  const messageBox = panel.querySelector('.app-modal__panel-message');
+  const successEl = panel.querySelector('.app-modal__success');
+  if (successEl) successEl.hidden = true;
+  if (formWrap) formWrap.hidden = false;
+  if (messageBox) {
+    messageBox.textContent = text;
+    messageBox.className = 'app-modal__panel-message error';
+    messageBox.hidden = false;
+  }
+}
+
+// Clear, specific error messages (never show generic "Something went wrong")
+function getSubmitErrorMessage(err, res, data) {
+  if (err) {
+    return 'We couldn\'t reach the server. Please check your connection and try again.';
+  }
+  if (res && res.status === 429) {
+    return (data && data.error) ? data.error : 'Too many attempts. Please wait a minute and try again.';
+  }
+  if (data && typeof data.error === 'string' && data.error.trim()) {
+    return data.error;
+  }
+  if (res && !res.ok) {
+    return 'The server couldn\'t process your request. Please try again.';
+  }
+  return 'Your request couldn\'t be completed. Please try again.';
+}
+
+function escapeHtml(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
 }
 
 function resetPanelForm(panel) {
   const formWrap = panel.querySelector('.app-modal__panel-form');
   const messageBox = panel.querySelector('.app-modal__panel-message');
+  const successEl = panel.querySelector('.app-modal__success');
   if (formWrap) formWrap.hidden = false;
   if (messageBox) {
     messageBox.hidden = true;
     messageBox.textContent = '';
     messageBox.className = 'app-modal__panel-message';
+  }
+  if (successEl) {
+    successEl.hidden = true;
+    successEl.innerHTML = '';
   }
   const form = panel.querySelector('form');
   if (form) {
@@ -282,6 +491,20 @@ function getActiveAppModalPanel() {
 // Setup validation on all forms with error elements
 document.querySelectorAll('form[novalidate]').forEach(setupFormValidation);
 
+function idempotencyKey() {
+  return typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : 'k_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+}
+
+function buildSubmitPayload(form) {
+  const formData = new FormData(form);
+  const payload = Object.fromEntries(formData.entries());
+  payload.form_id = form.id || '';
+  payload.trigger_button_id = lastTriggerButtonId || (form.querySelector('button[type="submit"]') && form.querySelector('button[type="submit"]').id) || null;
+  payload.idempotency_key = idempotencyKey();
+  payload._context = getContextForSubmit(payload.trigger_button_id);
+  return payload;
+}
+
 // Website review form
 const formWebsiteReview = document.getElementById('form-website-review');
 if (formWebsiteReview) {
@@ -289,22 +512,26 @@ if (formWebsiteReview) {
     e.preventDefault();
     if (!validateForm(this)) return;
     const panel = getActiveAppModalPanel();
-    const formData = new FormData(this);
-    const payload = Object.fromEntries(formData.entries());
+    const payload = buildSubmitPayload(this);
 
-    fetch('/api/website-review', {
+    fetch(window.API_BASE + '/website-review', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
-      .then(res => res.json().then(data => ({ ok: res.ok, data })))
-      .then(({ ok, data }) => {
+      .then(res => res.json().then(data => ({ ok: res.ok, data, res })).catch(() => ({ ok: false, data: {}, res })))
+      .then(({ ok, data, res }) => {
         if (panel) {
-          showPanelMessage(panel, ok, ok ? (data.message || 'Thanks — we’ll be in touch with your review soon.') : (data.error || 'Something went wrong. Please try again.'));
+          if (ok) {
+            recordFormSubmission(this.id);
+            showSuccessScreen(panel, data.message || 'Thanks — we\'ll be in touch with your review soon.');
+          } else {
+            showPanelError(panel, getSubmitErrorMessage(null, res, data));
+          }
         }
       })
-      .catch(() => {
-        if (panel) showPanelMessage(panel, false, 'Something went wrong. Please try again.');
+      .catch((err) => {
+        if (panel) showPanelError(panel, getSubmitErrorMessage(err));
       });
   });
 }
@@ -316,22 +543,26 @@ if (formBookCall) {
     e.preventDefault();
     if (!validateForm(this)) return;
     const panel = getActiveAppModalPanel();
-    const formData = new FormData(this);
-    const payload = Object.fromEntries(formData.entries());
+    const payload = buildSubmitPayload(this);
 
-    fetch('/api/book-a-call', {
+    fetch(window.API_BASE + '/book-a-call', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
-      .then(res => res.json().then(data => ({ ok: res.ok, data })))
-      .then(({ ok, data }) => {
+      .then(res => res.json().then(data => ({ ok: res.ok, data, res })).catch(() => ({ ok: false, data: {}, res })))
+      .then(({ ok, data, res }) => {
         if (panel) {
-          showPanelMessage(panel, ok, ok ? (data.message || 'Thanks — we’ll be in touch soon.') : (data.error || 'Something went wrong. Please try again.'));
+          if (ok) {
+            recordFormSubmission(this.id);
+            showSuccessScreen(panel, data.message || 'Thanks — we\'ll be in touch soon.');
+          } else {
+            showPanelError(panel, getSubmitErrorMessage(null, res, data));
+          }
         }
       })
-      .catch(() => {
-        if (panel) showPanelMessage(panel, false, 'Something went wrong. Please try again.');
+      .catch((err) => {
+        if (panel) showPanelError(panel, getSubmitErrorMessage(err));
       });
   });
 }
@@ -373,23 +604,27 @@ if (formBookCall) {
     e.preventDefault();
     if (!validateForm(this)) return;
     const panel = getActiveAppModalPanel();
-    const formData = new FormData(this);
-    const payload = Object.fromEntries(formData.entries());
+    const payload = buildSubmitPayload(this);
     payload.source = this.getAttribute('data-source') || id;
 
-    fetch('/api/lead', {
+    fetch(window.API_BASE + '/lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
-      .then(res => res.json().then(data => ({ ok: res.ok, data })))
-      .then(({ ok, data }) => {
+      .then(res => res.json().then(data => ({ ok: res.ok, data, res })).catch(() => ({ ok: false, data: {}, res })))
+      .then(({ ok, data, res }) => {
         if (panel) {
-          showPanelMessage(panel, ok, ok ? (data.message || successMessages[id]) : (data.error || 'Something went wrong. Please try again.'));
+          if (ok) {
+            recordFormSubmission(this.id);
+            showSuccessScreen(panel, data.message || successMessages[id]);
+          } else {
+            showPanelError(panel, getSubmitErrorMessage(null, res, data));
+          }
         }
       })
-      .catch(() => {
-        if (panel) showPanelMessage(panel, false, 'Something went wrong. Please try again.');
+      .catch((err) => {
+        if (panel) showPanelError(panel, getSubmitErrorMessage(err));
       });
   });
 });
