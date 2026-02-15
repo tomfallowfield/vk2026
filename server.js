@@ -9,6 +9,9 @@ const submissionsRouter = require('./server/routes/submissions');
 const app = express();
 const PORT = config.PORT;
 
+// Behind Apache (or another reverse proxy): trust X-Forwarded-* so rate-limit sees real client IP
+app.set('trust proxy', 1);
+
 const allowedOrigins = config.getAllowedOrigins();
 app.use(cors({
   origin: (origin, cb) => {

@@ -21,15 +21,18 @@ async function createSubmissionPage(payload) {
     return { success: false, error: 'Notion not configured' };
   }
   const type = payload.type || 'submission'; // book-a-call | website-review | lead
+  const triggerType = payload.modal_trigger_type || null;
   const props = {
     Name: payload.name ? { title: [{ text: { content: String(payload.name).slice(0, 2000) } }] } : undefined,
     Email: payload.email ? { email: payload.email } : undefined,
     Type: type ? { select: { name: type } } : undefined,
     Source: payload.source || payload.form_id ? { rich_text: [{ text: { content: String(payload.source || payload.form_id || '').slice(0, 2000) } }] } : undefined,
+    Trigger: triggerType ? { rich_text: [{ text: { content: String(triggerType).slice(0, 100) } }] } : undefined,
     'Submitted At': { date: { start: new Date().toISOString().slice(0, 10) } },
     'Source URL': SITE_BASE_URL ? { url: SITE_BASE_URL } : undefined,
     Message: payload.message ? { rich_text: [{ text: { content: String(payload.message).slice(0, 2000) } }] } : undefined,
-    Website: payload.website ? { url: payload.website } : undefined
+    Website: payload.website ? { url: payload.website } : undefined,
+    'LinkedIn URL': payload.linkedin_url ? { url: payload.linkedin_url } : undefined
   };
   const body = {
     parent: { database_id: NOTION_DATABASE_ID },

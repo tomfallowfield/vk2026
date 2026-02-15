@@ -24,6 +24,7 @@ function enrichPayload(req, formData, endpoint, type) {
     type,
     form_id: req.body.form_id,
     trigger_button_id: req.body.trigger_button_id,
+    modal_trigger_type: req.body.modal_trigger_type || null,
     idempotency_key: req.body.idempotency_key,
     _context: visitor,
     _server: {
@@ -60,7 +61,7 @@ router.post('/book-a-call', async (req, res) => {
   }
   const payload = enrichPayload(req, data, 'book-a-call', 'book-a-call');
   logSubmission('book-a-call', payload);
-  const notionResult = await createSubmissionPage({ ...data, type: 'book-a-call', form_id: req.body.form_id, source: 'book-a-call' });
+  const notionResult = await createSubmissionPage({ ...data, type: 'book-a-call', form_id: req.body.form_id, source: 'book-a-call', modal_trigger_type: req.body.modal_trigger_type });
   if (!notionResult.success && config.NOTION_TOKEN) {
     console.error('Notion book-a-call:', notionResult.error);
   }
@@ -89,7 +90,7 @@ router.post('/website-review', async (req, res) => {
   }
   const payload = enrichPayload(req, data, 'website-review', 'website-review');
   logSubmission('website-review', payload);
-  const notionResult = await createSubmissionPage({ ...data, type: 'website-review', form_id: req.body.form_id, source: 'website-review' });
+  const notionResult = await createSubmissionPage({ ...data, type: 'website-review', form_id: req.body.form_id, source: 'website-review', modal_trigger_type: req.body.modal_trigger_type });
   if (!notionResult.success && config.NOTION_TOKEN) {
     console.error('Notion website-review:', notionResult.error);
   }
@@ -122,7 +123,7 @@ router.post('/lead', async (req, res) => {
   if (!mcResult.success && config.MAILCHIMP_API_KEY) {
     console.error('Mailchimp lead:', mcResult.error);
   }
-  const notionResult = await createSubmissionPage({ ...data, type: 'lead', form_id: req.body.form_id, source: data.source });
+  const notionResult = await createSubmissionPage({ ...data, type: 'lead', form_id: req.body.form_id, source: data.source, modal_trigger_type: req.body.modal_trigger_type });
   if (!notionResult.success && config.NOTION_TOKEN) {
     console.error('Notion lead:', notionResult.error);
   }

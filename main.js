@@ -1,5 +1,31 @@
-// API base URL (same origin: /vk2026/api)
-window.API_BASE = typeof window.API_BASE !== 'undefined' ? window.API_BASE : '/vk2026/api';
+// API base URL (same origin: /vk2026/api) – can be overridden by settings.api_base
+window.API_BASE = (function () {
+  const s = window.SITE_SETTINGS || {};
+  if (typeof s.api_base === 'string' && s.api_base.trim()) return s.api_base.trim();
+  return typeof window.API_BASE !== 'undefined' ? window.API_BASE : '/vk2026/api';
+})();
+
+// Site settings (from settings.js); defaults if missing
+function getSettings() {
+  const s = window.SITE_SETTINGS || {};
+  return {
+    autodialog_form_to_show: s.autodialog_form_to_show ?? 'wrv',
+    autodialog_to_be_shown_on_exit_intent: s.autodialog_to_be_shown_on_exit_intent !== false,
+    autodialog_to_be_shown_after_delay_s: Math.max(0, Number(s.autodialog_to_be_shown_after_delay_s) || 0),
+    site_env: s.site_env || 'temp',
+    wrv_offer: s.wrv_offer !== false,
+    book_call_offer: s.book_call_offer !== false,
+    lead_magnets_enabled: s.lead_magnets_enabled !== false,
+    show_pricing: s.show_pricing !== false,
+    cookie_consent_enabled: s.cookie_consent_enabled !== false,
+    ga_id: typeof s.ga_id === 'string' ? s.ga_id.trim() : '',
+    maintenance_mode: s.maintenance_mode === true,
+    maintenance_message: typeof s.maintenance_message === 'string' ? s.maintenance_message : 'We\'ll be back shortly. Thanks for your patience.',
+    default_modal: (s.default_modal && typeof s.default_modal === 'string') ? s.default_modal : null,
+    api_base: typeof s.api_base === 'string' ? s.api_base.trim() : '',
+    book_call_calendar_url: typeof s.book_call_calendar_url === 'string' ? s.book_call_calendar_url.trim() : ''
+  };
+}
 
 // Cookie consent & visitor context (graceful degradation if declined)
 const COOKIE_CONSENT_KEY = 'vk_cookie_consent';
@@ -99,12 +125,16 @@ function recordFormSubmission(formId) {
   } catch (_) {}
 }
 
-// Cookie bar UI
+// Cookie bar UI (only when cookie_consent_enabled is true)
 (function () {
   const bar = document.getElementById('cookie-bar');
   const acceptBtn = document.getElementById('cookie-accept');
   const declineBtn = document.getElementById('cookie-decline');
   if (!bar || !acceptBtn || !declineBtn) return;
+  if (!getSettings().cookie_consent_enabled) {
+    bar.hidden = true;
+    return;
+  }
   const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
   if (consent === 'accept' || consent === 'decline') {
     bar.hidden = true;
@@ -122,6 +152,8 @@ function recordFormSubmission(formId) {
   });
 })();
 
+// How the modal was opened (for logging on submit): 'button' | 'url' | 'exit_intent' | 'inactivity'
+let lastModalTriggerType = null;
 // Which button opened the modal (for trigger_button_id)
 let lastTriggerButtonId = null;
 
@@ -271,6 +303,8 @@ document.addEventListener('click', e => {
   const trigger = e.target.closest('[data-modal]');
   if (trigger) {
     e.preventDefault();
+    if (getSettings().maintenance_mode) return;
+    lastModalTriggerType = 'button';
     lastTriggerButtonId = trigger.id || null;
     const panelId = trigger.getAttribute('data-modal');
     if (panelId) openAppModal(panelId);
@@ -309,31 +343,150 @@ const VALID_MODAL_IDS = new Set([
 
 function openModalFromUrl() {
   const params = new URLSearchParams(window.location.search);
-  const panelId = params.get('modal');
+  let panelId = params.get('modal');
+  const settings = getSettings();
+  if ((!panelId || panelId === '') && settings.default_modal && VALID_MODAL_IDS.has(settings.default_modal)) {
+    panelId = settings.default_modal;
+  }
   if (!panelId || !VALID_MODAL_IDS.has(panelId)) return;
+  if (panelId === 'website-review' && !settings.wrv_offer) return;
+  if (panelId === 'book-call' && !settings.book_call_offer) return;
+  lastModalTriggerType = 'url';
   setTimeout(() => {
     openAppModal(panelId);
     if (panelId === 'website-review') {
-      sessionStorage.setItem('appModalExitIntentShown', '1');
+      sessionStorage.setItem('appModalAutodialogShown', '1');
     }
   }, 0);
 }
 
 openModalFromUrl();
 
-// Exit intent: show website review modal once per session (desktop only)
+// Auto dialog: one modal, two optional triggers (exit intent + inactivity). Shown at most once per session.
 function isTouchDevice() {
   return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 }
 
-document.addEventListener('mouseout', e => {
-  if (isTouchDevice()) return;
-  if (e.relatedTarget) return;
-  if (e.clientY > 10) return;
-  if (sessionStorage.getItem('appModalExitIntentShown')) return;
-  sessionStorage.setItem('appModalExitIntentShown', '1');
-  openAppModal('website-review');
-});
+function getAutodialogPanelId() {
+  const settings = getSettings();
+  let form = (settings.autodialog_form_to_show || 'wrv').toLowerCase();
+  if (form === 'wrv') form = 'website-review';
+  if (!VALID_MODAL_IDS.has(form)) return null;
+  if (form === 'website-review' && !settings.wrv_offer) return null;
+  if (form === 'book-call' && !settings.book_call_offer) return null;
+  return form;
+}
+
+// Trigger: exit intent (mouse leaving top of viewport, desktop only)
+if (getSettings().autodialog_to_be_shown_on_exit_intent) {
+  document.addEventListener('mouseout', e => {
+    if (isTouchDevice()) return;
+    if (e.relatedTarget) return;
+    if (e.clientY > 10) return;
+    if (sessionStorage.getItem('appModalAutodialogShown')) return;
+    const panelId = getAutodialogPanelId();
+    if (!panelId) return;
+    sessionStorage.setItem('appModalAutodialogShown', '1');
+    lastModalTriggerType = 'exit_intent';
+    openAppModal(panelId);
+  });
+}
+
+// Trigger: after N seconds of inactivity
+(function () {
+  const settings = getSettings();
+  const seconds = settings.autodialog_to_be_shown_after_delay_s;
+  if (seconds <= 0) return;
+  const panelId = getAutodialogPanelId();
+  if (!panelId) return;
+
+  let inactivityTimer = null;
+  function schedule() {
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+    inactivityTimer = setTimeout(function () {
+      if (sessionStorage.getItem('appModalAutodialogShown')) return;
+      sessionStorage.setItem('appModalAutodialogShown', '1');
+      lastModalTriggerType = 'inactivity';
+      openAppModal(panelId);
+    }, seconds * 1000);
+  }
+  function onActivity() {
+    schedule();
+  }
+  schedule();
+  document.addEventListener('mousemove', onActivity, { passive: true });
+  document.addEventListener('keydown', onActivity, { passive: true });
+  document.addEventListener('scroll', onActivity, { passive: true });
+  document.addEventListener('touchstart', onActivity, { passive: true });
+})();
+
+// Apply offer toggles: hide CTAs when offers are disabled
+(function applyOfferToggles() {
+  const settings = getSettings();
+  if (!settings.wrv_offer) {
+    document.querySelectorAll('[data-modal="website-review"]').forEach(function (el) {
+      el.style.setProperty('display', 'none');
+    });
+  }
+  if (!settings.book_call_offer) {
+    document.querySelectorAll('[data-modal="book-call"]').forEach(function (el) {
+      el.style.setProperty('display', 'none');
+    });
+  }
+  if (!settings.lead_magnets_enabled) {
+    document.querySelectorAll('[data-modal="lead-50things"], [data-modal="lead-offboarding"], [data-modal="lead-socialproof"]').forEach(function (el) {
+      el.style.setProperty('display', 'none');
+    });
+    const resourcesSection = document.getElementById('resources');
+    if (resourcesSection) resourcesSection.style.setProperty('display', 'none');
+  }
+  if (!settings.show_pricing) {
+    const pricingSection = document.getElementById('pricing');
+    if (pricingSection) pricingSection.style.setProperty('display', 'none');
+    document.querySelectorAll('a[href="#pricing"]').forEach(function (el) {
+      el.style.setProperty('display', 'none');
+    });
+  }
+})();
+
+// Book-a-call calendar link (from settings)
+(function () {
+  const url = getSettings().book_call_calendar_url;
+  if (!url) return;
+  const calLink = document.getElementById('app-modal-calendar-link');
+  if (calLink) calLink.href = url;
+})();
+
+// Maintenance mode overlay
+(function () {
+  if (!getSettings().maintenance_mode) return;
+  const msg = getSettings().maintenance_message;
+  const esc = document.createElement('div');
+  esc.textContent = msg;
+  const safeMsg = esc.innerHTML;
+  const overlay = document.createElement('div');
+  overlay.id = 'maintenance-overlay';
+  overlay.className = 'maintenance-overlay';
+  overlay.setAttribute('role', 'alert');
+  overlay.setAttribute('aria-live', 'polite');
+  overlay.innerHTML = '<div class="maintenance-overlay__inner"><p class="maintenance-overlay__text">' + safeMsg + '</p></div>';
+  document.body.appendChild(overlay);
+})();
+
+// Google Analytics (when ga_id is set)
+(function () {
+  const gaId = getSettings().ga_id;
+  if (!gaId) return;
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', gaId);
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(gaId);
+  document.head.appendChild(script);
+})();
 
 // Focus trap inside app modal
 if (appModalDialog) {
@@ -412,25 +565,23 @@ function clearFieldError() {
   }
 }
 
-// Success: replace form area with animated success screen
+// Success: replace whole modal panel (both cols) with animated success screen
 function showSuccessScreen(panel, message) {
-  const formWrap = panel.querySelector('.app-modal__panel-form');
-  const messageBox = panel.querySelector('.app-modal__panel-message');
-  const successEl = panel.querySelector('.app-modal__success');
-  if (formWrap) formWrap.hidden = true;
-  if (messageBox) messageBox.hidden = true;
-  if (successEl) {
-    successEl.innerHTML = '<div class="app-modal__success-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="app-modal__success-message">' + escapeHtml(message) + '</p>';
-    successEl.hidden = false;
+  const contentEls = panel.querySelectorAll('.app-modal__eyebrow, .app-modal__title, .app-modal__book-call, .app-modal__two-col');
+  contentEls.forEach(function (el) { el.hidden = true; });
+  const successFull = panel.querySelector('.app-modal__success-full');
+  if (successFull) {
+    successFull.innerHTML = '<div class="app-modal__success-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="app-modal__success-message">' + escapeHtml(message) + '</p>';
+    successFull.hidden = false;
   }
 }
 
 function showPanelError(panel, text) {
-  const formWrap = panel.querySelector('.app-modal__panel-form');
+  const contentEls = panel.querySelectorAll('.app-modal__eyebrow, .app-modal__title, .app-modal__book-call, .app-modal__two-col');
+  contentEls.forEach(function (el) { el.hidden = false; });
+  const successFull = panel.querySelector('.app-modal__success-full');
+  if (successFull) successFull.hidden = true;
   const messageBox = panel.querySelector('.app-modal__panel-message');
-  const successEl = panel.querySelector('.app-modal__success');
-  if (successEl) successEl.hidden = true;
-  if (formWrap) formWrap.hidden = false;
   if (messageBox) {
     messageBox.textContent = text;
     messageBox.className = 'app-modal__panel-message error';
@@ -462,18 +613,18 @@ function escapeHtml(s) {
 }
 
 function resetPanelForm(panel) {
-  const formWrap = panel.querySelector('.app-modal__panel-form');
+  const contentEls = panel.querySelectorAll('.app-modal__eyebrow, .app-modal__title, .app-modal__book-call, .app-modal__two-col');
+  contentEls.forEach(function (el) { el.hidden = false; });
   const messageBox = panel.querySelector('.app-modal__panel-message');
-  const successEl = panel.querySelector('.app-modal__success');
-  if (formWrap) formWrap.hidden = false;
   if (messageBox) {
     messageBox.hidden = true;
     messageBox.textContent = '';
     messageBox.className = 'app-modal__panel-message';
   }
-  if (successEl) {
-    successEl.hidden = true;
-    successEl.innerHTML = '';
+  const successFull = panel.querySelector('.app-modal__success-full');
+  if (successFull) {
+    successFull.hidden = true;
+    successFull.innerHTML = '';
   }
   const form = panel.querySelector('form');
   if (form) {
@@ -500,9 +651,18 @@ function buildSubmitPayload(form) {
   const payload = Object.fromEntries(formData.entries());
   payload.form_id = form.id || '';
   payload.trigger_button_id = lastTriggerButtonId || (form.querySelector('button[type="submit"]') && form.querySelector('button[type="submit"]').id) || null;
+  payload.modal_trigger_type = lastModalTriggerType || null;
   payload.idempotency_key = idempotencyKey();
   payload._context = getContextForSubmit(payload.trigger_button_id);
   return payload;
+}
+
+function guardMaintenance(e) {
+  if (getSettings().maintenance_mode) {
+    e.preventDefault();
+    return true;
+  }
+  return false;
 }
 
 // Website review form
@@ -510,6 +670,7 @@ const formWebsiteReview = document.getElementById('form-website-review');
 if (formWebsiteReview) {
   formWebsiteReview.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (guardMaintenance(e)) return;
     if (!validateForm(this)) return;
     const panel = getActiveAppModalPanel();
     const payload = buildSubmitPayload(this);
@@ -541,6 +702,7 @@ const formBookCall = document.getElementById('form-book-call');
 if (formBookCall) {
   formBookCall.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (guardMaintenance(e)) return;
     if (!validateForm(this)) return;
     const panel = getActiveAppModalPanel();
     const payload = buildSubmitPayload(this);
@@ -602,6 +764,7 @@ if (formBookCall) {
   };
   form.addEventListener('submit', function (e) {
     e.preventDefault();
+    if (guardMaintenance(e)) return;
     if (!validateForm(this)) return;
     const panel = getActiveAppModalPanel();
     const payload = buildSubmitPayload(this);

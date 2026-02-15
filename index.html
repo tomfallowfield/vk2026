@@ -978,14 +978,15 @@
             <p class="app-modal__contact-info">
               <a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a>
               <span class="app-modal__contact-sep">·</span>
-              <a href="#" id="app-modal-calendar-link">Book via calendar</a>
+              <a href="https://calendar.app.google/8jiSEYPb3YYouyXq9" id="app-modal-calendar-link" target="_blank" rel="noopener">Book via calendar</a>
             </p>
             <form id="form-book-call" class="app-modal__form" action="#" method="post" novalidate>
               <input type="text" name="_hp" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
               <input type="hidden" name="phone" value="" />
               <div class="form-group">
-                <label for="book-call-name">Name</label>
-                <input type="text" id="book-call-name" name="name" placeholder="e.g. Jennifer Coolidge" />
+                <label for="book-call-name">Name <span class="required">*</span></label>
+                <input type="text" id="book-call-name" name="name" placeholder="e.g. Jennifer Coolidge" required aria-describedby="book-call-name-error" />
+                <p class="error-message" id="book-call-name-error"></p>
               </div>
               <div class="form-group">
                 <label for="book-call-email">Email <span class="required">*</span></label>
@@ -996,6 +997,11 @@
                 <label for="book-call-website">Website</label>
                 <input type="url" id="book-call-website" name="website" placeholder="https://yoursite.com" aria-describedby="book-call-website-error" />
                 <p class="error-message" id="book-call-website-error"></p>
+              </div>
+              <div class="form-group">
+                <label for="book-call-linkedin">LinkedIn profile URL</label>
+                <input type="url" id="book-call-linkedin" name="linkedin_url" placeholder="https://linkedin.com/in/yourprofile" aria-describedby="book-call-linkedin-error" />
+                <p class="error-message" id="book-call-linkedin-error"></p>
               </div>
               <div class="form-group">
                 <label for="book-call-message">Message</label>
@@ -1014,6 +1020,7 @@
           <blockquote class="app-modal__testimonial-quote">"The self-proclaimed Vanilla Killer took me from feeling stuck with my marketing and how to present myself to having a shiny new website complete with a lead magnet – and now feeling very confident about taking my business to the next stages. I highly recommend working with him and his killer messaging service."</blockquote>
         </div>
       </div>
+      <div class="app-modal__success-full" aria-live="polite" hidden></div>
     </div>
 
     <!-- Panel: Website review (form) -->
@@ -1064,6 +1071,7 @@
           <div class="app-modal__panel-message" id="website-review-message-box" aria-live="polite" hidden></div>
         </div>
       </div>
+      <div class="app-modal__success-full" aria-live="polite" hidden></div>
     </div>
 
     <!-- Panel: Lead magnet – 50 Things -->
@@ -1089,13 +1097,14 @@
         <form id="form-lead-50things" class="app-modal__form" action="#" method="post" data-source="lead-50things" novalidate>
           <input type="text" name="_hp" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <div class="form-group">
+            <label for="lead-50things-name">Name <span class="required">*</span></label>
+            <input type="text" id="lead-50things-name" name="name" placeholder="e.g. Jennifer Coolidge" required aria-describedby="lead-50things-name-error" />
+            <p class="error-message" id="lead-50things-name-error"></p>
+          </div>
+          <div class="form-group">
             <label for="lead-50things-email">Email <span class="required">*</span></label>
             <input type="email" id="lead-50things-email" name="email" placeholder="you@company.com" required aria-describedby="lead-50things-email-error" />
             <p class="error-message" id="lead-50things-email-error"></p>
-          </div>
-          <div class="form-group">
-            <label for="lead-50things-name">Name</label>
-            <input type="text" id="lead-50things-name" name="name" placeholder="e.g. Jennifer Coolidge" />
           </div>
           <button type="submit" id="button-submit-lead-50things" class="btn btn-primary">Download the Checklist</button>
         </form>
@@ -1104,6 +1113,7 @@
           <div class="app-modal__panel-message" id="lead-50things-message-box" aria-live="polite" hidden></div>
         </div>
       </div>
+      <div class="app-modal__success-full" aria-live="polite" hidden></div>
     </div>
 
     <!-- Panel: Lead magnet – Offboarding -->
@@ -1129,13 +1139,14 @@
         <form id="form-lead-offboarding" class="app-modal__form" action="#" method="post" data-source="lead-offboarding" novalidate>
           <input type="text" name="_hp" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <div class="form-group">
+            <label for="lead-offboarding-name">Name <span class="required">*</span></label>
+            <input type="text" id="lead-offboarding-name" name="name" placeholder="e.g. Jennifer Coolidge" required aria-describedby="lead-offboarding-name-error" />
+            <p class="error-message" id="lead-offboarding-name-error"></p>
+          </div>
+          <div class="form-group">
             <label for="lead-offboarding-email">Email <span class="required">*</span></label>
             <input type="email" id="lead-offboarding-email" name="email" placeholder="you@company.com" required aria-describedby="lead-offboarding-email-error" />
             <p class="error-message" id="lead-offboarding-email-error"></p>
-          </div>
-          <div class="form-group">
-            <label for="lead-offboarding-name">Name</label>
-            <input type="text" id="lead-offboarding-name" name="name" placeholder="e.g. Jennifer Coolidge" />
           </div>
           <button type="submit" id="button-submit-lead-offboarding" class="btn btn-primary">Get the Offboarding Guide</button>
         </form>
@@ -1144,6 +1155,7 @@
           <div class="app-modal__panel-message" id="lead-offboarding-message-box" aria-live="polite" hidden></div>
         </div>
       </div>
+      <div class="app-modal__success-full" aria-live="polite" hidden></div>
     </div>
 
     <!-- Panel: Lead magnet – Social Proof -->
@@ -1169,13 +1181,14 @@
         <form id="form-lead-socialproof" class="app-modal__form" action="#" method="post" data-source="lead-socialproof" novalidate>
           <input type="text" name="_hp" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <div class="form-group">
+            <label for="lead-socialproof-name">Name <span class="required">*</span></label>
+            <input type="text" id="lead-socialproof-name" name="name" placeholder="e.g. Jennifer Coolidge" required aria-describedby="lead-socialproof-name-error" />
+            <p class="error-message" id="lead-socialproof-name-error"></p>
+          </div>
+          <div class="form-group">
             <label for="lead-socialproof-email">Email <span class="required">*</span></label>
             <input type="email" id="lead-socialproof-email" name="email" placeholder="you@company.com" required aria-describedby="lead-socialproof-email-error" />
             <p class="error-message" id="lead-socialproof-email-error"></p>
-          </div>
-          <div class="form-group">
-            <label for="lead-socialproof-name">Name</label>
-            <input type="text" id="lead-socialproof-name" name="name" placeholder="e.g. Jennifer Coolidge" />
           </div>
           <button type="submit" id="button-submit-lead-socialproof" class="btn btn-primary">Join the Email Course</button>
         </form>
@@ -1184,6 +1197,7 @@
           <div class="app-modal__panel-message" id="lead-socialproof-message-box" aria-live="polite" hidden></div>
         </div>
       </div>
+      <div class="app-modal__success-full" aria-live="polite" hidden></div>
     </div>
   </div>
 </div>
@@ -1199,6 +1213,7 @@
   </div>
 </aside>
 
+<script src="settings.js"></script>
 <script src="main.js"></script>
 
 
