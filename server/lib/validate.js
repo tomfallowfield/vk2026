@@ -49,14 +49,20 @@ function validateWebsiteReview(body) {
   const errors = [];
   const name = trimStr(body.name, MAX_NAME);
   if (!name) errors.push('Name is required.');
-  if (body.website && !isValidUrl(body.website)) errors.push('Please enter a valid website URL.');
+  const email = trimStr(body.email, MAX_EMAIL);
+  if (!email) errors.push('Email is required.');
+  else if (!isValidEmail(email)) errors.push('Please enter a valid email address.');
+  const website = trimStr(body.website, MAX_URL);
+  if (!website) errors.push('Website is required.');
+  else if (!isValidUrl(body.website)) errors.push('Please enter a valid website URL.');
   if (body.linkedin_url && !isValidUrl(body.linkedin_url)) errors.push('Please enter a valid LinkedIn URL.');
   if (body.comments && body.comments.length > MAX_COMMENTS) errors.push('Comments are too long.');
   return {
     errors,
     data: {
       name,
-      website: trimStr(body.website, MAX_URL),
+      email,
+      website,
       linkedin_url: trimStr(body.linkedin_url, MAX_URL),
       comments: trimStr(body.comments, MAX_COMMENTS)
     }

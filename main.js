@@ -280,6 +280,27 @@ let lastTriggerButtonId = null;
   });
 })();
 
+// Pricing guarantee expand/collapse
+(function () {
+  document.querySelectorAll('.pricing-guarantee-toggle').forEach(button => {
+    button.addEventListener('click', () => {
+      const group = button.closest('.pricing-guarantee');
+      const detail = document.getElementById(button.getAttribute('aria-controls'));
+      const isOpen = group.classList.contains('is-open');
+
+      if (isOpen) {
+        group.classList.remove('is-open');
+        button.setAttribute('aria-expanded', 'false');
+        if (detail) detail.setAttribute('aria-hidden', 'true');
+      } else {
+        group.classList.add('is-open');
+        button.setAttribute('aria-expanded', 'true');
+        if (detail) detail.setAttribute('aria-hidden', 'false');
+      }
+    });
+  });
+})();
+
 // Video lightbox
 const modal = document.getElementById('videoModal');
 const video = document.getElementById('modalVideo');
@@ -395,11 +416,51 @@ const appModalPanels = appModal && appModal.querySelectorAll('.app-modal__panel'
 
 const FOCUSABLE_SELECTOR = 'button:not([disabled]), input:not([disabled]), textarea:not([disabled]), a[href]';
 
+// Easter egg: placeholder hints cycle through glamorous female actors/megastars
+const PLACEHOLDER_STARS = [
+  { name: 'Meryl Streep', email: 'meryl@streep.com' },
+  { name: 'Cate Blanchett', email: 'cate@blanchett.com' },
+  { name: 'Viola Davis', email: 'viola@davis.com' },
+  { name: 'Nicole Kidman', email: 'nicole@kidman.com' },
+  { name: 'Charlize Theron', email: 'charlize@theron.com' },
+  { name: 'Catherine Zeta-Jones', email: 'catherine@zetajones.com' },
+  { name: 'Helen Mirren', email: 'helen@mirren.com' },
+  { name: 'Dame Judi Dench', email: 'judi@dench.com' },
+  { name: 'Jennifer Coolidge', email: 'jennifer@coolidge.com' },
+  { name: 'Sandra Bullock', email: 'sandra@bullock.com' },
+  { name: 'Julia Roberts', email: 'julia@roberts.com' },
+  { name: 'Reese Witherspoon', email: 'reese@witherspoon.com' },
+  { name: 'Scarlett Johansson', email: 'scarlett@johansson.com' },
+  { name: 'Margot Robbie', email: 'margot@robbie.com' },
+  { name: 'Lupita Nyong\'o', email: 'lupita@nyongo.com' },
+  { name: 'Zendaya', email: 'zendaya@hollywood.com' },
+  { name: 'Florence Pugh', email: 'florence@pugh.com' },
+  { name: 'Emma Stone', email: 'emma@stone.com' },
+  { name: 'Lady Gaga', email: 'gaga@haus.com' },
+  { name: 'Rihanna', email: 'rihanna@fenty.com' }
+];
+
+function applyRandomStarPlaceholders() {
+  if (!appModal) return;
+  const star = PLACEHOLDER_STARS[Math.floor(Math.random() * PLACEHOLDER_STARS.length)];
+  const namePlaceholder = 'e.g. ' + star.name;
+  appModal.querySelectorAll('input[name="name"]').forEach(function (el) {
+    el.placeholder = namePlaceholder;
+    el.dataset.placeholderOrig = namePlaceholder;
+  });
+  appModal.querySelectorAll('input[name="email"]').forEach(function (el) {
+    el.placeholder = star.email;
+    el.dataset.placeholderOrig = star.email;
+  });
+}
+
 let lastAppModalTrigger = null;
 
 function openAppModal(panelId) {
   if (!appModal || !appModalPanels) return;
   appModalPanels.forEach(panel => resetPanelForm(panel));
+
+  applyRandomStarPlaceholders();
 
   lastAppModalTrigger = document.activeElement;
   appModal.classList.add('active');
@@ -647,6 +708,39 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
   });
 })();
 
+// Nav anchor links: smooth scroll with ease-in
+(function () {
+  var duration = 800;
+  function easeIn(t) {
+    return t * t;
+  }
+  function smoothScrollTo(targetY) {
+    var startY = window.scrollY || window.pageYOffset;
+    var dist = targetY - startY;
+    var start = performance.now();
+    function step(now) {
+      var elapsed = now - start;
+      var t = Math.min(elapsed / duration, 1);
+      var eased = easeIn(t);
+      window.scrollTo(0, startY + dist * eased);
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('.main-nav a[href^="#"], .mobile-menu__nav a[href^="#"]');
+    if (!link || !link.hash) return;
+    var id = link.hash.slice(1);
+    var target = id && document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    var headerOffset = 72;
+    var y = target.getBoundingClientRect().top + (window.scrollY || window.pageYOffset) - headerOffset;
+    smoothScrollTo(Math.max(0, y));
+    if (history.replaceState) history.replaceState(null, '', link.hash);
+  });
+})();
+
 // Book-a-call calendar link (from settings)
 (function () {
   const url = getSettings().book_call_calendar_url;
@@ -754,17 +848,14 @@ function validateForm(form) {
       isValid = false;
       field.classList.add('invalid');
       field.setAttribute('aria-invalid', 'true');
-      if (errorEl) {
-        if (field.validity.valueMissing) {
-          errorEl.textContent = field.required ? 'This field is required.' : getTypeMessage(field);
-        } else {
-          errorEl.textContent = getTypeMessage(field);
-        }
-      }
+      var msg = field.validity.valueMissing && field.required ? 'This field is required.' : getTypeMessage(field);
+      if (errorEl) errorEl.textContent = msg;
+      field.placeholder = msg;
     } else {
       field.classList.remove('invalid');
       field.setAttribute('aria-invalid', 'false');
       if (errorEl) errorEl.textContent = '';
+      field.placeholder = field.dataset.placeholderOrig || '';
     }
   });
 
@@ -780,6 +871,7 @@ function getTypeMessage(field) {
 function setupFormValidation(form) {
   const fields = form.querySelectorAll('input[aria-describedby*="-error"], textarea[aria-describedby*="-error"]');
   fields.forEach((field) => {
+    if (!field.dataset.placeholderOrig) field.dataset.placeholderOrig = field.getAttribute('placeholder') || '';
     field.addEventListener('input', clearFieldError);
     field.addEventListener('change', clearFieldError);
   });
@@ -797,12 +889,13 @@ function clearFieldError() {
     field.classList.remove('invalid');
     field.setAttribute('aria-invalid', 'false');
     if (errorEl) errorEl.textContent = '';
+    field.placeholder = field.dataset.placeholderOrig || '';
   }
 }
 
 // Success: replace whole modal panel (both cols) with animated success screen
 function showSuccessScreen(panel, message) {
-  const contentEls = panel.querySelectorAll('.app-modal__eyebrow, .app-modal__title, .app-modal__book-call, .app-modal__two-col');
+  const contentEls = panel.querySelectorAll('.app-modal__eyebrow, .app-modal__title, .app-modal__book-call, .app-modal__two-col, .app-modal__one-col');
   contentEls.forEach(function (el) { el.hidden = true; });
   const successFull = panel.querySelector('.app-modal__success-full');
   if (successFull) {
@@ -812,7 +905,7 @@ function showSuccessScreen(panel, message) {
 }
 
 function showPanelError(panel, text) {
-  const contentEls = panel.querySelectorAll('.app-modal__eyebrow, .app-modal__title, .app-modal__book-call, .app-modal__two-col');
+  const contentEls = panel.querySelectorAll('.app-modal__eyebrow, .app-modal__title, .app-modal__book-call, .app-modal__two-col, .app-modal__one-col');
   contentEls.forEach(function (el) { el.hidden = false; });
   const successFull = panel.querySelector('.app-modal__success-full');
   if (successFull) successFull.hidden = true;
@@ -848,7 +941,7 @@ function escapeHtml(s) {
 }
 
 function resetPanelForm(panel) {
-  const contentEls = panel.querySelectorAll('.app-modal__eyebrow, .app-modal__title, .app-modal__book-call, .app-modal__two-col');
+  const contentEls = panel.querySelectorAll('.app-modal__eyebrow, .app-modal__title, .app-modal__book-call, .app-modal__two-col, .app-modal__one-col');
   contentEls.forEach(function (el) { el.hidden = false; });
   const messageBox = panel.querySelector('.app-modal__panel-message');
   if (messageBox) {
@@ -867,6 +960,9 @@ function resetPanelForm(panel) {
     form.querySelectorAll('.invalid').forEach((el) => el.classList.remove('invalid'));
     form.querySelectorAll('[aria-invalid="true"]').forEach((el) => el.setAttribute('aria-invalid', 'false'));
     form.querySelectorAll('.error-message').forEach((el) => { el.textContent = ''; });
+    form.querySelectorAll('input[data-placeholder-orig], textarea[data-placeholder-orig]').forEach(function (el) {
+      el.placeholder = el.dataset.placeholderOrig || '';
+    });
   }
 }
 
@@ -928,7 +1024,7 @@ if (formWebsiteReview) {
         if (panel) {
           if (ok) {
             recordFormSubmission(this.id);
-            showSuccessScreen(panel, data.message || 'Thanks — we\'ll be in touch with your review soon.');
+            showSuccessScreen(panel, data.message || 'Thanks – we\'ll be in touch with your review soon.');
           } else {
             showPanelError(panel, getSubmitErrorMessage(null, res, data));
           }
@@ -962,7 +1058,7 @@ if (formBookCall) {
         if (panel) {
           if (ok) {
             recordFormSubmission(this.id);
-            showSuccessScreen(panel, data.message || 'Thanks — we\'ll be in touch soon.');
+            showSuccessScreen(panel, data.message || 'Thanks – we\'ll be in touch soon.');
           } else {
             showPanelError(panel, getSubmitErrorMessage(null, res, data));
           }

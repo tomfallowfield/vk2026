@@ -7,7 +7,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Zalando+Sans+SemiExpanded:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Zalando+Sans+SemiExpanded:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -76,29 +76,56 @@
 <div id="mobile-menu" class="mobile-menu" aria-hidden="true" aria-label="Main menu" role="dialog" aria-modal="true">
   <button type="button" class="mobile-menu__close" aria-label="Close menu">×</button>
   <div class="mobile-menu__inner">
-    <nav class="mobile-menu__nav">
-      <a href="#rescue">How it works</a>
-      <a href="#pricing">Pricing</a>
-      <a href="#faqs">FAQs</a>
-    </nav>
+    <div class="mobile-menu__brand">
+      <a href="#top" class="mobile-menu__logo-wrap" aria-label="Home">
+      <svg class="logo" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 225.71 74.55" aria-hidden="true">
+        <defs><style>.cls-1{fill:currentColor}.cls-2{fill:#383838}</style></defs>
+        <g><g><path class="cls-2" d="M47.08,18.35c.27,0,6.01-.37,6.01-.37l1.25,22.82.78-22.82h5.15l-2.5,34.6-7.18,1.79s-3.78-36.01-3.51-36.01Z"/><path class="cls-2" d="M73.03,41.69c-.26,0-5.79.24-5.79.24l-1.24-6.72-.71,6.72h-4.96l2.41-22.59,6.92-1.17s3.65,23.52,3.38,23.52ZM67.5,31.3l-1.09-7.13-1.32,7.33,2.41-.2Z"/><path class="cls-2" d="M78.96,17.08l2.42,14.77,1.31-12.67,6.74-.44-3.01,26.26h-3.92l-3.61-12.82.91,14.18-6.7.07-1.51-29.1,7.37-.26Z"/><path class="cls-2" d="M103.53,16.94l-.35,7.95-3.77.08-.97,14.22,2.8.16-.66,6.14-10.57-.12-.35-6.03h3.5l.82-14.65-3.42-.51,1.05-7.44,11.93.2Z"/><path class="cls-2" d="M104.38,17.85l7.29-.35-2.45,21.6,5.17-.85s.5,7.13.2,7.13c-.27,0-10.18-.31-10.18-.31l-.03-27.22Z"/><path class="cls-2" d="M117.78,18.08l7.29-.35-2.45,21.6,5.17-.85s.5,7.13.2,7.13c-.27,0-10.18-.31-10.18-.31l-.03-27.22Z"/><path class="cls-2" d="M141.35,42.62c-.28,0-6.26.26-6.26.26l-1.34-7.26-.77,7.26h-5.37l2.6-24.4,7.48-1.26s3.94,25.4,3.66,25.4ZM135.37,31.41l-1.18-7.7-1.42,7.91,2.6-.22Z"/></g><g><path class="cls-1" d="M154.5,37.09l6.46,18.51-7.45,2.09-3.57-15.67-.65,10.19-6.37-.42,1.06-34.36h7.28l-.36,14.32,4.59-10.33,5.92,2.91-6.91,12.77Z"/><path class="cls-1" d="M172.44,17.23l-.36,8.07-3.84.08-.99,14.43,2.85.16-.67,6.23-10.78-.12-.36-6.11h3.57l.83-14.87-3.49-.52,1.07-7.55,12.16.2Z"/><path class="cls-1" d="M171.06,21.23l8.69-.35-2.92,21.92,6.16-.87s.59,7.24.24,7.24c-.32,0-12.13-.32-12.13-.32l-.04-27.62Z"/><path class="cls-1" d="M184.74,21.24l8.71-.36-2.93,21.98,6.18-.87s.59,7.26.24,7.24c-.32,0-12.15-.32-12.15-.32l-.04-27.7Z"/><path class="cls-1" d="M221.95,37.16s3.65-.95,3.65-6.46.04-11.1-7.65-11.1c-3.88,0-6.18.12-6.18.12l-.54,12.04-7.46-.06.16-3.57,5.75.99.4-7.89-11.18.12-.32,10.27h-4.61l-.2,6.06,4.22.2-.16,8.68,10.31.32,1.11-5.71-5.87-.55.12-2.66,7.45.1-.41,9.13,5.83.36.59-8.6,2.42,11.14,6.34-2.3-3.77-10.62ZM217.67,32.22l.16-6.22s3.01,0,3.01,3.09c0,3.37-3.17,3.13-3.17,3.13Z"/></g></g>
+        <g><path class="cls-1" d="M50.74,66.78c-1.47.93-3.5,1.28-5.2,1.6-.87.19-1.62.33-1.84.83-.15.96,2.33,1.43,2.89,1.93,1.5,1.06-.6,1.62-1.66,1.77-.89.16-1.83.35-2.63.49-1.07.2-2.44.39-3.7.51-9.61,1.09-14.04-2.47-20.67-.39-1.23.38-2.46.81-3.86.97-1.31.14-2.59.03-3.69-.22-1.32-.32-4.12-1.17-3.1-2.3.91-1.02,3.48-1.01,4.13-1.58.2-.16.17-.41-.03-.58-1.16-.95-3.33-.41-4.74-.11-1.52.33-3.55.45-4.99.02-.63-.21-2.08-.71-1.53-1.51.88-1.37,7.94-.41,7.9-1.62-.4-.67-3.31-1.04-3.71-2v-.02c0-1.52,5.38-1.48,6.71-1.6,3.74-.12,6.92-.63,10.39-1.11,2.6,5.24,4.76,8.34,5.6,6.8.61-1.1,1.35-3.78,2.15-7.34,2.93.17,5.88.72,8.63.75,2.06.02,4.35-.17,6.35.36,1.69.46,2.36,1.23.26,1.58-.51.13-4.36.34-2.48.9,1.66.43,5.39.2,7.53.36.98.01,2.7.53,1.29,1.51Z"/><g><path class="cls-2" d="M24.73,54.77c-.18.26-.11.62.15.8,1.48,1,3.16,1.91,4.93,2.71-.22,1.07-.44,2.09-.65,3.04-.8,3.56-1.54,6.24-2.15,7.34-.84,1.54-3-1.56-5.6-6.8-.94-1.9-1.95-4.09-2.96-6.44,2.83-1.31,5.6-3.01,7.8-4.86.24-.2.28-.56.07-.81-.2-.24-.57-.27-.81-.07-2.09,1.76-4.77,3.4-7.51,4.67-.93-2.17-1.86-4.46-2.77-6.78,2.99-1.08,6.21-2.83,9-4.88,1.3.96,2.69,1.85,4.11,2.63-.47.34-.93.64-1.39.91-.27.16-.37.52-.2.79.1.18.29.28.49.28.1,0,.2-.02.29-.08.64-.37,1.29-.81,1.94-1.29.82.42,1.65.8,2.46,1.14-.62,3.49-1.25,6.94-1.88,10.04-1.63-.74-3.18-1.59-4.52-2.5-.27-.18-.62-.11-.8.16Z"/><path class="cls-2" d="M35.91,22.26v.05s-.21,1.44-.57,3.83c-1.33,3.43-3.16,6.71-5.07,8.9-.2.24-.18.6.06.81.11.1.24.15.38.15.16,0,.32-.07.43-.2,1.26-1.44,2.47-3.3,3.53-5.35-.49,3.12-1.09,6.87-1.75,10.79-1.15,1.23-2.36,2.36-3.56,3.32-1.43-.77-2.85-1.65-4.16-2.6.83-.66,1.62-1.34,2.33-2.04.23-.22.23-.58.01-.81-.22-.23-.58-.23-.81-.01-.75.73-1.6,1.45-2.5,2.14-.9-.69-1.74-1.41-2.5-2.14-.23-.22-.59-.22-.81.01-.22.23-.22.59.01.81.72.7,1.5,1.38,2.34,2.04-2.65,1.9-5.68,3.53-8.45,4.54-1.59-4.1-3.08-8.25-4.31-11.95,1.05-.42,2.05-.87,2.99-1.36.28-.15.39-.5.24-.78-.15-.28-.5-.39-.78-.24-.87.46-1.82.89-2.81,1.28-.45-1.37-.85-2.67-1.21-3.87.41-.61.42-1.74,1.48-1.65.78.07.33,2.53,2.02,2.53,1.95,0,.84-2.4,2.27-2.34,1.24.06.77,2.47,2.79,2.54,1.49.04.45-3.57,2.66-4.74,1.87-.99,3.77,1.53,6.67,1.3,4.19-.33,7.18-2.3,9.08-4.96Z"/><path class="cls-2" d="M32.13,45.9c.15-.88.31-1.77.45-2.65-.69.67-1.4,1.31-2.1,1.89.55.27,1.1.53,1.65.76Z"/></g><path class="cls-1" d="M17.5,33.6c-.7-.02-1.64,1.49-1.2,2.63.24.64.96,1.25,1.53,1.09.66-.18.84-1.29.77-1.97-.08-.76-.54-1.74-1.09-1.75Z"/><path class="cls-1" d="M15.01,37.87c-.54-.01-1.26.83-.92,1.46.19.35.74.69,1.18.61.51-.1.64-.72.59-1.09-.06-.42-.42-.96-.84-.97Z"/><path class="cls-1" d="M36.24,6.59C30.53-.81,16.48-1.55,9.52,2.24c-7.14,3.9-2.94,10.77-4.93,11.42-2.6.84-2.77,2.78-2.86,5.19-.15,4.03,1.69,6.81,3.63,6.29,1.3-.34,1,.62,1.11,2.66.13,2.47,1.12,2.19,1.88,2.14.28-.02.46-.16.59-.36.41-.61.42-1.74,1.48-1.65.78.07.33,2.53,2.02,2.53,1.95,0,.84-2.4,2.27-2.34,1.24.06.77,2.47,2.79,2.54,1.49.04.45-3.57,2.66-4.74,1.87-.99,3.77,1.53,6.67,1.3,4.19-.33,7.18-2.3,9.08-4.96.42-.58.78-1.2,1.09-1.84.16-.32.31-.65.44-.98,1.75-4.42,1.24-9.68-1.2-12.85ZM15.5,13.34c.18-.34.57-.61.87-.84.39-.3.71-.67,1.12-.95-.51-.5-1.05-1.02-1.72-1.39-.62-.36.03-.98.65-.6.14.08.86.62.97.71.12.1.74.72.86.82.46-.28.93-.58,1.43-.8.26-.14.54-.25.78-.41.37-.23.93.02.87.39-.05.26-.8.59-1.11.72-.2.08-1.13.63-1.33.74.11,0,1.81,2.26,1.89,2.56.07.25-.28.4-.47.4-.38.01-.52-.3-.72-.57-.49-.63-.99-1.25-1.45-1.91-.02,0-1.78,1.65-2.02,1.7-.27.05-.81-.21-.62-.57ZM6.73,12.4c.09-.21,1.81-1.79,1.99-1.79-.52-.51-1.04-1.02-1.71-1.39-.62-.36.04-.98.65-.6.14.08.86.62.97.72.12.09.74.71.85.81.47-.28.94-.57,1.44-.8.26-.13.54-.24.78-.4.37-.23.93.02.87.39-.05.26-.81.59-1.11.71-.2.09-1.13.64-1.33.74.03,0,1.86,2.22,1.88,2.57.02.29-.31.42-.55.4-.35-.04-.48-.36-.67-.61-.47-.63-.97-1.23-1.42-1.88-.02,0-1.79,1.66-2.03,1.7-.3.04-.76-.21-.61-.57ZM13.55,22.65c-.37.12-.96-1.52-2.36-1.64-1.18-.1-1.89.96-2.23.76-.2-.11-.19-.6-.04-1.24.38-1.61,1.66-4.18,2.79-4.1.81.06,1.43,1.47,1.77,2.94.36,1.56.41,3.17.07,3.28Z"/></g>
+      </svg>
+      </a>
+      <p class="mobile-menu__tagline">Generate BAZILLIONS of enquiries.</p>
+    </div>
+    <section class="mobile-menu__section">
+      <h3 class="mobile-menu__section-title">Menu</h3>
+      <nav class="mobile-menu__nav">
+        <a href="#top">Home</a>
+        <a href="#rescue">How it works</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faqs">FAQs</a>
+      </nav>
+    </section>
     <section class="mobile-menu__section">
       <h3 class="mobile-menu__section-title">Get in touch</h3>
-      <p class="site-email mobile-menu__email"><a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a></p>
+      <div class="mobile-menu__contact-row">
+        <span class="mobile-menu__contact-item site-email">
+          <span class="mobile-menu__contact-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+          <a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a>
+        </span>
+        <span class="mobile-menu__contact-sep" aria-hidden="true">·</span>
+        <span class="mobile-menu__contact-item">
+          <span class="mobile-menu__contact-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+          <a href="#" id="mobile-menu-calendar-link" target="_blank" rel="noopener">Booking link</a>
+        </span>
+        <span class="mobile-menu__contact-sep" aria-hidden="true">·</span>
+        <span class="mobile-menu__contact-item">
+          <span class="mobile-menu__contact-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></span>
+          <a href="https://www.linkedin.com/in/tom-fallowfield/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        </span>
+      </div>
       <div class="mobile-menu__ctas">
         <a href="#" class="btn btn-primary" data-modal="book-call">Book a call</a>
         <a href="#" class="btn btn-secondary" data-modal="website-review">Request a free website review</a>
-        <a href="#" id="mobile-menu-calendar-link" class="mobile-menu__cal-link" target="_blank" rel="noopener">Book via calendar</a>
       </div>
     </section>
-    <section class="mobile-menu__section">
+    <section class="mobile-menu__section mobile-menu__section--free-tools">
       <h3 class="mobile-menu__section-title">Free tools</h3>
       <ul class="mobile-menu__lead-magnets">
         <li><a href="#" data-modal="lead-50things">50 Things You Can Fix on Your Website Today</a></li>
-        <li><a href="#" data-modal="lead-offboarding">The Offboarding Goldmine</a></li>
-        <li><a href="#" data-modal="lead-socialproof">The Social Proof Advantage</a></li>
+        <li><a href="#" data-modal="lead-offboarding">Offboarding Clients – A Guide</a></li>
+        <li><a href="#" data-modal="lead-socialproof">Social Proof</a></li>
       </ul>
     </section>
-    <p class="mobile-menu__linkedin"><a href="https://www.linkedin.com/in/tom-fallowfield/" target="_blank" rel="noopener noreferrer">Find us on LinkedIn</a></p>
     <p class="mobile-menu__copyright">© <span id="mobile-menu-year"></span> Vanilla Killer. All rights reserved.</p>
   </div>
 </div>
@@ -113,25 +140,34 @@
     
       <p class="hero-lead">Without a <strong>KILLER ARGUMENT</strong> why people should buy your service, you're wasting time and money getting people onto your website.</p>
 
-      <div class="hero-ctas">
-        <a href="#" id="button-book-call-hero" class="btn btn-primary" data-modal="book-call">
-          <span class="btn-text">Stop losing enquiries</span>
-          <span class="btn-tooltip" role="tooltip">Book a free discovery call</span>
-        </a>
-        <a href="#" id="button-website-review-hero" class="btn btn-secondary" data-modal="website-review">
-          <span class="btn-text">Steal our ideas!</span>
-          <span class="btn-tooltip" role="tooltip">Request a free website review</span>
-        </a>
+      <div class="hero-ctas-wrap">
+        <span class="hero-wrv-callout" aria-hidden="true">
+          <span class="hero-wrv-callout-text">Most people start here (it's free)</span>
+          <svg class="hero-wrv-callout-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 24" aria-hidden="true">
+            <path d="M30 0 Q 55 12, 50 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M46 18 L50 22 L54 17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <div class="hero-ctas">
+          <a href="#" id="button-book-call-hero" class="btn btn-primary" data-modal="book-call">
+            <span class="btn-text">Stop losing enquiries</span>
+            <span class="btn-tooltip" role="tooltip">Book a free discovery call</span>
+          </a>
+          <a href="#" id="button-website-review-hero" class="btn btn-secondary" data-modal="website-review">
+            <span class="btn-text">Steal our ideas!</span>
+            <span class="btn-tooltip" role="tooltip">Request a free website review</span>
+          </a>
+        </div>
       </div>
 
       <div class="hero-social-proof">
         <div class="avatar-stack" aria-hidden="true">
-          <span class="avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#e5e0d8" stroke="#d4cfc6"/><ellipse cx="20" cy="22" rx="7" ry="9" fill="#d4cfc6"/><circle cx="16" cy="19" r="1.2" fill="#383838"/><circle cx="24" cy="19" r="1.2" fill="#383838"/></svg></span>
-          <span class="avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#e8e3db" stroke="#d9d4cc"/><ellipse cx="20" cy="22" rx="7" ry="9" fill="#d9d4cc"/><circle cx="16" cy="19" r="1.2" fill="#383838"/><circle cx="24" cy="19" r="1.2" fill="#383838"/></svg></span>
-          <span class="avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#e0dbd3" stroke="#cfcac2"/><ellipse cx="20" cy="22" rx="7" ry="9" fill="#cfcac2"/><circle cx="16" cy="19" r="1.2" fill="#383838"/><circle cx="24" cy="19" r="1.2" fill="#383838"/></svg></span>
-          <span class="avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#ebe6de" stroke="#ddd8d0"/><ellipse cx="20" cy="22" rx="7" ry="9" fill="#ddd8d0"/><circle cx="16" cy="19" r="1.2" fill="#383838"/><circle cx="24" cy="19" r="1.2" fill="#383838"/></svg></span>
-          <span class="avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#e3ded6" stroke="#d2cdc5"/><ellipse cx="20" cy="22" rx="7" ry="9" fill="#d2cdc5"/><circle cx="16" cy="19" r="1.2" fill="#383838"/><circle cx="24" cy="19" r="1.2" fill="#383838"/></svg></span>
-          <span class="avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#e6e1d9" stroke="#d6d1c9"/><ellipse cx="20" cy="22" rx="7" ry="9" fill="#d6d1c9"/><circle cx="16" cy="19" r="1.2" fill="#383838"/><circle cx="24" cy="19" r="1.2" fill="#383838"/></svg></span>
+          <span class="avatar"><img src="images/li_mugs/1517679187609.jpg" alt="" width="36" height="36" loading="lazy" decoding="async" /></span>
+          <span class="avatar"><img src="images/li_mugs/1629831625588.jpg" alt="" width="36" height="36" loading="lazy" decoding="async" /></span>
+          <span class="avatar"><img src="images/li_mugs/1760254420414.jpg" alt="" width="36" height="36" loading="lazy" decoding="async" /></span>
+          <span class="avatar"><img src="images/li_mugs/1761904572088.jpg" alt="" width="36" height="36" loading="lazy" decoding="async" /></span>
+          <span class="avatar"><img src="images/li_mugs/1766498059940.jpg" alt="" width="36" height="36" loading="lazy" decoding="async" /></span>
+          <span class="avatar"><img src="images/li_mugs/katie.jpg" alt="" width="36" height="36" loading="lazy" decoding="async" /></span>
         </div>
         <p class="hero-social-proof-text">Join the 50+ businesses we helped in the last 12 months.</p>
       </div>
@@ -147,7 +183,16 @@
     <div class="hero-two-col">
       <div class="hero-two-col-text">
           <div class="hero-testimonial">
-      <div class="testimonial-card">
+     
+     
+            <div class="hero-guarantee">
+              <span class="hero-guarantee-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+              </span>
+              <span class="hero-guarantee-text"><strong>Performance guaranteed.</strong> All our work is backed by a 100% no-bullshit guarantee. If agreed performance targets are not met, we refine the messaging until they are.</span>
+            </div>
+     
+            <div class="testimonial-card">
         <div class="testimonial-card-header">
           <span class="testimonial-card-avatar" aria-hidden="true">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#e5e0d8" stroke="#d4cfc6"/><ellipse cx="20" cy="22" rx="7" ry="9" fill="#d4cfc6"/><circle cx="16" cy="19" r="1.2" fill="#383838"/><circle cx="24" cy="19" r="1.2" fill="#383838"/></svg>
@@ -158,15 +203,10 @@
           </div>
         </div>
         <blockquote class="testimonial testimonial-card-quote">
-          "Placeholder testimonial — replace with a short client quote that speaks to results or confidence."
+          "Placeholder testimonial – replace with a short client quote that speaks to results or confidence."
         </blockquote>
       </div>
-      <div class="hero-guarantee">
-        <span class="hero-guarantee-icon" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-        </span>
-        Performance guaranteed. All our work is backed by a 100% no-bullshit guarantee. If agreed performance targets are not met, we refine the messaging until they are.
-      </div>
+
     </div>
     
       </div>
@@ -179,7 +219,10 @@
             </div>
             <div class="mac-window-body mac-window-body--back">
               <div class="mac-window-video-thumb mac-window-video-thumb--back">
-                <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="" />
+                <picture>
+                  <source srcset="vids/vanilla-killer-hero-video-thumbnail.webp" type="image/webp" />
+                  <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="" width="560" height="315" decoding="async" loading="lazy" />
+                </picture>
                 <span class="play-icon" aria-hidden="true">▶</span>
               </div>
             </div>
@@ -197,7 +240,10 @@
             </div>
             <div class="mac-window-body">
               <button class="video-thumb mac-window-video" data-video="vids/hero-video.mp4">
-                <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
+                <picture>
+                  <source srcset="vids/vanilla-killer-hero-video-thumbnail.webp" type="image/webp" />
+                  <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" width="560" height="315" decoding="async" />
+                </picture>
                 <span class="play-icon">▶</span>
               </button>
             </div>
@@ -288,16 +334,12 @@
   </div>
 </section>
 
-<!-- TESTIMONIAL (Oakleigh) -->
+<!-- TESTIMONIAL (Mike) -->
 <section class="section-muted testimonial-section">
   <div class="container">
     <div class="testimonial-wrap">
-      <img src="images/oakleigh.jpg" alt="Oakleigh Wood" class="testimonial-avatar" />
-      <blockquote class="testimonial">
-        "The handbook Tom delivered encapsulates the entire purpose behind our operation, our values, and – most importantly – how to sell that purpose, both online and in person."
-        <br>
-        <strong>Oakleigh Wood MBA FIMI, Director, Bristol Caravans</strong>
-      </blockquote>
+      <img src="images/testimonial_mugs/mike.png" alt="Mike Hill" class="testimonial-avatar" />
+      <blockquote class="testimonial">"Vanilla Killer created language for our website which has given everyone renewed clarity about what we do. We can approach the market now with total confidence – on all channels."<br><strong>Mike Hill, CEO, Total Ticketing</strong></blockquote>
     </div>
   </div>
 </section>
@@ -309,264 +351,216 @@
 
     <p class="eyebrow">The Vanilla Killer rescue kit</p>
     <h2>Here's what we'll do to stop the bleeding</h2>
-    
 
-    <div class="rescue-block">
-      <div class="rescue-text">
-        <h2 class="rescue-title">
-          <span class="rescue-icon rescue-icon--1" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          </span>
-          First we clarify the argument
-        </h2>
-        <p class="rescue-sub">
-          Get clear on the real reason someone should choose your services.
-        </p>
-        <p>
-          We define the core argument. Who the service is for, what problem it solves, and why they should act now.
-        </p>
-        <p>
-          We carry out a detailed analysis of your competitors, define tone of voice, and brainstorm every possible objection buyers may raise to your offer.
-        </p>
-        <p>
-          The output is the very reason your business exists, distilled into a messaging handbook.
-        </p>
-      </div>
-      <div class="rescue-mac-wrap">
-        <div class="mac-window mac-window-front">
-          <div class="mac-window-titlebar">
-            <span class="mac-traffic">
-              <span class="mac-traffic-close"></span>
-              <span class="mac-traffic-min"></span>
-              <span class="mac-traffic-max"></span>
+    <div class="rescue-steps">
+      <div class="rescue-block">
+        <div class="rescue-block__head">
+          <h2 class="rescue-title">
+            <span class="rescue-icon rescue-icon--1" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
             </span>
-            <span class="mac-window-meta">First we clarify the argument</span>
-          </div>
-          <div class="mac-window-body">
-            <button class="video-thumb mac-window-video" data-video="vids/hero-video.mp4">
-              <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
-              <span class="play-icon">▶</span>
-            </button>
+            First we get to the heart of the argument
+          </h2>
+        </div>
+        <div class="rescue-text">
+          <p class="rescue-sub">Get clear on the real reason someone should choose your services.</p>
+          <p>We define the core argument: who the service is for, what problem it solves, and why they should act now. We carry out a detailed analysis of your competitors, define tone of voice, and brainstorm every possible objection buyers may raise.</p><p>The output is the very reason your business exists, distilled into a messaging handbook.</p>
+        </div>
+        <div class="rescue-mac-wrap">
+          <div class="mac-window mac-window-front">
+            <div class="mac-window-titlebar">
+              <span class="mac-traffic"><span class="mac-traffic-close"></span><span class="mac-traffic-min"></span><span class="mac-traffic-max"></span></span>
+              <span class="mac-window-meta">First we clarify the argument</span>
+            </div>
+            <div class="mac-window-body">
+              <button class="video-thumb mac-window-video" data-video="vids/hero-video.mp4">
+                <picture>
+                  <source srcset="vids/vanilla-killer-hero-video-thumbnail.webp" type="image/webp" />
+                  <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" width="560" height="315" decoding="async" loading="lazy" />
+                </picture>
+                <span class="play-icon">▶</span>
+              </button>
+            </div>
           </div>
         </div>
+      </div>
+
+      <div class="rescue-block">
+        <div class="rescue-block__head">
+          <h2 class="rescue-title">
+            <span class="rescue-icon rescue-icon--2" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+            </span>
+            Then we ask - how can we attract the RIGHT people?
+          </h2>
+        </div>
+        <div class="rescue-text">
+          <p class="rescue-sub">A great lead magnet will attract the right people by solving a problem for them.</p>
+          <p>It gives you a way to funnel people onto your site from social media and a reason to give you their email address. If you make it genuinely useful it will build a list of potential clients and give them a taste of working with you. </p><p>Follow up with an automated email sequence that moves people closer to buying.</p>
+        </div>
+        <div class="rescue-mac-wrap">
+          <div class="mac-window mac-window-front">
+            <div class="mac-window-titlebar">
+              <span class="mac-traffic"><span class="mac-traffic-close"></span><span class="mac-traffic-min"></span><span class="mac-traffic-max"></span></span>
+              <span class="mac-window-meta">Then we ask - how can we attract the RIGHT people?</span>
+            </div>
+            <div class="mac-window-body">
+              <button class="video-thumb mac-window-video" data-video="vids/hero-video.mp4">
+                <picture>
+                  <source srcset="vids/vanilla-killer-hero-video-thumbnail.webp" type="image/webp" />
+                  <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" width="560" height="315" decoding="async" loading="lazy" />
+                </picture>
+                <span class="play-icon">▶</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rescue-block">
+        <div class="rescue-block__head">
+          <h2 class="rescue-title">
+            <span class="rescue-icon rescue-icon--3" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+            </span>
+            Then we rewrite your website from top to toe
+          </h2>
+        </div>
+        <div class="rescue-text">
+          <p class="rescue-sub">Finally we put the argument to work where it matters most.</p>
+          <p>The new core message will inform a focused rewrite and restructuring of your website and LinkedIn profile.</p><p>Headlines, layout, calls to action, and social proof all considered carefully and tested for maximum conversions.</p>
+        </div>
+        <div class="rescue-mac-wrap">
+          <div class="mac-window mac-window-front">
+            <div class="mac-window-titlebar">
+              <span class="mac-traffic"><span class="mac-traffic-close"></span><span class="mac-traffic-min"></span><span class="mac-traffic-max"></span></span>
+              <span class="mac-window-meta">Then we rewrite your website</span>
+            </div>
+            <div class="mac-window-body">
+              <button class="video-thumb mac-window-video" data-video="vids/hero-video.mp4">
+                <picture>
+                  <source srcset="vids/vanilla-killer-hero-video-thumbnail.webp" type="image/webp" />
+                  <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" width="560" height="315" decoding="async" loading="lazy" />
+                </picture>
+                <span class="play-icon">▶</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- .rescue-steps -->
+    <div class="rescue-guarantee-wrap">
+      <div class="rescue-guarantee-callout">
+        <span class="rescue-guarantee-icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+        </span>
+        After deployment, we measure the effect on enquiries and conversion rate. If needed, we keep iterating the messaging until it performs properly.
       </div>
     </div>
-
-    <div class="rescue-block">
-      <div class="rescue-mac-wrap">
-        <div class="mac-window mac-window-front">
-          <div class="mac-window-titlebar">
-            <span class="mac-traffic">
-              <span class="mac-traffic-close"></span>
-              <span class="mac-traffic-min"></span>
-              <span class="mac-traffic-max"></span>
-            </span>
-            <span class="mac-window-meta">Then we attract the right people</span>
-          </div>
-          <div class="mac-window-body">
-            <button class="video-thumb mac-window-video" data-video="vids/hero-video.mp4">
-              <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
-              <span class="play-icon">▶</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="rescue-text">
-        <h2 class="rescue-title">
-          <span class="rescue-icon rescue-icon--2" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-          </span>
-          Then we attract the right people
-        </h2>
-        <p class="rescue-sub">
-            A great lead magnet will attract the right people by solving a problem for them.
-        </p>
-        <p>
-          It gives you a way to funnel people onto your site from social media. And once they're on there, it gives them a reason to give you their email address.
-        </p>
-        <p>
-          If you make it genuinely useful it will build you a list of potential clients and give them a tantalising taste of working with you.
-        </p>
-        <p>
-          Follow up with an automated email sequence that moves people closer to buying.
-        </p>
-
-
-      </div>
-    </div>
-
-    <div class="rescue-block">
-      <div class="rescue-text">
-        <h2 class="rescue-title">
-          <span class="rescue-icon rescue-icon--3" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
-          </span>
-          Then we rewrite your website – and measure performance
-        </h2>
-        <p class="rescue-sub">
-          Finally we put the argument to work where it matters most.
-        </p>
-        <p>
-          The new core message will inform a focused rewrite of your website and LinkedIn profile.
-        </p>
-        <p>
-          Headlines, structure, CTAs, and proof all aligned to the same core message.
-        </p>
-        <div class="rescue-guarantee-callout">
-          <span class="rescue-guarantee-icon" aria-hidden="true">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
-            </svg>
-          </span>
-          After deployment, we measure the effect it has on enquiries and conversion rate. If needed, we will then keep iterating the messaging until it performs properly.
-        </div>
-      </div>
-      <div class="rescue-mac-wrap">
-        <div class="mac-window mac-window-front">
-          <div class="mac-window-titlebar">
-            <span class="mac-traffic">
-              <span class="mac-traffic-close"></span>
-              <span class="mac-traffic-min"></span>
-              <span class="mac-traffic-max"></span>
-            </span>
-            <span class="mac-window-meta">Then we rewrite your website</span>
-          </div>
-          <div class="mac-window-body">
-            <button class="video-thumb mac-window-video" data-video="vids/hero-video.mp4">
-              <img src="vids/vanilla-killer-hero-video-thumbnail.png" alt="Play video" />
-              <span class="play-icon">▶</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </section>
 <!-- PRICING -->
 <section id="pricing">
   <div class="container">
 
-    <p class="eyebrow">Investment</p>
-    <h2>Our tried and tested process</h2>
-    <p class="subhead">Imagine life six months from now, if you keep doing what you're doing, vs. six months from now with help from Vanilla Killer.</p>
+    <p class="eyebrow">Pricing</p>
+    <h2>How much does it all cost? </h2>
+    <p class="subhead">Six months from now, you will have paid something. Will it be these fees, or the cost of doing nothing?</p>
     <section class="pricing-core">
       <div class="pricing-product pricing-product--core">
         <div class="pricing-panel pricing-panel--core">
           <div class="pricing-panel__left">
+            <p class="pricing-tier-eyebrow">Core service</p>
             <h2>Messaging Overhaul</h2>
-            <p class="pricing-sub">A clear argument. A focused homepage. Measurable performance.</p>
-            <p class="pricing-body">This is the core Vanilla Killer engagement. We define your argument, rewrite your homepage or one-page site, and align everything around conversion.</p>
-            <div class="pricing-guarantee">
-              <span class="pricing-guarantee-icon" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-              </span>
-              Performance guaranteed.
+            <p class="pricing-subhead">For service businesses with traffic but inconsistent enquiries</p>
+            <p class="pricing-body">We define who you serve, why you exist, and how you help, then we (re)write a one-page website or home page designed to drive enquiries. All of this is designed around one vital metric: increasing qualified enquiries.</p>
+            <div class="pricing-guarantee" role="group" aria-labelledby="guarantee-head-core">
+              <button type="button" class="pricing-guarantee-toggle" id="guarantee-head-core" aria-expanded="false" aria-controls="guarantee-detail-core">
+                <span class="pricing-guarantee-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                </span>
+                <span class="pricing-guarantee-label">Performance guarantee</span>
+                <span class="pricing-guarantee-chevron" aria-hidden="true">+</span>
+              </button>
+              <div class="pricing-guarantee-detail" id="guarantee-detail-core" aria-hidden="true">
+                <p>We agree a conversion rate target before we start, then we'll keep refining the copy and structure until that target is hit – with no additional costs. No time limit, no bullshit.</p>
+              </div>
             </div>
-            <div class="addon-price">Investment: £2,250</div>
+            <div class="addon-price">Investment: £2,250 <span class="addon-price-note">0% payment plans available</span></div>
+            <p class="pricing-delivery">Work delivered within four weeks</p>
+            <div class="pricing-delivery-cta">
+              <a href="#" class="btn btn-primary" data-modal="book-call">Book a call</a>
+            </div>
           </div>
           <div class="pricing-panel__right">
-      <ul class="feature-list pricing-features" aria-label="What's included">
+      <p class="pricing-features-section-title">Process</p>
+      <ul class="feature-list pricing-features" aria-label="Process">
         <li class="feature-item">
           <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="feature-desc-1" id="feature-btn-1">
-            <span class="feature-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998-0A4.5 4.5 0 0 0 16.5 14h-8a4.5 4.5 0 0 0-3.999 6.118Z"/></svg>
-            </span>
-            <span class="feature-title">Ideal Client Profile definition</span>
+            <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998-0A4.5 4.5 0 0 0 16.5 14h-8a4.5 4.5 0 0 0-3.999 6.118Z"/></svg></span>
+            <span class="feature-title">Ideal Client Profile (ICP) definition</span>
             <span class="feature-chevron" aria-hidden="true">+</span>
           </button>
-          <div class="feature-description" id="feature-desc-1" role="region" aria-labelledby="feature-btn-1" hidden>We define precisely who this is for and who it isn't, so your messaging speaks to someone specific rather than everyone vaguely.</div>
+          <div class="feature-description" id="feature-desc-1" role="region" aria-labelledby="feature-btn-1" hidden>Together we define precisely who this is for, and who it isn't, so your messaging speaks to a specific buyer.</div>
         </li>
         <li class="feature-item">
           <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="feature-desc-2" id="feature-btn-2">
-            <span class="feature-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg>
-            </span>
+            <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></span>
             <span class="feature-title">Deep competitor messaging analysis</span>
             <span class="feature-chevron" aria-hidden="true">+</span>
           </button>
-          <div class="feature-description" id="feature-desc-2" role="region" aria-labelledby="feature-btn-2" hidden>We analyse competitor positioning and identify gaps you can own.</div>
+          <div class="feature-description" id="feature-desc-2" role="region" aria-labelledby="feature-btn-2" hidden>We analyse the positioning and messaging of your ten closest competitors, so you can stand out from the crowd.</div>
         </li>
         <li class="feature-item">
           <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="feature-desc-3" id="feature-btn-3">
-            <span class="feature-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg>
-            </span>
-            <span class="feature-title">Objections & belief-building work</span>
+            <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg></span>
+            <span class="feature-title">Objections & hesitations</span>
             <span class="feature-chevron" aria-hidden="true">+</span>
           </button>
-          <div class="feature-description" id="feature-desc-3" role="region" aria-labelledby="feature-btn-3" hidden>We surface the hesitations buyers don't say out loud and address them directly in your messaging.</div>
+          <div class="feature-description" id="feature-desc-3" role="region" aria-labelledby="feature-btn-3" hidden>We brainstorm all possible hesitations, so we can address them directly in your messaging.</div>
         </li>
         <li class="feature-item">
           <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="feature-desc-4" id="feature-btn-4">
-            <span class="feature-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.157.166 2.26.42 3.293.775 1.087.403 2.167.965 3.29 1.47 1.125.513 2.37.922 3.61 1.25.799.197 1.593-.34 1.593-1.18 0-.778-.569-1.43-1.25-1.762a8.962 8.962 0 0 0-1.875-.124 9.72 9.72 0 0 1-.659-.139 3.001 3.001 0 0 0-1.055-5.942 2.25 2.25 0 0 0-1.48-1.323c-1.12-.472-2.312-.736-3.594-.77A8.968 8.968 0 0 0 6 3c.665 0 1.31.057 1.872.166 1.522.305 2.785.838 3.78 1.484.996.646 1.893 1.35 2.643 2.057.732.692 1.316 1.387 1.709 2.076.393.69.578 1.36.578 2.008 0 .647-.185 1.318-.578 2.008-.393.69-.977 1.385-1.709 2.077-.75.706-1.647 1.41-2.643 2.056A9.06 9.06 0 0 1 6 18.479c-.562-.109-1.207-.166-1.872-.166Z"/></svg>
-            </span>
-            <span class="feature-title">Tone of voice exercises</span>
+            <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.157.166 2.26.42 3.293.775 1.087.403 2.167.965 3.29 1.47 1.125.513 2.37.922 3.61 1.25.799.197 1.593-.34 1.593-1.18 0-.778-.569-1.43-1.25-1.762a8.962 8.962 0 0 0-1.875-.124 9.72 9.72 0 0 1-.659-.139 3.001 3.001 0 0 0-1.055-5.942 2.25 2.25 0 0 0-1.48-1.323c-1.12-.472-2.312-.736-3.594-.77A8.968 8.968 0 0 0 6 3c.665 0 1.31.057 1.872.166 1.522.305 2.785.838 3.78 1.484.996.646 1.893 1.35 2.643 2.057.732.692 1.316 1.387 1.709 2.076.393.69.578 1.36.578 2.008 0 .647-.185 1.318-.578 2.008-.393.69-.977 1.385-1.709 2.077-.75.706-1.647 1.41-2.643 2.056A9.06 9.06 0 0 1 6 18.479c-.562-.109-1.207-.166-1.872-.166Z"/></svg></span>
+            <span class="feature-title">Strategic Tone of Voice (TOV) exercises</span>
             <span class="feature-chevron" aria-hidden="true">+</span>
           </button>
-          <div class="feature-description" id="feature-desc-4" role="region" aria-labelledby="feature-btn-4" hidden>We refine how your business sounds so it feels consistent and deliberate.</div>
+          <div class="feature-description" id="feature-desc-4" role="region" aria-labelledby="feature-btn-4" hidden>We get to the bottom of the way your business uses language, so it feels authentic, consistent, and deliberate.</div>
         </li>
         <li class="feature-item">
           <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="feature-desc-5" id="feature-btn-5">
-            <span class="feature-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5v-7.5H8.25v7.5Zm12 0H8.25v-7.5h7.5v7.5Z"/></svg>
-            </span>
+            <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.563.563 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"/></svg></span>
+            <span class="feature-title">Social proof collection</span>
+            <span class="feature-chevron" aria-hidden="true">+</span>
+          </button>
+          <div class="feature-description" id="feature-desc-5" role="region" aria-labelledby="feature-btn-5" hidden>We will help you round up the most compelling testimonials and proof items. If you need more, we can consult on the best ways to obtain them.</div>
+        </li>
+      </ul>
+      <p class="pricing-features-section-title">Deliverables</p>
+      <ul class="feature-list pricing-features" aria-label="Deliverables">
+        <li class="feature-item">
+          <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="feature-desc-6" id="feature-btn-6">
+            <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg></span>
             <span class="feature-title">Core Messaging Handbook</span>
             <span class="feature-chevron" aria-hidden="true">+</span>
           </button>
-          <div class="feature-description" id="feature-desc-5" role="region" aria-labelledby="feature-btn-5" hidden>A structured document capturing your positioning, argument, and messaging framework.</div>
-        </li>
-        <li class="feature-item">
-          <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="feature-desc-6" id="feature-btn-6">
-            <span class="feature-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"/></svg>
-            </span>
-            <span class="feature-title">One-page website (or home page) rewrite</span>
-            <span class="feature-chevron" aria-hidden="true">+</span>
-          </button>
-          <div class="feature-description" id="feature-desc-6" role="region" aria-labelledby="feature-btn-6" hidden>An entire one-page website (like this one) rewritten and structured around one persuasive idea, with aligned tone of voice, social proof, and focused calls to action.</div>
-
+          <div class="feature-description" id="feature-desc-6" role="region" aria-labelledby="feature-btn-6" hidden>A structured document capturing your positioning, argument, and messaging framework.</div>
         </li>
         <li class="feature-item">
           <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="feature-desc-7" id="feature-btn-7">
-            <span class="feature-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"/></svg>
-            </span>
-            <span class="feature-title">Conversion rate tracking</span>
+            <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"/></svg></span>
+            <span class="feature-title">Draft of one-page website (or home page)</span>
             <span class="feature-chevron" aria-hidden="true">+</span>
           </button>
-          <div class="feature-description" id="feature-desc-7" role="region" aria-labelledby="feature-btn-7" hidden>We define what success looks like and measure performance against agreed targets.</div>
+          <div class="feature-description" id="feature-desc-7" role="region" aria-labelledby="feature-btn-7" hidden>An entire one-page website (like this one) rewritten and structured around one persuasive idea, written in the right tone, with social proof in the right places, and focused calls to action.</div>
         </li>
         <li class="feature-item">
           <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="feature-desc-8" id="feature-btn-8">
-            <span class="feature-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"/></svg>
-            </span>
-            <span class="feature-title">LinkedIn Business Page alignment</span>
+            <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z"/></svg></span>
+            <span class="feature-title">LinkedIn profile rewrite</span>
             <span class="feature-chevron" aria-hidden="true">+</span>
           </button>
-          <div class="feature-description" id="feature-desc-8" role="region" aria-labelledby="feature-btn-8" hidden>Messaging aligned across your website and LinkedIn presence.</div>
-        </li>
-        <li class="feature-item">
-          <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="feature-desc-9" id="feature-btn-9">
-            <span class="feature-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.563.563 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"/></svg>
-            </span>
-            <span class="feature-title">Social proof integration</span>
-            <span class="feature-chevron" aria-hidden="true">+</span>
-          </button>
-          <div class="feature-description" id="feature-desc-9" role="region" aria-labelledby="feature-btn-9" hidden>Testimonials and proof structured strategically to reinforce belief.</div>
-        </li>
-        <li class="feature-item">
-          <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="feature-desc-10" id="feature-btn-10">
-            <span class="feature-icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-            </span>
-            <span class="feature-title">Performance guarantee</span>
-            <span class="feature-chevron" aria-hidden="true">+</span>
-          </button>
-          <div class="feature-description" id="feature-desc-10" role="region" aria-labelledby="feature-btn-10" hidden>If agreed conversion targets are not met, we refine the messaging until they are.</div>
+          <div class="feature-description" id="feature-desc-8" role="region" aria-labelledby="feature-btn-8" hidden>Your new messaging will be consistent between your website and LinkedIn presence.</div>
         </li>
       </ul>
           </div>
@@ -576,66 +570,86 @@
       <div class="pricing-addons">
         <div class="addon-panel">
           <div class="addon-panel__left">
-            <p class="addon-optional">Optional</p>
+            <p class="addon-optional pricing-tier-eyebrow">Optional Add-On</p>
             <h4 class="addon-title">Lead Magnet System</h4>
-            <p class="addon-copy">Give people a reason to visit your site. Build an email list. Nurture leads automatically.</p>
-            <div class="pricing-guarantee">
-              <span class="pricing-guarantee-icon" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-              </span>
-              Performance guaranteed.
+            <p class="pricing-subhead">Designed to build long-term pipeline, rather than chase one-off sales</p>
+            <p class="addon-copy">Continuously attract potential clients to your website and give them a reason to share their email address. Demonstrate your authority, then nurture them with valuable follow-up and a gentle pitch. The entire system is automated, so it runs with minimal ongoing input from you.</p>
+            <div class="pricing-guarantee" role="group" aria-labelledby="guarantee-head-leadmagnet">
+              <button type="button" class="pricing-guarantee-toggle" id="guarantee-head-leadmagnet" aria-expanded="false" aria-controls="guarantee-detail-leadmagnet">
+                <span class="pricing-guarantee-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                </span>
+                <span class="pricing-guarantee-label">Performance guarantee</span>
+                <span class="pricing-guarantee-chevron" aria-hidden="true">+</span>
+              </button>
+              <div class="pricing-guarantee-detail" id="guarantee-detail-leadmagnet" aria-hidden="true">
+                <p>We remain involved until your lead magnet reaches 50 downloads. We review data, optimise the landing page and strengthen follow-up until the pipeline is behaving like a real acquisition system. It's not finished until it's doing its job.</p>
+              </div>
             </div>
-            <div class="addon-price">Additional: £1,000</div>
+            <div class="addon-price">Additional: £1,000 <span class="addon-price-note">0% payment plans available</span></div>
+            <p class="pricing-delivery">Delivered: <strong>Additional two weeks</strong></p>
           </div>
           <div class="addon-panel__right">
-            <ul class="feature-list pricing-features addon-features" aria-label="Lead Magnet System includes">
+            <p class="pricing-features-section-title">Process</p>
+            <ul class="feature-list pricing-features addon-features" aria-label="Lead Magnet Process">
               <li class="feature-item">
                 <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon1-desc-1" id="addon1-btn-1">
                   <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"/></svg></span>
-                  <span class="feature-title">Lead magnet idea & positioning</span>
+                  <span class="feature-title">Ideation & positioning</span>
                   <span class="feature-chevron" aria-hidden="true">+</span>
                 </button>
-                <div class="feature-description" id="addon1-desc-1" role="region" aria-labelledby="addon1-btn-1" hidden>We define a single, compelling lead magnet that fits your audience and your offer—so it attracts the right people and sets up the sale.</div>
+                <div class="feature-description" id="addon1-desc-1" role="region" aria-labelledby="addon1-btn-1" hidden>We define a compelling lead magnet that solves a problem for your audience, so it attracts the right people and moves them towards the sale.</div>
               </li>
               <li class="feature-item">
                 <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon1-desc-2" id="addon1-btn-2">
-                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5v-7.5H8.25v7.5Zm12 0H8.25v-7.5h7.5v7.5Z"/></svg></span>
-                  <span class="feature-title">Structure & copy</span>
+                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.227-.276.318-.659.258-1.02a7.448 7.448 0 0 1-.428-2.9c0-2.58 2.057-4.67 4.6-4.67s4.6 2.09 4.6 4.67c0 .862-.169 1.69-.428 2.9-.06.361-.031.744.258 1.02l3.03 2.496M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l5.653-4.655"/></svg></span>
+                  <span class="feature-title">Format selection</span>
                   <span class="feature-chevron" aria-hidden="true">+</span>
                 </button>
-                <div class="feature-description" id="addon1-desc-2" role="region" aria-labelledby="addon1-btn-2" hidden>The lead magnet itself—structured for clarity and written so it delivers real value and positions you as the obvious next step.</div>
+                <div class="feature-description" id="addon1-desc-2" role="region" aria-labelledby="addon1-btn-2" hidden>Should it be a questionnaire, a document, a video, or an email course? Each will appeal to a different audience – we will help you select the best format.</div>
               </li>
+            </ul>
+            <p class="pricing-features-section-title">Deliverables</p>
+            <ul class="feature-list pricing-features addon-features" aria-label="Lead Magnet Deliverables">
               <li class="feature-item">
                 <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon1-desc-3" id="addon1-btn-3">
-                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"/></svg></span>
-                  <span class="feature-title">Landing page copy</span>
+                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5v-7.5H8.25v7.5Zm12 0H8.25v-7.5h7.5v7.5Z"/></svg></span>
+                  <span class="feature-title">The lead magnet copy</span>
                   <span class="feature-chevron" aria-hidden="true">+</span>
                 </button>
-                <div class="feature-description" id="addon1-desc-3" role="region" aria-labelledby="addon1-btn-3" hidden>Conversion-focused copy for the page where visitors exchange their email for the lead magnet—clear benefit, minimal friction.</div>
+                <div class="feature-description" id="addon1-desc-3" role="region" aria-labelledby="addon1-btn-3" hidden>The lead magnet itself, structured and written so it delivers real value, projects your expertise, and positions you as the obvious next step.</div>
               </li>
               <li class="feature-item">
                 <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon1-desc-4" id="addon1-btn-4">
-                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg></span>
-                  <span class="feature-title">Welcome email</span>
+                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"/></svg></span>
+                  <span class="feature-title">A landing page for the lead magnet</span>
                   <span class="feature-chevron" aria-hidden="true">+</span>
                 </button>
-                <div class="feature-description" id="addon1-desc-4" role="region" aria-labelledby="addon1-btn-4" hidden>The first email they receive—thanks them, delivers the lead magnet, and sets expectations for what comes next.</div>
+                <div class="feature-description" id="addon1-desc-4" role="region" aria-labelledby="addon1-btn-4" hidden>Just because it's free doesn't mean it doesn't need to be sold. A good landing page explains the benefits of the item, displays social proof, and makes the transaction possible with minimal friction.</div>
               </li>
               <li class="feature-item">
                 <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon1-desc-5" id="addon1-btn-5">
-                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.86m-19.5 0V6a2.25 2.25 0 0 1 2.25-2.25h15A2.25 2.25 0 0 1 21.75 6v7.5m-19.5 0h19.5"/></svg></span>
-                  <span class="feature-title">5-email follow-up sequence</span>
+                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/></svg></span>
+                  <span class="feature-title">A welcome email</span>
                   <span class="feature-chevron" aria-hidden="true">+</span>
                 </button>
-                <div class="feature-description" id="addon1-desc-5" role="region" aria-labelledby="addon1-btn-5" hidden>A short automated sequence that nurtures leads with useful content and gentle prompts toward a call or next step.</div>
+                <div class="feature-description" id="addon1-desc-5" role="region" aria-labelledby="addon1-btn-5" hidden>The first email they receive thanks them, delivers the lead magnet, and sets expectations for what comes next.</div>
               </li>
               <li class="feature-item">
                 <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon1-desc-6" id="addon1-btn-6">
-                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg></span>
-                  <span class="feature-title">Measurement plan</span>
+                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.86m-19.5 0V6a2.25 2.25 0 0 1 2.25-2.25h15A2.25 2.25 0 0 1 21.75 6v7.5m-19.5 0h19.5"/></svg></span>
+                  <span class="feature-title">A five-part follow-up email sequence</span>
                   <span class="feature-chevron" aria-hidden="true">+</span>
                 </button>
-                <div class="feature-description" id="addon1-desc-6" role="region" aria-labelledby="addon1-btn-6" hidden>We define what to track—downloads, open rates, replies—and how to use the data to improve results over time.</div>
+                <div class="feature-description" id="addon1-desc-6" role="region" aria-labelledby="addon1-btn-6" hidden>An automated sequence that nurtures leads with useful content (while you sleep), and gently prompts them towards a sales call.</div>
+              </li>
+              <li class="feature-item">
+                <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon1-desc-7" id="addon1-btn-7">
+                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 1 1 0-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783C10.084 19.217 8.936 19.5 7.5 19.5c-2.485 0-4.5-4.03-4.5-9S5.015 1.5 7.5 1.5c1.436 0 2.584.283 3.334.84.401.891.732 1.821.985 2.783m0 9.18c-.688.06-1.386.09-2.09.09H7.5a4.5 4.5 0 0 1 0-9h.75c.704 0 1.402.03 2.09.09m0-9.18c-.253-.962-.584-1.892-.985-2.783C4.916 4.783 6.064 4.5 7.5 4.5c2.485 0 4.5 4.03 4.5 9s-2.015 9-4.5 9c-1.436 0-2.584-.283-3.334-.84a11.666 11.666 0 0 1-.985-2.783m0 9.18c.253.962.584 1.892.985 2.783.75.557 1.898.84 3.335.84 2.485 0 4.5-4.03 4.5-9s-2.015-9-4.5-9c-1.437 0-2.584.283-3.334.84a11.666 11.666 0 0 0-.985 2.783"/></svg></span>
+                  <span class="feature-title">20 social media posts to promote your new lead magnet</span>
+                  <span class="feature-chevron" aria-hidden="true">+</span>
+                </button>
+                <div class="feature-description" id="addon1-desc-7" role="region" aria-labelledby="addon1-btn-7" hidden>Titles, hooks, outlines, and CTAs for 20 social media posts to get attention and promote the lead magnet to the right people.</div>
               </li>
             </ul>
           </div>
@@ -643,42 +657,36 @@
 
         <div class="addon-panel">
           <div class="addon-panel__left">
-            <p class="addon-optional">Optional</p>
+            <p class="addon-optional pricing-tier-eyebrow">Optional Add-On</p>
             <h4 class="addon-title">Multi-Page Expansion</h4>
-            <p class="addon-copy">Extend your core argument across up to five service or sector pages.</p>
-            <div class="pricing-guarantee">
-              <span class="pricing-guarantee-icon" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
-              </span>
-              Performance guaranteed.
+            <p class="pricing-subhead">For more complex businesses with multiple services or market sectors</p>
+            <p class="addon-copy">We expand your core argument across up to five additional pages. Service pages are often overlooked or hastily written, but done right these pages create demand for your most profitable activities.</p>
+            <div class="pricing-guarantee" role="group" aria-labelledby="guarantee-head-multipage">
+              <button type="button" class="pricing-guarantee-toggle" id="guarantee-head-multipage" aria-expanded="false" aria-controls="guarantee-detail-multipage">
+                <span class="pricing-guarantee-icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                </span>
+                <span class="pricing-guarantee-label">Performance guarantee</span>
+                <span class="pricing-guarantee-chevron" aria-hidden="true">+</span>
+              </button>
+              <div class="pricing-guarantee-detail" id="guarantee-detail-multipage" aria-hidden="true">
+                <p>We track conversion and engagement  performance of every additional page and adjust the messaging tactics where needed, so you can be confident each page is pulling its weight.</p>
+              </div>
             </div>
-            <div class="addon-price">Additional: £1,500</div>
+            <div class="addon-price">Additional: £1,750</div>
+            <p class="pricing-delivery">Delivered: <strong>Additional two weeks</strong></p>
           </div>
           <div class="addon-panel__right">
-            <ul class="feature-list pricing-features addon-features" aria-label="Multi-Page Expansion includes">
-              <li class="feature-item">
-                <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon2-desc-1" id="addon2-btn-1">
-                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625a1.125 1.125 0 0 0-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span>
-                  <span class="feature-title">Up to 5 additional pages</span>
-                  <span class="feature-chevron" aria-hidden="true">+</span>
-                </button>
-                <div class="feature-description" id="addon2-desc-1" role="region" aria-labelledby="addon2-btn-1" hidden>Service or sector pages that extend your core message—each page focused on one audience or offer, all aligned to the same argument.</div>
-              </li>
-              <li class="feature-item">
-                <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon2-desc-2" id="addon2-btn-2">
-                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg></span>
-                  <span class="feature-title">Aligned messaging structure</span>
-                  <span class="feature-chevron" aria-hidden="true">+</span>
-                </button>
-                <div class="feature-description" id="addon2-desc-2" role="region" aria-labelledby="addon2-btn-2" hidden>Each page uses the same messaging framework—headlines, proof, and CTAs that feel like one coherent story across the site.</div>
-              </li>
+ 
+            <p class="pricing-features-section-title">Deliverables</p>
+            <ul class="feature-list pricing-features addon-features" aria-label="Multi-Page Deliverables">
               <li class="feature-item">
                 <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon2-desc-3" id="addon2-btn-3">
-                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 0 1-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 1-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 1-3 0m-9.75 0h9.75"/></svg></span>
-                  <span class="feature-title">Service-specific positioning</span>
+                  <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625a1.125 1.125 0 0 0-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span>
+                  <span class="feature-title">Messaging and copy for up to five additional pages</span>
                   <span class="feature-chevron" aria-hidden="true">+</span>
                 </button>
-                <div class="feature-description" id="addon2-desc-3" role="region" aria-labelledby="addon2-btn-3" hidden>Messaging tailored to each service or sector—so a multi-offer business speaks clearly to each audience without sounding generic.</div>
+                <div class="feature-description" id="addon2-desc-3" role="region" aria-labelledby="addon2-btn-3" hidden>Service or sector pages that extend your core message – each page focused on one audience or offer, all aligned to the same argument.</div>
               </li>
               <li class="feature-item">
                 <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon2-desc-4" id="addon2-btn-4">
@@ -686,36 +694,58 @@
                   <span class="feature-title">Conversion-focused layout</span>
                   <span class="feature-chevron" aria-hidden="true">+</span>
                 </button>
-                <div class="feature-description" id="addon2-desc-4" role="region" aria-labelledby="addon2-btn-4" hidden>Structure and hierarchy designed to move readers toward one clear action per page—no confusion, no dead ends.</div>
+                <div class="feature-description" id="addon2-desc-4" role="region" aria-labelledby="addon2-btn-4" hidden>Structure and hierarchy designed to move readers toward one clear action per page – no confusion, no dead ends.</div>
               </li>
               <li class="feature-item">
                 <button type="button" class="feature-toggle" aria-expanded="false" aria-controls="addon2-desc-5" id="addon2-btn-5">
                   <span class="feature-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.563.563 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"/></svg></span>
-                  <span class="feature-title">Consistent proof integration</span>
+                  <span class="feature-title">Social proof integration</span>
                   <span class="feature-chevron" aria-hidden="true">+</span>
                 </button>
-                <div class="feature-description" id="addon2-desc-5" role="region" aria-labelledby="addon2-btn-5" hidden>Testimonials and case evidence placed where they have the most impact—so every page builds belief in a consistent way.</div>
+                <div class="feature-description" id="addon2-desc-5" role="region" aria-labelledby="addon2-btn-5" hidden>Testimonials and case evidence specific to the service in question, placed where they have the most impact. Every page creates demand in a consistent way.</div>
               </li>
             </ul>
+          </div>
+        </div>
+
+        <div class="addon-panel addon-panel--deployment">
+          <div class="addon-panel__left">
+            <p class="addon-optional pricing-tier-eyebrow">Optional Add-On</p>
+            <h4 class="addon-title">Deployment</h4>
+            <p class="addon-price">£POA</p>
+          </div>
+          <div class="addon-panel__right addon-panel__right--copy-only">
+            <p class="addon-copy">If you have a CMS, you can probably do this yourself, but if you prefer we would be delighted to assist.</p>
+            <p class="addon-copy">We can deploy your new messaging onto your website. Our dev team is experienced in multiple website platforms including Webflow, Framer, Wix, Squarespace, Shopify, Mailchimp, ConvertKit, HubSpot, WordPress, Drupal, Laravel, and even Joomla. Just give details and ask us for a quote.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <div class="imagine-ctas">
-      <a href="#" id="button-book-call-imagine-1" class="btn btn-primary" data-modal="book-call">Let's grow your business</a>
-      <a href="#" id="button-website-review-imagine-1" class="btn btn-secondary" data-modal="website-review">Request a free website review</a>
+    <div class="imagine-ctas cta-pair">
+      <a href="#" id="button-book-call-imagine-1" class="btn btn-primary" data-modal="book-call">
+        <span class="btn-text">Let's grow your business</span>
+        <span class="btn-tooltip" role="tooltip">Book a free discovery call</span>
+      </a>
+      <a href="#" id="button-website-review-imagine-1" class="btn btn-secondary" data-modal="website-review">
+        <span class="btn-text">Request a free website review</span>
+        <span class="btn-tooltip" role="tooltip">Request a free website review</span>
+      </a>
     </div>
 
   </div>
 </section>
 
-<!-- TESTIMONIAL (2) -->
+<!-- TESTIMONIAL (Oakleigh) -->
 <section class="section-muted testimonial-section" id="testimonial-2">
   <div class="container">
     <div class="testimonial-wrap">
-      <img src="images/mike.png" alt="Mike Hill" class="testimonial-avatar" />
-      <blockquote class="testimonial">“Vanilla Killer created language for our website which has given everyone renewed clarity about what we do. We can approach the market now with total confidence — on all channels.”<br><strong>Mike Hill, CEO, Total Ticketing</strong></blockquote>
+      <img src="images/testimonial_mugs/oakleigh.jpg" alt="Oakleigh Wood" class="testimonial-avatar" />
+      <blockquote class="testimonial">
+        "The handbook Tom delivered encapsulates the entire purpose behind our operation, our values, and – most importantly – how to sell that purpose, both online and in person."
+        <br>
+        <strong>Oakleigh Wood MBA FIMI, Director, Bristol Caravans</strong>
+      </blockquote>
     </div>
   </div>
 </section>
@@ -725,7 +755,7 @@
   <div class="container">
 
     <p class="eyebrow">Your guide</p>
-    <h2>About Tom Fallowfield</h2>
+    <h2>Tom Fallowfield</h2>
 
     <div style="display: grid; grid-template-columns: 260px 1fr; gap: 40px; align-items: start; margin-top: 36px;">
 
@@ -737,21 +767,20 @@
 
       <div>
         <p>
-          After graduating philosophy from Durham, Tom spent 25 fairly unhappy years as a generalist web designer, doing what clients told him to, and building websites which looked… like websites.
+          Like all philosophy graduates, Tom became a web designer and spent 25 years as a generalist, doing what clients told him to and endlessly making their logos bigger.
         </p>
 
         <p>
-          Then came a blinding realisation: we have been doing this wrong! Pretty design is not the central issue. Most small businesses exist with very little thought given to the most important question of all, why on earth should anyone buy their stuff?
+          But in 2024 came a blinding realisation: we're doing this wrong! All of us. Design is not the central issue. Most founders are so busy they forget to think about the most important question of all – why on earth SHOULD anyone buy their services?
         </p>
-
         <p>
-          Vanilla Killer came into being to fix this, by helping businesses step outside their own thinking and construct a clear, logical argument for why they deserve to win.
+          Vanilla Killer exists to address this, to push back the tide of vacuous website copy and help businesses construct a clear, logical argument that will persuade leads to become clients.
         </p>
 
         <p>
           These days Tom can be found on 
           <a href="https://www.linkedin.com/in/tom-fallowfield/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          talking endlessly about how to improve your messaging.
+          posting content about how to improve your messaging. Come and say hi! 👋
         </p>
       </div>
 
@@ -772,7 +801,7 @@
         <span>+</span>
       </button>
       <div class="faq-panel">
-        <p>This one is just a little joke.</p>
+        <p>This is a joke.</p>
       </div>
     </div>
 
@@ -795,7 +824,7 @@
       </button>
       <div class="faq-panel">
         <p>Don't beat yourself up. It's not your fault. As I always say, "You can't read the label from inside the jar." When you're living and breathing your own business, it's almost impossible to get the necessary perspective.</p>
-        <p>Writing this site – which I'm doing right now - was actually extremely difficult and took me much longer than expected.</p>
+        <p>Writing this site – which I'm doing right now – is actually extremely difficult! It's taking me much longer than expected. (Yours will be easy for me.) </p>
       </div>
     </div>
 
@@ -859,24 +888,24 @@
 <!-- RESOURCES -->
 <section id="resources">
   <div class="container">
-    <p class="eyebrow">Free Tools</p>
+    <p class="eyebrow">Free tools</p>
     <h2>If you want to do it yourself, this might help.</h2>
     <p class="subhead">The following tools will help you tighten your argument and clarify your value.</p>
 
     <div class="resources-grid">
       <a href="#" id="button-lead-50things-resources" class="resource-card" data-modal="lead-50things">
         <h3>50 Things You Can Fix on Your Website Today</h3>
-        <p>A practical checklist to help you spot weak messaging, missed conversion opportunities, and unclear positioning. Use it to stress-test your homepage, sharpen your offer, and increase enquiries without touching your ad budget.</p>
-        <span class="btn btn-primary">Download the Checklist</span>
+        <p>A practical checklist to help you spot weak messaging, missed conversion opportunities, and unclear positioning. </p><p>Use it to stress-test your homepage, sharpen your offer, and increase enquiries without touching your ad budget.</p>
+        <span class="btn btn-secondary">Download the Checklist</span>
       </a>
 
       <a href="#" id="button-lead-offboarding-resources" class="resource-card" data-modal="lead-offboarding">
-        <h3>The Offboarding Goldmine</h3>
-        <p>Most businesses treat client offboarding as admin. It is actually a research lab. This guide shows you how to extract testimonials, sharpen your messaging, surface objections, and unlock referrals before the relationship closes.</p>
-        <span class="btn btn-primary">Get the Offboarding Guide</span>
+        <h3>Offboarding Clients - A Guide</h3>
+        <p>Most businesses treat client offboarding as admin. It is actually a goldmine.</p><p>This detailed guide shows you how to extract testimonials, sharpen your messaging, surface objections, and unlock referrals before the relationship closes.</p>
+        <span class="btn btn-secondary">Get the Offboarding Guide</span>
       </a>
 
-      <a href="#" id="button-lead-socialproof-resources" class="resource-card" data-modal="lead-socialproof">
+      <a href="#" id="button-lead-socialproof-resources" class="resource-card resource-card--hidden" data-modal="lead-socialproof">
         <h3>The Social Proof Advantage</h3>
         <p>A short email course on how to collect, shape, and deploy social proof so it actually persuades. Learn how to turn vague praise into belief-shifting evidence that moves people from sceptical to ready.</p>
         <span class="btn btn-primary">Join the Email Course</span>
@@ -888,28 +917,37 @@
 <!-- HOW IT FEELS -->
 <section class="section-muted" id="how-it-feels">
   <div class="container">
-    <h2>Imagine how good it would feel to have great messaging</h2>
+    <h2>How great it would feel to have effective messaging?</h2>
 
     <div class="feels-grid">
       <div class="feels-card">
+        <span class="feels-card-icon feels-card-icon--1" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></span>
         <h3>You’re proud to send people to your site</h3>
-        <p>It finally reflects the quality of your work — and so does its conversion rate.</p>
+        <p>It finally reflects the quality of your work – and so does its conversion rate.</p>
       </div>
 
       <div class="feels-card">
+        <span class="feels-card-icon feels-card-icon--2" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>
         <h3>You sound clear and confident, everywhere</h3>
-        <p>On calls, on socials, in outreach — you know what to say and how to say it. You’re excited to talk about what you do!</p>
+        <p>On calls, on socials, in outreach – you know what to say and how to say it. You’re excited to talk about what you do!</p>
       </div>
 
       <div class="feels-card">
+        <span class="feels-card-icon feels-card-icon--3" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v10c0 4 12 4 12 0V4"/></svg></span>
         <h3>You’ve got a lead magnet you actually want to share</h3>
-        <p>It’s valuable, and aligned with your offer. It gives people a reason to visit your site — and gives you a reason to start more conversations.</p>
+        <p>It’s valuable, and aligned with your offer. It gives people a reason to visit your site – and gives you a reason to start more conversations.</p>
       </div>
     </div>
 
-    <div class="imagine-ctas">
-      <a href="#" id="button-book-call-imagine-2" class="btn btn-primary" data-modal="book-call">Let's grow your business</a>
-      <a href="#" id="button-website-review-imagine-2" class="btn btn-secondary" data-modal="website-review">Request a free website review</a>
+    <div class="imagine-ctas cta-pair">
+      <a href="#" id="button-book-call-imagine-2" class="btn btn-primary" data-modal="book-call">
+        <span class="btn-text">Let's grow your business</span>
+        <span class="btn-tooltip" role="tooltip">Book a free discovery call</span>
+      </a>
+      <a href="#" id="button-website-review-imagine-2" class="btn btn-secondary" data-modal="website-review">
+        <span class="btn-text">Request a free website review</span>
+        <span class="btn-tooltip" role="tooltip">Request a free website review</span>
+      </a>
     </div>
   </div>
 </section>
@@ -918,7 +956,7 @@
 <section class="section-muted testimonial-section">
   <div class="container">
     <div class="testimonial-wrap">
-      <img src="images/charlie.jpg" alt="Charlie Mulraine" class="testimonial-avatar" />
+      <img src="images/testimonial_mugs/charlie.jpg" alt="Charlie Mulraine" class="testimonial-avatar" />
       <blockquote class="testimonial">
         "The self-proclaimed Vanilla Killer took me from feeling stuck with my marketing and how to present myself to having a shiny new website complete with a lead magnet – and now feeling very confident about taking my business to the next stages.
         <br><br>
@@ -979,24 +1017,32 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
 
-    <!-- Panel: Book a call -->
+    <!-- Panel: Book a call (2-col desktop: left = title/blurb/details/testimonial, right = form; 1-col mobile: form above testimonial) -->
     <div class="app-modal__panel" data-panel="book-call" aria-hidden="true">
       <div class="app-modal__two-col app-modal__two-col--book-call">
+        <p class="app-modal__eyebrow">Let's talk</p>
+        <h2 class="app-modal__title" id="app-modal-title">Let's find out if we can help</h2>
         <div class="app-modal__two-col-left">
-          <p class="app-modal__eyebrow">Let's talk</p>
-          <h2 class="app-modal__title" id="app-modal-title">Book a call</h2>
-          <p class="app-modal__blurb">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-          <hr class="app-modal__rule" />
-          <p class="app-modal__contact-info">
-            <span class="site-email"><a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a><span class="app-modal__contact-sep">·</span></span>
-            <a href="https://calendar.app.google/8jiSEYPb3YYouyXq9" id="app-modal-calendar-link" target="_blank" rel="noopener">Book via calendar</a>
-          </p>
-          <hr class="app-modal__rule" />
-          <div class="app-modal__book-call-testimonial">
-            <img src="images/charlie.jpg" alt="" class="app-modal__testimonial-avatar" />
-            <p class="app-modal__testimonial-name">Charlie Mulraine</p>
-            <p class="app-modal__testimonial-org">Career Coach</p>
-            <blockquote class="app-modal__testimonial-quote">"The self-proclaimed Vanilla Killer took me from feeling stuck with my marketing and how to present myself to having a shiny new website complete with a lead magnet – and now feeling very confident about taking my business to the next stages. I highly recommend working with him and his killer messaging service."</blockquote>
+          <p class="app-modal__blurb">Drop us a line – we'll discuss your situation and decide whether Vanilla Killer can help you get BAZILLIONS of leads.</p>
+          <div class="app-modal__contact-info">
+            <span class="app-modal__contact-item">
+              <span class="app-modal__contact-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+              <a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a>
+            </span>
+            <span class="app-modal__contact-item">
+              <span class="app-modal__contact-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+              <a href="https://calendar.app.google/8jiSEYPb3YYouyXq9" id="app-modal-calendar-link" target="_blank" rel="noopener">Book via calendar</a>
+            </span>
+          </div>
+          <div class="app-modal__testimonial-card">
+            <div class="app-modal__book-call-testimonial">
+              <img src="images/testimonial_mugs/charlie.jpg" alt="" class="app-modal__testimonial-avatar" />
+              <div class="app-modal__testimonial-heading">
+                <p class="app-modal__testimonial-name">Charlie Mulraine</p>
+                <p class="app-modal__testimonial-org">Career Coach</p>
+              </div>
+              <blockquote class="app-modal__testimonial-quote">"The self-proclaimed Vanilla Killer took me from feeling stuck with my marketing and how to present myself to having a shiny new website complete with a lead magnet – and now feeling very confident about taking my business to the next stages. I highly recommend working with him and his killer messaging service."</blockquote>
+            </div>
           </div>
         </div>
         <div class="app-modal__two-col-right app-modal__book-call-form-col">
@@ -1021,7 +1067,7 @@
                   <p class="error-message" id="book-call-website-error"></p>
                 </div>
                 <div class="form-group">
-                  <label for="book-call-linkedin">LinkedIn profile URL</label>
+                  <label for="book-call-linkedin">LinkedIn</label>
                   <input type="url" id="book-call-linkedin" name="linkedin_url" placeholder="https://linkedin.com/in/yourprofile" aria-describedby="book-call-linkedin-error" />
                   <p class="error-message" id="book-call-linkedin-error"></p>
                 </div>
@@ -1045,19 +1091,22 @@
     <!-- Panel: Website review (form) -->
     <div class="app-modal__panel" data-panel="website-review" aria-hidden="true">
       <div class="app-modal__two-col">
+        <p class="app-modal__eyebrow">Free value - no strings attached</p>
+        <h2 class="app-modal__title">Request a website review</h2>
         <div class="app-modal__two-col-left">
-          <p class="app-modal__eyebrow">Steal our ideas for free</p>
-          <h2 class="app-modal__title">Request website review video</h2>
-          <p class="app-modal__blurb">Share your details and we'll send you a short, personalised review of your website – with clear ideas on how to improve your messaging and conversion.</p>
+          <p class="app-modal__blurb">
+            If you have a website, send us the details and we'll send you a free review – a custom Loom video with clear ideas on how to improve your messaging and conversions.</p>
+          <div class="app-modal__testimonial-card">
           <div class="app-modal__testimonials">
             <div class="app-modal__testimonial-item">
-              <img src="images/charlie.jpg" alt="" class="app-modal__testimonial-avatar" />
+              <img src="images/testimonial_mugs/faben.jpg" alt="" class="app-modal__testimonial-avatar" />
               <div class="app-modal__testimonial-content">
-                <p class="app-modal__testimonial-name">Charlie Mulraine</p>
-                <p class="app-modal__testimonial-org">Career Coach</p>
-                <blockquote class="app-modal__testimonial-quote">"The self-proclaimed Vanilla Killer took me from feeling stuck with my marketing to having a shiny new website complete with a lead magnet – and now feeling very confident about taking my business to the next stages."</blockquote>
+                <p class="app-modal__testimonial-name">Faben Hunt</p>
+                <p class="app-modal__testimonial-org">Owner, Timber Ridge Loft Boarding</p>
+                <blockquote class="app-modal__testimonial-quote">"Thank you for the review video. You have a great vibe and it didn't feel like a sales pitch. You gave away some great value!"</blockquote>
               </div>
             </div>
+          </div>
           </div>
         </div>
         <div class="app-modal__two-col-right">
@@ -1065,17 +1114,22 @@
         <form id="form-website-review" class="app-modal__form" action="#" method="post" novalidate>
           <input type="text" name="_hp" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
           <div class="form-group">
-            <label for="website-review-name">Name</label>
+            <label for="website-review-name">Name <span class="required">*</span></label>
             <input type="text" id="website-review-name" name="name" placeholder="e.g. Jennifer Coolidge" required aria-describedby="website-review-name-error" />
             <p class="error-message" id="website-review-name-error"></p>
           </div>
           <div class="form-group">
-            <label for="website-review-website">Website URL</label>
-            <input type="url" id="website-review-website" name="website" placeholder="https://yoursite.com" aria-describedby="website-review-website-error" />
+            <label for="website-review-email">Email <span class="required">*</span></label>
+            <input type="email" id="website-review-email" name="email" placeholder="you@company.com" required aria-describedby="website-review-email-error" />
+            <p class="error-message" id="website-review-email-error"></p>
+          </div>
+          <div class="form-group">
+            <label for="website-review-website">Website URL <span class="required">*</span></label>
+            <input type="url" id="website-review-website" name="website" placeholder="https://yoursite.com" required aria-describedby="website-review-website-error" />
             <p class="error-message" id="website-review-website-error"></p>
           </div>
           <div class="form-group">
-            <label for="website-review-linkedin">LinkedIn Profile URL</label>
+            <label for="website-review-linkedin">LinkedIn</label>
             <input type="url" id="website-review-linkedin" name="linkedin_url" placeholder="https://linkedin.com/in/yourprofile" aria-describedby="website-review-linkedin-error" />
             <p class="error-message" id="website-review-linkedin-error"></p>
           </div>
@@ -1096,20 +1150,18 @@
     <!-- Panel: Lead magnet – 50 Things -->
     <div class="app-modal__panel" data-panel="lead-50things" aria-hidden="true">
       <div class="app-modal__two-col">
+        <p class="app-modal__eyebrow">Free Download</p>
+        <h2 class="app-modal__title">50 Things You Can Fix on Your Website Today</h2>
         <div class="app-modal__two-col-left">
-          <p class="app-modal__eyebrow">Free Download</p>
-          <h2 class="app-modal__title">50 Things You Can Fix on Your Website Today</h2>
-          <p class="app-modal__blurb">A practical checklist to spot weak messaging, missed conversion opportunities, and unclear positioning. Use it to stress-test your homepage, sharpen your offer, and increase enquiries without touching your ad budget.</p>
-          <div class="app-modal__testimonials">
-            <div class="app-modal__testimonial-item">
-              <img src="images/oakleigh.jpg" alt="" class="app-modal__testimonial-avatar" />
-              <div class="app-modal__testimonial-content">
-                <p class="app-modal__testimonial-name">Oakleigh Wood</p>
-                <p class="app-modal__testimonial-org">Bristol Caravans</p>
-                <blockquote class="app-modal__testimonial-quote">"The handbook Tom delivered encapsulates the entire purpose behind our operation, our values, and – most importantly – how to sell that purpose, both online and in person."</blockquote>
-              </div>
-            </div>
-          </div>
+          <p class="app-modal__blurb">A practical checklist of the issues that kill conversions – drawn from hundreds of website reviews. Stress-test your homepage, sharpen your offer, and increase enquiries without touching your ad budget.</p>
+          <ul class="app-modal__benefits">
+            <li>Where to display your social proof</li>
+            <li>Secrets of good navigation</li>
+            <li>How loading speed affects conversions</li>
+            <li>Why (and how) to include a guarantee</li>
+            <li>Displaying your pricing clearly</li>
+            <li>And 45 more conversion killers – with fixes</li>
+          </ul>
         </div>
         <div class="app-modal__two-col-right">
           <div class="app-modal__panel-form">
@@ -1138,20 +1190,17 @@
     <!-- Panel: Lead magnet – Offboarding -->
     <div class="app-modal__panel" data-panel="lead-offboarding" aria-hidden="true">
       <div class="app-modal__two-col">
+        <p class="app-modal__eyebrow">Free Guide</p>
+        <h2 class="app-modal__title">The Offboarding Goldmine</h2>
         <div class="app-modal__two-col-left">
-          <p class="app-modal__eyebrow">Free Guide</p>
-          <h2 class="app-modal__title">The Offboarding Goldmine</h2>
-          <p class="app-modal__blurb">Most businesses treat client offboarding as admin. It is actually a research lab. This guide shows you how to extract testimonials, sharpen your messaging, surface objections, and unlock referrals before the relationship closes.</p>
-          <div class="app-modal__testimonials">
-            <div class="app-modal__testimonial-item">
-              <img src="images/mike.png" alt="" class="app-modal__testimonial-avatar" />
-              <div class="app-modal__testimonial-content">
-                <p class="app-modal__testimonial-name">Mike Hill</p>
-                <p class="app-modal__testimonial-org">Total Ticketing</p>
-                <blockquote class="app-modal__testimonial-quote">"Vanilla Killer created language for our website which has given everyone renewed clarity about what we do. We can approach the market now with total confidence — on all channels."</blockquote>
-              </div>
-            </div>
-          </div>
+          <p class="app-modal__blurb">Short, effective end-of-project conversations that yield a surprising range of benefits. Full of tips and sample questions to ask.</p>
+          <ul class="app-modal__benefits">
+            <li>Capture the language clients actually use to describe what you do</li>
+            <li>Generate stronger narrative-style testimonials – without the awkward asks</li>
+            <li>Learn how real clients found and chose you</li>
+            <li>Spot opportunities to improve your service</li>
+            <li>Create a natural pathway for referrals (at precisely the best time)</li>
+          </ul>
         </div>
         <div class="app-modal__two-col-right">
           <div class="app-modal__panel-form">
@@ -1180,20 +1229,16 @@
     <!-- Panel: Lead magnet – Social Proof -->
     <div class="app-modal__panel" data-panel="lead-socialproof" aria-hidden="true">
       <div class="app-modal__two-col">
+        <p class="app-modal__eyebrow">Free Email Course</p>
+        <h2 class="app-modal__title">The Social Proof Advantage</h2>
         <div class="app-modal__two-col-left">
-          <p class="app-modal__eyebrow">Free Email Course</p>
-          <h2 class="app-modal__title">The Social Proof Advantage</h2>
-          <p class="app-modal__blurb">A short email course on how to collect, shape, and deploy social proof so it actually persuades. Learn how to turn vague praise into belief-shifting evidence that moves people from sceptical to ready.</p>
-          <div class="app-modal__testimonials">
-            <div class="app-modal__testimonial-item">
-              <img src="images/charlie.jpg" alt="" class="app-modal__testimonial-avatar" />
-              <div class="app-modal__testimonial-content">
-                <p class="app-modal__testimonial-name">Charlie Mulraine</p>
-                <p class="app-modal__testimonial-org">Career Coach</p>
-                <blockquote class="app-modal__testimonial-quote">"I highly recommend working with him and his killer messaging service."</blockquote>
-              </div>
-            </div>
-          </div>
+          <p class="app-modal__blurb">Collect, shape, and deploy social proof so it actually persuades – and turns vague praise into belief-shifting evidence.</p>
+          <ul class="app-modal__benefits">
+            <li>How to collect proof that converts (without the cringe)</li>
+            <li>Shape testimonials into narrative that builds trust</li>
+            <li>Where and how to display it for maximum impact</li>
+            <li>Turn sceptical visitors into ready-to-act leads</li>
+          </ul>
         </div>
         <div class="app-modal__two-col-right">
           <div class="app-modal__panel-form">
