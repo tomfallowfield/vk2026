@@ -30,6 +30,26 @@
     book_call_calendar_url: 'https://calendar.app.google/8jiSEYPb3YYouyXq9',
     lead_magnets_enabled: true,
 
+    // --- Lead magnets (per-LM settings; Mailchimp tags drive automations) ---
+    // Each key = panel/form id (data-panel, form id). Mailchimp tag is what gets applied in Mailchimp so your automation can send the right lead-magnet email.
+    lead_magnets: {
+      'lead-50things': {
+        enabled: true,
+        success_message: 'Thanks! Check your email for the checklist.',
+        mailchimp_tag: 'lead-50things'
+      },
+      'lead-offboarding': {
+        enabled: true,
+        success_message: 'Thanks! Check your email for the offboarding guide.',
+        mailchimp_tag: 'lead-offboarding'
+      },
+      'lead-socialproof': {
+        enabled: true,
+        success_message: 'Thanks! Check your email to get started with the course.',
+        mailchimp_tag: 'lead-socialproof'
+      }
+    },
+
     // --- UI toggles ---
     show_pricing: true,
     cookie_consent_enabled: true,

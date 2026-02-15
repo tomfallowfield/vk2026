@@ -10,15 +10,15 @@ function isConfigured() {
 /**
  * Add or update a contact in the audience with merge fields and a tag.
  * Tag is used by Mailchimp automations to send the correct lead-magnet email.
- * @param {{ email: string, name?: string, source: string }} data - source e.g. lead-50things
+ * @param {{ email: string, name?: string, source: string, mailchimp_tag?: string }} data - source = form id; mailchimp_tag = tag to apply (defaults to source)
  * @returns {{ success: boolean, error?: string }}
  */
 async function addOrUpdateContact(data) {
   if (!isConfigured()) {
     return { success: false, error: 'Mailchimp not configured' };
   }
-  const { email, name, source } = data;
-  const tag = source; // e.g. lead-50things
+  const { email, name, source, mailchimp_tag } = data;
+  const tag = (mailchimp_tag && String(mailchimp_tag).trim()) ? String(mailchimp_tag).trim() : source;
   const subscriberHash = require('crypto').createHash('md5').update(email.toLowerCase()).digest('hex');
   const url = `${BASE}/lists/${MAILCHIMP_AUDIENCE_ID}/members/${subscriberHash}`;
   const body = {

@@ -24,7 +24,10 @@ const MAILCHIMP_AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID || '';
 
 // Notion
 const NOTION_TOKEN = process.env.NOTION_TOKEN || '';
-const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID || '';
+const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID || 'a554b664bf984c0993b16ab4ac0b2a9d';
+
+// Booking-confirmed webhook (optional; if set, route requires matching secret)
+const BOOKING_WEBHOOK_SECRET = process.env.BOOKING_WEBHOOK_SECRET || '';
 
 module.exports = {
   SITE_BASE_URL,
@@ -34,5 +37,6 @@ module.exports = {
   MAILCHIMP_SERVER_PREFIX,
   MAILCHIMP_AUDIENCE_ID,
   NOTION_TOKEN,
-  NOTION_DATABASE_ID
+  NOTION_DATABASE_ID,
+  BOOKING_WEBHOOK_SECRET
 };

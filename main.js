@@ -23,8 +23,26 @@ function getSettings() {
     maintenance_message: typeof s.maintenance_message === 'string' ? s.maintenance_message : 'We\'ll be back shortly. Thanks for your patience.',
     default_modal: (s.default_modal && typeof s.default_modal === 'string') ? s.default_modal : null,
     api_base: typeof s.api_base === 'string' ? s.api_base.trim() : '',
-    book_call_calendar_url: typeof s.book_call_calendar_url === 'string' ? s.book_call_calendar_url.trim() : ''
+    book_call_calendar_url: typeof s.book_call_calendar_url === 'string' ? s.book_call_calendar_url.trim() : '',
+    lead_magnets: (s.lead_magnets && typeof s.lead_magnets === 'object') ? s.lead_magnets : {}
   };
+}
+
+function getEnabledLeadMagnetIds() {
+  const settings = getSettings();
+  if (!settings.lead_magnets_enabled) return [];
+  const lm = settings.lead_magnets;
+  const ids = ['lead-50things', 'lead-offboarding', 'lead-socialproof'];
+  if (!Object.keys(lm).length) return ids;
+  return ids.filter(function (id) {
+    const config = lm[id];
+    return !config || config.enabled !== false;
+  });
+}
+
+function getLeadMagnetConfig(id) {
+  const lm = getSettings().lead_magnets[id];
+  return lm && typeof lm === 'object' ? lm : {};
 }
 
 // Cookie consent & visitor context (graceful degradation if declined)
@@ -351,6 +369,7 @@ function openModalFromUrl() {
   if (!panelId || !VALID_MODAL_IDS.has(panelId)) return;
   if (panelId === 'website-review' && !settings.wrv_offer) return;
   if (panelId === 'book-call' && !settings.book_call_offer) return;
+  if (VALID_MODAL_IDS.has(panelId) && getEnabledLeadMagnetIds().indexOf(panelId) === -1) return;
   lastModalTriggerType = 'url';
   setTimeout(() => {
     openAppModal(panelId);
@@ -374,6 +393,7 @@ function getAutodialogPanelId() {
   if (!VALID_MODAL_IDS.has(form)) return null;
   if (form === 'website-review' && !settings.wrv_offer) return null;
   if (form === 'book-call' && !settings.book_call_offer) return null;
+  if (getEnabledLeadMagnetIds().indexOf(form) === -1) return null;
   return form;
 }
 
@@ -433,12 +453,21 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
       el.style.setProperty('display', 'none');
     });
   }
-  if (!settings.lead_magnets_enabled) {
+  var enabledLmIds = getEnabledLeadMagnetIds();
+  if (enabledLmIds.length === 0) {
     document.querySelectorAll('[data-modal="lead-50things"], [data-modal="lead-offboarding"], [data-modal="lead-socialproof"]').forEach(function (el) {
       el.style.setProperty('display', 'none');
     });
-    const resourcesSection = document.getElementById('resources');
+    var resourcesSection = document.getElementById('resources');
     if (resourcesSection) resourcesSection.style.setProperty('display', 'none');
+  } else {
+    ['lead-50things', 'lead-offboarding', 'lead-socialproof'].forEach(function (id) {
+      if (enabledLmIds.indexOf(id) === -1) {
+        document.querySelectorAll('[data-modal="' + id + '"]').forEach(function (el) {
+          el.style.setProperty('display', 'none');
+        });
+      }
+    });
   }
   if (!settings.show_pricing) {
     const pricingSection = document.getElementById('pricing');
@@ -753,15 +782,13 @@ if (formBookCall) {
 })();
 // #endregion
 
-// Lead magnet forms
-['lead-50things', 'lead-offboarding', 'lead-socialproof'].forEach(id => {
+// Lead magnet forms (only enabled LMs from settings)
+getEnabledLeadMagnetIds().forEach(function (id) {
   const form = document.getElementById('form-' + id);
   if (!form) return;
-  const successMessages = {
-    'lead-50things': 'Thanks! Check your email for the checklist.',
-    'lead-offboarding': 'Thanks! Check your email for the offboarding guide.',
-    'lead-socialproof': 'Thanks! Check your email to get started with the course.',
-  };
+  const config = getLeadMagnetConfig(id);
+  const successMessage = (config.success_message && config.success_message.trim()) ? config.success_message.trim() : 'Thanks! Check your email.';
+  const mailchimpTag = (config.mailchimp_tag && config.mailchimp_tag.trim()) ? config.mailchimp_tag.trim() : id;
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (guardMaintenance(e)) return;
@@ -769,6 +796,7 @@ if (formBookCall) {
     const panel = getActiveAppModalPanel();
     const payload = buildSubmitPayload(this);
     payload.source = this.getAttribute('data-source') || id;
+    payload.mailchimp_tag = mailchimpTag;
 
     fetch(window.API_BASE + '/lead', {
       method: 'POST',
@@ -780,7 +808,7 @@ if (formBookCall) {
         if (panel) {
           if (ok) {
             recordFormSubmission(this.id);
-            showSuccessScreen(panel, data.message || successMessages[id]);
+            showSuccessScreen(panel, data.message || successMessage);
           } else {
             showPanelError(panel, getSubmitErrorMessage(null, res, data));
           }

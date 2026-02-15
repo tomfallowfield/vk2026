@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const config = require('./server/config');
 const submissionsRouter = require('./server/routes/submissions');
+const webhooksRouter = require('./server/routes/webhooks');
 
 const app = express();
 const PORT = config.PORT;
@@ -35,6 +36,7 @@ const limiter = rateLimit({
 });
 app.use('/vk2026/api', limiter);
 app.use('/vk2026/api', submissionsRouter);
+app.use('/vk2026/api/webhooks', webhooksRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/vk2026`);

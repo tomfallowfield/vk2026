@@ -3,7 +3,7 @@ const router = express.Router();
 const { logSubmission } = require('../lib/logger');
 const { validateBookACall, validateWebsiteReview, validateLead } = require('../lib/validate');
 const { addOrUpdateContact } = require('../lib/mailchimp');
-const { createSubmissionPage } = require('../lib/notion');
+const { createOrUpdateVkCrmPage } = require('../lib/notion-vkcrm');
 const config = require('../config');
 
 const HONEYPOT_FIELD = '_hp';
@@ -61,10 +61,6 @@ router.post('/book-a-call', async (req, res) => {
   }
   const payload = enrichPayload(req, data, 'book-a-call', 'book-a-call');
   logSubmission('book-a-call', payload);
-  const notionResult = await createSubmissionPage({ ...data, type: 'book-a-call', form_id: req.body.form_id, source: 'book-a-call', modal_trigger_type: req.body.modal_trigger_type });
-  if (!notionResult.success && config.NOTION_TOKEN) {
-    console.error('Notion book-a-call:', notionResult.error);
-  }
   const response = { message: 'Thanks — we\'ll be in touch soon.' };
   if (key) {
     idempotencyCache.set(key, { response, expiry: Date.now() + IDEMPOTENCY_WINDOW_MS });
@@ -90,9 +86,19 @@ router.post('/website-review', async (req, res) => {
   }
   const payload = enrichPayload(req, data, 'website-review', 'website-review');
   logSubmission('website-review', payload);
-  const notionResult = await createSubmissionPage({ ...data, type: 'website-review', form_id: req.body.form_id, source: 'website-review', modal_trigger_type: req.body.modal_trigger_type });
+  const vkcrmPayload = {
+    submission_type: 'wrv_request',
+    submitted_at: payload._server?.timestamp || new Date().toISOString(),
+    name: data.name,
+    website: data.website,
+    linkedin_url: data.linkedin_url,
+    email: data.email,
+    company_name: data.company,
+    comments: data.comments
+  };
+  const notionResult = await createOrUpdateVkCrmPage(vkcrmPayload, payload._context || {});
   if (!notionResult.success && config.NOTION_TOKEN) {
-    console.error('Notion website-review:', notionResult.error);
+    console.error('Notion VKCRM website-review:', notionResult.error);
   }
   const response = { message: 'Thanks — we\'ll be in touch with your review soon.' };
   if (key) {
@@ -119,13 +125,9 @@ router.post('/lead', async (req, res) => {
   }
   const payload = enrichPayload(req, data, 'lead', 'lead');
   logSubmission('lead', payload);
-  const mcResult = await addOrUpdateContact({ email: data.email, name: data.name, source: data.source });
+  const mcResult = await addOrUpdateContact({ email: data.email, name: data.name, source: data.source, mailchimp_tag: data.mailchimp_tag });
   if (!mcResult.success && config.MAILCHIMP_API_KEY) {
     console.error('Mailchimp lead:', mcResult.error);
-  }
-  const notionResult = await createSubmissionPage({ ...data, type: 'lead', form_id: req.body.form_id, source: data.source, modal_trigger_type: req.body.modal_trigger_type });
-  if (!notionResult.success && config.NOTION_TOKEN) {
-    console.error('Notion lead:', notionResult.error);
   }
   const successMessages = {
     'lead-50things': 'Thanks! Check your email for the checklist.',

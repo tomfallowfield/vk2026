@@ -67,7 +67,8 @@ function validateLead(body) {
   const source = (body.source || '').trim();
   const validSources = ['lead-50things', 'lead-offboarding', 'lead-socialproof'];
   if (!validSources.includes(source)) errors.push('Invalid lead source.');
-  return { errors, data: { name, email, source } };
+  const mailchimp_tag = typeof body.mailchimp_tag === 'string' ? body.mailchimp_tag.trim() : null;
+  return { errors, data: { name, email, source, mailchimp_tag: mailchimp_tag || source } };
 }
 
 module.exports = { validateBookACall, validateWebsiteReview, validateLead };
