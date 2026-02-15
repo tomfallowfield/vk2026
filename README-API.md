@@ -28,11 +28,11 @@ Set at least:
 - `SITE_BASE_URL` – e.g. `http://139.59.113.186/vk2026` or `http://localhost:3000/vk2026`
 - `PORT` – e.g. `3000`
 
-Optional (for Mailchimp lead magnets):
+Optional (for Mailchimp – contact forms and lead magnets):
 
-- `MAILCHIMP_API_KEY`
-- `MAILCHIMP_SERVER_PREFIX` (e.g. `us19`)
-- `MAILCHIMP_AUDIENCE_ID`
+- `MAILCHIMP_API_KEY` – from Mailchimp → Account → Extras → API keys
+- `MAILCHIMP_SERVER_PREFIX` – e.g. `us19` (the part after the hyphen in your API key)
+- `MAILCHIMP_AUDIENCE_ID` – Audience → Settings → Audience name and defaults → Audience ID
 
 Optional (for Notion CRM):
 
@@ -56,4 +56,12 @@ If you use an existing Notion CRM, the property names in `server/lib/notion.js` 
 
 ## 6. Mailchimp
 
-Configure an automation (or segment) in Mailchimp so that when a contact has tag `lead-50things`, `lead-offboarding`, or `lead-socialproof`, they receive the correct lead-magnet email. The API only adds/updates the contact and sets the tag.
+**API secrets:** No separate “form API secret” is required. The server uses the values in `.env` (Mailchimp API key, server prefix, audience ID). Keep `.env` out of git and only on the server.
+
+**What gets synced:**
+
+- **All forms** that collect email are added/updated in your Mailchimp audience (same list).
+- **Book-a-call** and **website-review** get the tag **`submitted website contact form`**. You can create a segment or automation in Mailchimp for this tag.
+- **Lead magnets** get per-form tags from `settings.js` (`lead_magnets`), e.g. `lead-50things`, `lead-offboarding`, `lead-socialproof`. Configure automations in Mailchimp so that when a contact has one of these tags, they receive the right lead-magnet email.
+
+Tags are added without removing existing ones (e.g. someone can have both a lead-magnet tag and “submitted website contact form”).

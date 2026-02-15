@@ -8,6 +8,8 @@ const config = require('../config');
 
 const HONEYPOT_FIELD = '_hp';
 const IDEMPOTENCY_WINDOW_MS = 24 * 60 * 60 * 1000;
+/** Tag applied in Mailchimp for book-a-call and website-review (contact) form submissions */
+const MAILCHIMP_TAG_CONTACT_FORM = 'submitted website contact form';
 const idempotencyCache = new Map();
 
 function pruneIdempotency() {
@@ -81,6 +83,15 @@ router.post('/book-a-call', async (req, res) => {
   if (!notionResult.success) {
     console.error('Notion VKCRM book-a-call:', notionResult.error);
   }
+  const mcResult = await addOrUpdateContact({
+    email: data.email,
+    name: data.name,
+    source: 'book-a-call',
+    mailchimp_tag: MAILCHIMP_TAG_CONTACT_FORM
+  });
+  if (!mcResult.success && config.MAILCHIMP_API_KEY) {
+    console.error('Mailchimp book-a-call:', mcResult.error);
+  }
   const response = { message: 'Thanks — we\'ll be in touch soon.' };
   if (key) {
     idempotencyCache.set(key, { response, expiry: Date.now() + IDEMPOTENCY_WINDOW_MS });
@@ -123,6 +134,15 @@ router.post('/website-review', async (req, res) => {
   const notionResult = await createOrUpdateVkCrmPage(vkcrmPayload, payload._context || {});
   if (!notionResult.success) {
     console.error('Notion VKCRM website-review:', notionResult.error);
+  }
+  const mcResult = await addOrUpdateContact({
+    email: data.email,
+    name: data.name,
+    source: 'website-review',
+    mailchimp_tag: MAILCHIMP_TAG_CONTACT_FORM
+  });
+  if (!mcResult.success && config.MAILCHIMP_API_KEY) {
+    console.error('Mailchimp website-review:', mcResult.error);
   }
   const response = { message: 'Thanks — we\'ll be in touch with your review soon.' };
   if (key) {

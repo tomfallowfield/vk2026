@@ -36,12 +36,12 @@
       'lead-50things': {
         enabled: true,
         success_message: 'Thanks! Check your email for the checklist.',
-        mailchimp_tag: 'lead-50things'
+        mailchimp_tag: 'requested_2026cheatsheet'
       },
       'lead-offboarding': {
         enabled: true,
         success_message: 'Thanks! Check your email for the offboarding guide.',
-        mailchimp_tag: 'lead-offboarding'
+        mailchimp_tag: 'requested_offboarding_guide'
       },
       'lead-socialproof': {
         enabled: true,
