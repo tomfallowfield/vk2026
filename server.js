@@ -4,6 +4,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const config = require('./server/config');
+const { isConfigured: isVkCrmConfigured } = require('./server/lib/notion-vkcrm');
 const submissionsRouter = require('./server/routes/submissions');
 const webhooksRouter = require('./server/routes/webhooks');
 
@@ -41,4 +42,5 @@ app.use('/vk2026/api/webhooks', webhooksRouter);
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/vk2026`);
   console.log(`API at http://localhost:${PORT}/vk2026/api`);
+  console.log(`Notion VKCRM: ${isVkCrmConfigured() ? 'configured' : 'NOT configured (set NOTION_TOKEN and NOTION_DATABASE_ID in .env)'}`);
 });

@@ -86,6 +86,7 @@ router.post('/website-review', async (req, res) => {
   }
   const payload = enrichPayload(req, data, 'website-review', 'website-review');
   logSubmission('website-review', payload);
+  console.log('WRV received:', data.name || '(no name)');
   const vkcrmPayload = {
     submission_type: 'wrv_request',
     submitted_at: payload._server?.timestamp || new Date().toISOString(),
@@ -97,7 +98,7 @@ router.post('/website-review', async (req, res) => {
     comments: data.comments
   };
   const notionResult = await createOrUpdateVkCrmPage(vkcrmPayload, payload._context || {});
-  if (!notionResult.success && config.NOTION_TOKEN) {
+  if (!notionResult.success) {
     console.error('Notion VKCRM website-review:', notionResult.error);
   }
   const response = { message: 'Thanks — we\'ll be in touch with your review soon.' };
