@@ -53,6 +53,8 @@
     // --- UI toggles ---
     show_pricing: true,
     cookie_consent_enabled: true,
+    // Show contact email sitewide (footer, modals, mobile menu). false = hide everywhere.
+    show_email: true,
 
     // --- Analytics ---
     // Google Analytics measurement ID (e.g. G-XXXXXXXXXX). Leave empty to disable.

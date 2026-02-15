@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vanilla Killer 1.6 cookietastic</title>
+  <title>Vanilla Killer 1.7 hamburger</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,6 +71,37 @@
     <button class="hamburger" aria-label="Open menu">☰</button>
   </div>
 </header>
+
+<!-- Mobile menu: full-screen overlay, close on nav/modal link click -->
+<div id="mobile-menu" class="mobile-menu" aria-hidden="true" aria-label="Main menu" role="dialog" aria-modal="true">
+  <button type="button" class="mobile-menu__close" aria-label="Close menu">×</button>
+  <div class="mobile-menu__inner">
+    <nav class="mobile-menu__nav">
+      <a href="#rescue">How it works</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faqs">FAQs</a>
+    </nav>
+    <section class="mobile-menu__section">
+      <h3 class="mobile-menu__section-title">Get in touch</h3>
+      <p class="site-email mobile-menu__email"><a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a></p>
+      <div class="mobile-menu__ctas">
+        <a href="#" class="btn btn-primary" data-modal="book-call">Book a call</a>
+        <a href="#" class="btn btn-secondary" data-modal="website-review">Request a free website review</a>
+        <a href="#" id="mobile-menu-calendar-link" class="mobile-menu__cal-link" target="_blank" rel="noopener">Book via calendar</a>
+      </div>
+    </section>
+    <section class="mobile-menu__section">
+      <h3 class="mobile-menu__section-title">Free tools</h3>
+      <ul class="mobile-menu__lead-magnets">
+        <li><a href="#" data-modal="lead-50things">50 Things You Can Fix on Your Website Today</a></li>
+        <li><a href="#" data-modal="lead-offboarding">The Offboarding Goldmine</a></li>
+        <li><a href="#" data-modal="lead-socialproof">The Social Proof Advantage</a></li>
+      </ul>
+    </section>
+    <p class="mobile-menu__linkedin"><a href="https://www.linkedin.com/in/tom-fallowfield/" target="_blank" rel="noopener noreferrer">Find us on LinkedIn</a></p>
+    <p class="mobile-menu__copyright">© <span id="mobile-menu-year"></span> Vanilla Killer. All rights reserved.</p>
+  </div>
+</div>
 
 <section class="hero" id="top">
   <div class="container">
@@ -942,7 +973,7 @@
       <div>
         <p class="footer-title">Contact</p>
         <ul class="footer-links">
-          <li><a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a></li>
+          <li class="site-email"><a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a></li>
           <li><a href="https://www.linkedin.com/in/tom-fallowfield/" target="_blank" rel="noopener noreferrer">Tom's LinkedIn Profile</a></li>
         </ul>
       </div>
@@ -970,54 +1001,62 @@
 
     <!-- Panel: Book a call -->
     <div class="app-modal__panel" data-panel="book-call" aria-hidden="true">
-      <p class="app-modal__eyebrow">Let's talk</p>
-      <h2 class="app-modal__title" id="app-modal-title">Book a call</h2>
-      <div class="app-modal__book-call">
-        <div class="app-modal__book-call-form-wrap">
+      <div class="app-modal__two-col app-modal__two-col--book-call">
+        <div class="app-modal__two-col-left">
+          <p class="app-modal__eyebrow">Let's talk</p>
+          <h2 class="app-modal__title" id="app-modal-title">Book a call</h2>
+          <p class="app-modal__blurb">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+          <hr class="app-modal__rule" />
+          <p class="app-modal__contact-info">
+            <span class="site-email"><a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a><span class="app-modal__contact-sep">·</span></span>
+            <a href="https://calendar.app.google/8jiSEYPb3YYouyXq9" id="app-modal-calendar-link" target="_blank" rel="noopener">Book via calendar</a>
+          </p>
+          <hr class="app-modal__rule" />
+          <div class="app-modal__book-call-testimonial">
+            <img src="images/charlie.jpg" alt="" class="app-modal__testimonial-avatar" />
+            <p class="app-modal__testimonial-name">Charlie Mulraine</p>
+            <p class="app-modal__testimonial-org">Career Coach</p>
+            <blockquote class="app-modal__testimonial-quote">"The self-proclaimed Vanilla Killer took me from feeling stuck with my marketing and how to present myself to having a shiny new website complete with a lead magnet – and now feeling very confident about taking my business to the next stages. I highly recommend working with him and his killer messaging service."</blockquote>
+          </div>
+        </div>
+        <div class="app-modal__two-col-right app-modal__book-call-form-col">
           <div class="app-modal__panel-form">
-            <p class="app-modal__contact-info">
-              <a href="mailto:tom@vanillakiller.com">tom@vanillakiller.com</a>
-              <span class="app-modal__contact-sep">·</span>
-              <a href="https://calendar.app.google/8jiSEYPb3YYouyXq9" id="app-modal-calendar-link" target="_blank" rel="noopener">Book via calendar</a>
-            </p>
-            <form id="form-book-call" class="app-modal__form" action="#" method="post" novalidate>
+            <form id="form-book-call" class="app-modal__form app-modal__form--compact" action="#" method="post" novalidate>
               <input type="text" name="_hp" value="" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" />
               <input type="hidden" name="phone" value="" />
-              <div class="form-group">
-                <label for="book-call-name">Name <span class="required">*</span></label>
-                <input type="text" id="book-call-name" name="name" placeholder="e.g. Jennifer Coolidge" required aria-describedby="book-call-name-error" />
-                <p class="error-message" id="book-call-name-error"></p>
+              <div class="app-modal__book-call-form-scroll">
+                <div class="form-group">
+                  <label for="book-call-name">Name <span class="required">*</span></label>
+                  <input type="text" id="book-call-name" name="name" placeholder="e.g. Jennifer Coolidge" required aria-describedby="book-call-name-error" />
+                  <p class="error-message" id="book-call-name-error"></p>
+                </div>
+                <div class="form-group">
+                  <label for="book-call-email">Email <span class="required">*</span></label>
+                  <input type="email" id="book-call-email" name="email" placeholder="you@company.com" required aria-describedby="book-call-email-error" />
+                  <p class="error-message" id="book-call-email-error"></p>
+                </div>
+                <div class="form-group">
+                  <label for="book-call-website">Website</label>
+                  <input type="url" id="book-call-website" name="website" placeholder="https://yoursite.com" aria-describedby="book-call-website-error" />
+                  <p class="error-message" id="book-call-website-error"></p>
+                </div>
+                <div class="form-group">
+                  <label for="book-call-linkedin">LinkedIn profile URL</label>
+                  <input type="url" id="book-call-linkedin" name="linkedin_url" placeholder="https://linkedin.com/in/yourprofile" aria-describedby="book-call-linkedin-error" />
+                  <p class="error-message" id="book-call-linkedin-error"></p>
+                </div>
+                <div class="form-group">
+                  <label for="book-call-message">Message</label>
+                  <textarea id="book-call-message" name="message" rows="3" placeholder="Tell us a bit about your business and what you'd like to achieve"></textarea>
+                </div>
               </div>
-              <div class="form-group">
-                <label for="book-call-email">Email <span class="required">*</span></label>
-                <input type="email" id="book-call-email" name="email" placeholder="you@company.com" required aria-describedby="book-call-email-error" />
-                <p class="error-message" id="book-call-email-error"></p>
+              <div class="app-modal__book-call-form-footer">
+                <button type="submit" id="button-submit-book-call" class="btn btn-primary">Send</button>
               </div>
-              <div class="form-group">
-                <label for="book-call-website">Website</label>
-                <input type="url" id="book-call-website" name="website" placeholder="https://yoursite.com" aria-describedby="book-call-website-error" />
-                <p class="error-message" id="book-call-website-error"></p>
-              </div>
-              <div class="form-group">
-                <label for="book-call-linkedin">LinkedIn profile URL</label>
-                <input type="url" id="book-call-linkedin" name="linkedin_url" placeholder="https://linkedin.com/in/yourprofile" aria-describedby="book-call-linkedin-error" />
-                <p class="error-message" id="book-call-linkedin-error"></p>
-              </div>
-              <div class="form-group">
-                <label for="book-call-message">Message</label>
-                <textarea id="book-call-message" name="message" rows="4" placeholder="Tell us a bit about your business and what you'd like to achieve"></textarea>
-              </div>
-              <button type="submit" id="button-submit-book-call" class="btn btn-primary">Send</button>
             </form>
           </div>
           <div class="app-modal__success" id="book-call-success" aria-live="polite" hidden></div>
           <div class="app-modal__panel-message" id="book-call-message-box" aria-live="polite" hidden></div>
-        </div>
-        <div class="app-modal__book-call-testimonial">
-          <img src="images/charlie.jpg" alt="" class="app-modal__testimonial-avatar" />
-          <p class="app-modal__testimonial-name">Charlie Mulraine</p>
-          <p class="app-modal__testimonial-org">Career Coach</p>
-          <blockquote class="app-modal__testimonial-quote">"The self-proclaimed Vanilla Killer took me from feeling stuck with my marketing and how to present myself to having a shiny new website complete with a lead magnet – and now feeling very confident about taking my business to the next stages. I highly recommend working with him and his killer messaging service."</blockquote>
         </div>
       </div>
       <div class="app-modal__success-full" aria-live="polite" hidden></div>

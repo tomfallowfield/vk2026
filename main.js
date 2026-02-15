@@ -18,6 +18,7 @@ function getSettings() {
     lead_magnets_enabled: s.lead_magnets_enabled !== false,
     show_pricing: s.show_pricing !== false,
     cookie_consent_enabled: s.cookie_consent_enabled !== false,
+    show_email: s.show_email !== false,
     ga_id: typeof s.ga_id === 'string' ? s.ga_id.trim() : '',
     maintenance_mode: s.maintenance_mode === true,
     maintenance_message: typeof s.maintenance_message === 'string' ? s.maintenance_message : 'We\'ll be back shortly. Thanks for your patience.',
@@ -592,6 +593,8 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
       if (enabledLmIds.indexOf(id) === -1) {
         document.querySelectorAll('[data-modal="' + id + '"]').forEach(function (el) {
           el.style.setProperty('display', 'none');
+          var li = el.closest('li');
+          if (li) li.style.setProperty('display', 'none');
         });
       }
     });
@@ -605,12 +608,56 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
   }
 })();
 
+// Mobile menu: open/close, close on link click, body scroll lock
+(function () {
+  const menu = document.getElementById('mobile-menu');
+  const hamburger = document.querySelector('.hamburger');
+  const closeBtn = menu && menu.querySelector('.mobile-menu__close');
+  if (!menu || !hamburger) return;
+
+  function openMobileMenu() {
+    menu.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    var yearEl = document.getElementById('mobile-menu-year');
+    if (yearEl && !yearEl.textContent) yearEl.textContent = new Date().getFullYear();
+    if (closeBtn) closeBtn.focus();
+  }
+
+  function closeMobileMenu() {
+    menu.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', function () {
+    openMobileMenu();
+  });
+  if (closeBtn) closeBtn.addEventListener('click', closeMobileMenu);
+
+  menu.addEventListener('click', function (e) {
+    if (e.target.closest('a')) closeMobileMenu();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (menu.getAttribute('aria-hidden') === 'false') {
+      closeMobileMenu();
+    }
+  });
+})();
+
 // Book-a-call calendar link (from settings)
 (function () {
   const url = getSettings().book_call_calendar_url;
   if (!url) return;
   const calLink = document.getElementById('app-modal-calendar-link');
   if (calLink) calLink.href = url;
+  const mobileCalLink = document.getElementById('mobile-menu-calendar-link');
+  if (mobileCalLink) mobileCalLink.href = url;
+})();
+
+// Show/hide contact email sitewide (footer, modals, mobile menu)
+(function () {
+  document.body.classList.toggle('show-email', getSettings().show_email);
 })();
 
 // Maintenance mode overlay
@@ -847,6 +894,13 @@ function guardMaintenance(e) {
   return false;
 }
 
+function setSubmitButtonLoading(form, loading) {
+  const btn = form && form.querySelector('button[type="submit"]');
+  if (!btn) return;
+  btn.disabled = loading;
+  btn.classList.toggle('is-loading', loading);
+}
+
 // Website review form
 const formWebsiteReview = document.getElementById('form-website-review');
 if (formWebsiteReview) {
@@ -856,6 +910,7 @@ if (formWebsiteReview) {
     if (!validateForm(this)) return;
     const panel = getActiveAppModalPanel();
     const payload = buildSubmitPayload(this);
+    setSubmitButtonLoading(this, true);
 
     fetch(window.API_BASE + '/website-review', {
       method: 'POST',
@@ -875,7 +930,8 @@ if (formWebsiteReview) {
       })
       .catch((err) => {
         if (panel) showPanelError(panel, getSubmitErrorMessage(err));
-      });
+      })
+      .finally(() => { setSubmitButtonLoading(this, false); });
   });
 }
 
@@ -888,6 +944,7 @@ if (formBookCall) {
     if (!validateForm(this)) return;
     const panel = getActiveAppModalPanel();
     const payload = buildSubmitPayload(this);
+    setSubmitButtonLoading(this, true);
 
     fetch(window.API_BASE + '/book-a-call', {
       method: 'POST',
@@ -907,7 +964,8 @@ if (formBookCall) {
       })
       .catch((err) => {
         if (panel) showPanelError(panel, getSubmitErrorMessage(err));
-      });
+      })
+      .finally(() => { setSubmitButtonLoading(this, false); });
   });
 }
 
@@ -950,6 +1008,7 @@ getEnabledLeadMagnetIds().forEach(function (id) {
     const payload = buildSubmitPayload(this);
     payload.source = this.getAttribute('data-source') || id;
     payload.mailchimp_tag = mailchimpTag;
+    setSubmitButtonLoading(this, true);
 
     fetch(window.API_BASE + '/lead', {
       method: 'POST',
@@ -969,7 +1028,8 @@ getEnabledLeadMagnetIds().forEach(function (id) {
       })
       .catch((err) => {
         if (panel) showPanelError(panel, getSubmitErrorMessage(err));
-      });
+      })
+      .finally(() => { setSubmitButtonLoading(this, false); });
   });
 });
 

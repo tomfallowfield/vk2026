@@ -53,6 +53,11 @@
       line-height: 1.6;
     }
 
+    /* Hide contact email sitewide when settings.show_email is false */
+    body:not(.show-email) .site-email {
+      display: none !important;
+    }
+
     h1, h2, h3, h4, h5, h6, .eyebrow {
       font-family: 'Zalando Sans SemiExpanded', Inter, system-ui, sans-serif;
       line-height: 1.25;
@@ -171,6 +176,34 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(254, 94, 182, 0.4);
     }
+    .btn.is-loading {
+      color: transparent;
+      pointer-events: none;
+    }
+    .btn.is-loading::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: 50%;
+      animation: btn-throbber 0.6s linear infinite;
+    }
+    .btn-primary.is-loading::after {
+      border-color: rgba(255, 255, 255, 0.5);
+      border-right-color: transparent;
+    }
+    .btn-secondary.is-loading::after {
+      border-color: rgba(56, 56, 56, 0.4);
+      border-right-color: transparent;
+    }
+    @keyframes btn-throbber {
+      to { transform: rotate(360deg); }
+    }
     .btn-secondary {
       background: rgba(255, 255, 255, 0.92);
       color: var(--brand-grey);
@@ -203,6 +236,141 @@
       .main-nav,
       .header-cta { display: none; }
       .hamburger { display: block; }
+    }
+
+    /* Mobile menu: full-screen overlay */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: var(--paper);
+      padding: 0;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+    .mobile-menu[aria-hidden="false"] {
+      display: block;
+    }
+    .mobile-menu__close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      font-size: 28px;
+      line-height: 1;
+      color: var(--ink);
+      background: none;
+      border: none;
+      cursor: pointer;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: background 0.15s ease;
+    }
+    .mobile-menu__close:hover,
+    .mobile-menu__close:focus {
+      background: var(--border);
+    }
+    .mobile-menu__inner {
+      min-height: 100%;
+      padding: 80px 5% 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .mobile-menu__nav {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .mobile-menu__nav a {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: var(--ink);
+      text-decoration: none;
+      padding: 8px 0;
+    }
+    .mobile-menu__nav a:hover {
+      color: var(--brand-pink);
+    }
+    .mobile-menu__section-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin: 0 0 12px 0;
+    }
+    .mobile-menu__email {
+      margin: 0 0 16px 0;
+    }
+    .mobile-menu__email a {
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .mobile-menu__ctas {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .mobile-menu__ctas .btn {
+      width: 100%;
+      justify-content: center;
+    }
+    .mobile-menu__cal-link {
+      display: inline-block;
+      color: var(--brand-pink);
+      font-weight: 500;
+      text-decoration: none;
+      padding: 8px 0;
+    }
+    .mobile-menu__cal-link:hover {
+      text-decoration: underline;
+    }
+    .mobile-menu__lead-magnets {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-menu__lead-magnets a {
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .mobile-menu__lead-magnets a:hover {
+      color: var(--brand-pink);
+    }
+    .mobile-menu__linkedin {
+      margin: 0;
+    }
+    .mobile-menu__linkedin a {
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .mobile-menu__linkedin a:hover {
+      color: var(--brand-pink);
+    }
+    .mobile-menu__copyright {
+      margin: 0;
+      margin-top: auto;
+      padding-top: 24px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    @media (min-width: 1001px) {
+      .mobile-menu {
+        display: none !important;
+      }
     }
 
     /* HERO */
@@ -906,12 +1074,81 @@
       flex-direction: column;
     }
 
-    .app-modal__book-call {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-      align-items: start;
-      margin-top: 24px;
+    .app-modal__rule {
+      margin: 20px 0;
+      border: 0;
+      height: 1px;
+      background: var(--border, #e2e2e0);
+    }
+
+    /* Book a call: two-col layout, compact form, sticky submit */
+    .app-modal__two-col--book-call {
+      margin-top: 0;
+    }
+
+    .app-modal__book-call-form-col {
+      display: flex;
+      flex-direction: column;
+      max-height: min(70vh, 520px);
+      min-height: 0;
+    }
+
+    .app-modal__book-call-form-col .app-modal__panel-form {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .app-modal__form--compact {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .app-modal__form--compact .form-group {
+      margin-bottom: 0.35rem;
+    }
+
+    .app-modal__book-call-form-scroll {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding-right: 6px;
+      margin-right: -6px;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
+      scrollbar-color: var(--text-subtle, #888) transparent;
+    }
+
+    .app-modal__book-call-form-scroll::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .app-modal__book-call-form-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .app-modal__book-call-form-scroll::-webkit-scrollbar-thumb {
+      background: var(--text-subtle, #bbb);
+      border-radius: 4px;
+    }
+
+    .app-modal__book-call-form-scroll::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted, #999);
+    }
+
+    .app-modal__book-call-form-footer {
+      flex-shrink: 0;
+      padding-top: 14px;
+      margin-top: 4px;
+      border-top: 1px solid var(--border, #e2e2e0);
+      background: var(--card-bg);
+    }
+
+    .app-modal__book-call-form-footer .btn {
+      width: 100%;
     }
 
     .app-modal__contact-info {
@@ -1071,9 +1308,8 @@
         gap: 28px;
       }
 
-      .app-modal__book-call {
-        grid-template-columns: 1fr;
-        gap: 28px;
+      .app-modal__book-call-form-col {
+        max-height: min(75vh, 420px);
       }
 
       .app-modal__book-call-testimonial {
