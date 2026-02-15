@@ -199,6 +199,29 @@ function buildGeneralNotes(payload, submissionType, submittedAt, context = {}, i
   return lines.join('\n');
 }
 
+/** Max characters per Notion rich_text item (API limit). */
+const RICH_TEXT_CHUNK = 2000;
+
+/**
+ * Convert notes string into Notion block children for page body (paragraphs).
+ * @param {string} notesText
+ * @returns {Array<{ type: string, paragraph?: { rich_text: Array<{ type: string, text: { content: string } }> }, divider?: object }>}
+ */
+function notesToBodyBlocks(notesText) {
+  if (!notesText || typeof notesText !== 'string') return [];
+  const blocks = [];
+  for (let i = 0; i < notesText.length; i += RICH_TEXT_CHUNK) {
+    const content = notesText.slice(i, i + RICH_TEXT_CHUNK);
+    blocks.push({
+      type: 'paragraph',
+      paragraph: {
+        rich_text: [{ type: 'text', text: { content } }]
+      }
+    });
+  }
+  return blocks.length ? blocks : [];
+}
+
 /**
  * Extract plain text from a Notion rich_text property value (from API response).
  */
@@ -294,25 +317,13 @@ async function createOrUpdateVkCrmPage(payload, context = {}) {
     trigger_button_id: payload.trigger_button_id || context.trigger_button_id,
     modal_trigger_type: payload.modal_trigger_type || context.modal_trigger_type
   };
-  let generalNotes = buildGeneralNotes(payloadWithTrigger, submissionType, submittedAt, context, false, isUpdate, matchedBy);
-  if (existingId) {
-    const existingNotes = await getCurrentGeneralNotes(existingId);
-    if (existingNotes.trim()) {
-      generalNotes = existingNotes.trim() + '\n\n---\n\n' + generalNotes;
-    }
-  }
+  const notesForBody = buildGeneralNotes(payloadWithTrigger, submissionType, submittedAt, context, false, isUpdate, matchedBy);
+  const bodyBlocks = notesToBodyBlocks(notesForBody);
 
   const isDateTime = submittedAt.length > 10 && submittedAt.indexOf('T') !== -1;
   const dateStart = isDateTime ? submittedAt : submittedAt.slice(0, 10);
 
   const statusName = submissionType === 'call_booking' ? STATUS_INCOMING_WEB_ENQUIRY : STATUS_WRV_REQUESTED;
-
-  const MAX_RICH_TEXT_CHARS = 2000;
-  const richTextBlocks = [];
-  for (let i = 0; i < generalNotes.length; i += MAX_RICH_TEXT_CHARS) {
-    richTextBlocks.push({ type: 'text', text: { content: generalNotes.slice(i, i + MAX_RICH_TEXT_CHARS) } });
-  }
-  if (richTextBlocks.length === 0) richTextBlocks.push({ type: 'text', text: { content: '' } });
 
   const properties = {
     WRV: { title: [{ text: { content: title.slice(0, 2000) } }] },
@@ -326,7 +337,7 @@ async function createOrUpdateVkCrmPage(payload, context = {}) {
     },
     'Lead source': { multi_select: [{ name: 'website' }] },
     Status: { status: { name: statusName } },
-    'General notes': { rich_text: richTextBlocks }
+    'General notes': { rich_text: [{ type: 'text', text: { content: '' } }] }
   };
 
   const body = { properties: {} };
@@ -337,8 +348,18 @@ async function createOrUpdateVkCrmPage(payload, context = {}) {
   try {
     if (existingId) {
       await client.pages.update({ page_id: existingId, ...body });
+      if (bodyBlocks.length > 0) {
+        const appendChildren = [
+          { type: 'divider', divider: {} },
+          ...bodyBlocks
+        ];
+        await client.blocks.children.append({ block_id: existingId, children: appendChildren });
+      }
     } else {
       body.parent = { database_id: NOTION_DATABASE_ID };
+      if (bodyBlocks.length > 0) {
+        body.children = bodyBlocks;
+      }
       await client.pages.create(body);
     }
     return { success: true };

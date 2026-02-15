@@ -667,6 +667,23 @@ if (appModalDialog) {
 }
 
 // Form validation: inline errors, no native tooltips
+function isUrlValueValid(value) {
+  if (typeof value !== 'string') return false;
+  const t = value.trim();
+  if (!t) return true;
+  try {
+    new URL(t);
+    return true;
+  } catch {
+    try {
+      new URL('https://' + t);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+}
+
 function validateForm(form) {
   let isValid = true;
   const fields = form.querySelectorAll('input[aria-describedby*="-error"], textarea[aria-describedby*="-error"]');
@@ -674,8 +691,13 @@ function validateForm(form) {
   fields.forEach((field) => {
     const errorId = field.getAttribute('aria-describedby');
     const errorEl = errorId ? document.getElementById(errorId) : null;
+    const isUrlField = field.type === 'url';
+    const urlValid = isUrlField ? isUrlValueValid(field.value) : true;
+    const valid = isUrlField
+      ? (field.validity.valueMissing ? !field.required : urlValid)
+      : field.checkValidity();
 
-    if (!field.checkValidity()) {
+    if (!valid) {
       isValid = false;
       field.classList.add('invalid');
       field.setAttribute('aria-invalid', 'true');
@@ -714,7 +736,11 @@ function clearFieldError() {
   const field = this;
   const errorId = field.getAttribute('aria-describedby');
   const errorEl = errorId ? document.getElementById(errorId) : null;
-  if (field.checkValidity()) {
+  const isUrlField = field.type === 'url';
+  const valid = isUrlField
+    ? (field.validity.valueMissing ? !field.required : isUrlValueValid(field.value))
+    : field.checkValidity();
+  if (valid) {
     field.classList.remove('invalid');
     field.setAttribute('aria-invalid', 'false');
     if (errorEl) errorEl.textContent = '';

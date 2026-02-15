@@ -2090,7 +2090,13 @@ footer a:hover {
   font-size: 0.9rem;
 }
 
-/* Success screen (replaces form in modal) */
+/* Success screen (replaces form in modal) – hide main content when success is shown */
+.app-modal__panel .app-modal__eyebrow[hidden],
+.app-modal__panel .app-modal__title[hidden],
+.app-modal__panel .app-modal__book-call[hidden],
+.app-modal__panel .app-modal__two-col[hidden] {
+  display: none !important;
+}
 .app-modal__success,
 .app-modal__success-full {
   padding: 32px 24px;

@@ -13,11 +13,17 @@ function isValidEmail(s) {
 function isValidUrl(s) {
   if (typeof s !== 'string' || !s.trim()) return true; // optional
   if (s.length > MAX_URL) return false;
+  const t = s.trim();
   try {
-    new URL(s.trim());
+    new URL(t);
     return true;
   } catch {
-    return false;
+    try {
+      new URL('https://' + t);
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
 
