@@ -65,3 +65,7 @@ If you use an existing Notion CRM, the property names in `server/lib/notion.js` 
 - **Lead magnets** get per-form tags from `settings.js` (`lead_magnets`), e.g. `lead-50things`, `lead-offboarding`, `lead-socialproof`. Configure automations in Mailchimp so that when a contact has one of these tags, they receive the right lead-magnet email.
 
 Tags are added without removing existing ones (e.g. someone can have both a lead-magnet tag and “submitted website contact form”).
+
+## 7. Website wiki (Notion)
+
+Documentation for this site is maintained in the repo and can be synced to a Notion page. Edit `docs/wiki-content.js` to change the wiki; then run `node scripts/sync-wiki-to-notion.js` to push to Notion. Create a Notion page (e.g. "VK Website Wiki"), share it with your integration, copy the page ID from the URL, and set NOTION_WIKI_PAGE_ID in .env.

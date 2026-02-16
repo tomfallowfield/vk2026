@@ -215,13 +215,19 @@ let lastModalTriggerType = null;
 // Which button opened the modal (for trigger_button_id)
 let lastTriggerButtonId = null;
 
-// Header: hide on scroll down, show on scroll up
+// Header: hide on scroll down, show on scroll up (only for manual scroll; not when scrolling via menu/nav)
+window._programmaticScrollActive = false;
 (function () {
   const header = document.querySelector('header');
   let lastScrollY = window.scrollY;
   const scrollThreshold = 80;
 
   window.addEventListener('scroll', function () {
+    if (window._programmaticScrollActive) {
+      header.classList.remove('header--hidden');
+      lastScrollY = window.scrollY;
+      return;
+    }
     const scrollY = window.scrollY;
     if (scrollY <= scrollThreshold) {
       header.classList.remove('header--hidden');
@@ -708,22 +714,27 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
   });
 })();
 
-// Nav anchor links: smooth scroll with ease-in
+// Nav anchor links: smooth scroll with ease-out (start fast, slow down at end)
 (function () {
   var duration = 800;
-  function easeIn(t) {
-    return t * t;
+  function easeOut(t) {
+    return 1 - (1 - t) * (1 - t);
   }
   function smoothScrollTo(targetY) {
+    window._programmaticScrollActive = true;
     var startY = window.scrollY || window.pageYOffset;
     var dist = targetY - startY;
     var start = performance.now();
     function step(now) {
       var elapsed = now - start;
       var t = Math.min(elapsed / duration, 1);
-      var eased = easeIn(t);
+      var eased = easeOut(t);
       window.scrollTo(0, startY + dist * eased);
-      if (t < 1) requestAnimationFrame(step);
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        window._programmaticScrollActive = false;
+      }
     }
     requestAnimationFrame(step);
   }
@@ -1134,4 +1145,40 @@ getEnabledLeadMagnetIds().forEach(function (id) {
       .finally(() => { setSubmitButtonLoading(this, false); });
   });
 });
+
+// Hero LinkedIn faces: populate from SITE_SETTINGS.linkedin_faces (name, role, photo) with hover tooltip
+(function () {
+  const container = document.getElementById('hero-linkedin-faces');
+  if (!container) return;
+  const list = window.SITE_SETTINGS && Array.isArray(window.SITE_SETTINGS.linkedin_faces) ? window.SITE_SETTINGS.linkedin_faces : [];
+  const base = 'images/li_mugs/';
+  list.forEach(function (person) {
+    const name = (person.name && String(person.name).trim()) || '';
+    const role = (person.role && String(person.role).trim()) || '';
+    const photo = (person.photo && String(person.photo).trim()) || '';
+    if (!photo) return;
+    const span = document.createElement('span');
+    span.className = 'avatar';
+    const tooltipText = [name, role].filter(Boolean).join(' – ');
+    if (tooltipText) {
+      const tooltip = document.createElement('span');
+      tooltip.className = 'avatar-tooltip';
+      tooltip.setAttribute('role', 'tooltip');
+      tooltip.textContent = tooltipText;
+      span.appendChild(tooltip);
+    }
+    const img = document.createElement('img');
+    img.src = base + encodeURIComponent(photo);
+    img.alt = name || '';
+    img.width = 36;
+    img.height = 36;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    const imgWrap = document.createElement('span');
+    imgWrap.className = 'avatar-img';
+    imgWrap.appendChild(img);
+    span.appendChild(imgWrap);
+    container.appendChild(span);
+  });
+})();
 

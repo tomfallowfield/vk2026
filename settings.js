@@ -70,6 +70,18 @@
 
     // --- Modals ---
     // When URL has ?modal= with no value, open this modal (e.g. 'website-review', 'book-call'). Null = do nothing.
-    default_modal: null
+    default_modal: null,
+
+    // --- Hero LinkedIn faces (avatar stack) ---
+    // Each entry: name (tooltip), role (tooltip), photo (filename in images/li_mugs/).
+    // Tooltip on hover shows "Name – Role". Rename image files to match photo values.
+    linkedin_faces: [
+      { name: 'Arthur Jones', role: 'CEO Maskew Media', photo: 'arthur jones.jpg' },
+      { name: 'Dave Stubberfield', role: 'Director, Carter Consultancy', photo: 'dave stubberfield.jpg' },
+      { name: 'Mike Hill', role: 'CEO, Total Ticketing', photo: 'mike.jpg' },
+      { name: 'Paola Forsberg', role: 'The Leading Lady of LinkedIn Leadgen!', photo: 'paola forsberg.jpg' },
+      { name: 'Rachel Coles', role: 'CEO Conv3rt Marketing', photo: 'rachel coles.jpg' },
+      { name: 'Katie Skelton', role: 'Massive Email Wierdo', photo: 'katie.jpg' }
+    ]
   };
 })();

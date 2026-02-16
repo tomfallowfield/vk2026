@@ -847,22 +847,66 @@
     }
 
     .avatar-stack .avatar {
+      position: relative;
       display: inline-flex;
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      overflow: hidden;
+      overflow: visible;
       border: 2px solid var(--paper);
       margin-left: -12px;
       flex-shrink: 0;
+    }
+
+    .avatar-stack .avatar .avatar-tooltip {
+      position: absolute;
+      left: 50%;
+      bottom: 100%;
+      transform: translateX(-50%);
+      margin-bottom: 10px;
+      padding: 8px 14px;
+      background: var(--brand-grey);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 500;
+      white-space: nowrap;
+      border-radius: 8px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      pointer-events: none;
+    }
+
+    .avatar-stack .avatar .avatar-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -6px;
+      border: 6px solid transparent;
+      border-top-color: var(--brand-grey);
+    }
+
+    .avatar-stack .avatar:hover .avatar-tooltip,
+    .avatar-stack .avatar:focus-within .avatar-tooltip {
+      opacity: 1;
+      visibility: visible;
     }
 
     .avatar-stack .avatar:first-child {
       margin-left: 0;
     }
 
+    .avatar-stack .avatar .avatar-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      display: inline-flex;
+    }
+
     .avatar-stack .avatar svg,
-    .avatar-stack .avatar img {
+    .avatar-stack .avatar .avatar-img img {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -1257,7 +1301,7 @@
       top: 0.2em;
       width: 1em;
       height: 1em;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FE5EB6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23383838' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
@@ -2142,9 +2186,10 @@ section#how-it-feels .eyebrow {
     .pricing-panel--core {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-bottom: none;
+      /* border-bottom: none; */
       border-radius: 8px 8px 0 0;
       padding: 40px 36px 36px;
+      margin-bottom: 20px;
     }
 
     .pricing-panel--core .pricing-panel__left {
@@ -2444,6 +2489,7 @@ section#how-it-feels .eyebrow {
       border: 1px solid var(--border);
       border-radius: 0;
       padding: 28px 24px;
+      margin-bottom: 20px;
     }
     .addon-panel:last-child {
       border-radius: 0 0 8px 8px;
