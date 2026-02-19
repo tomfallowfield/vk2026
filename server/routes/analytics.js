@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { writeEvents, enrichVisitor, getRecentEvents, isConfigured, isValidEventType } = require('../lib/analytics-db');
+const { writeEvents, enrichVisitor, getRecentEvents, deleteEvents, isConfigured, isValidEventType } = require('../lib/analytics-db');
 const { logEvents } = require('../lib/analytics-logger');
 const { maybeNotifyReturnVisit } = require('../lib/return-visit-notify');
 
@@ -114,6 +114,31 @@ router.post('/events', async (req, res) => {
   void maybeNotifyReturnVisit(visitor_id);
 
   res.status(204).end();
+});
+
+/**
+ * POST /events/delete
+ * Body: { ids: [1, 2, 3] } – event ids to delete. Same view_key as GET /events if DEMO_VIEW_KEY set.
+ */
+router.post('/events/delete', async (req, res) => {
+  const viewKey = process.env.DEMO_VIEW_KEY || '';
+  if (viewKey && req.query.view_key !== viewKey) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const ids = Array.isArray(req.body?.ids) ? req.body.ids : [];
+  if (ids.length === 0) {
+    return res.status(400).json({ error: 'ids must be a non-empty array' });
+  }
+  if (!isConfigured()) {
+    return res.status(204).end();
+  }
+  try {
+    await deleteEvents(ids);
+    res.status(204).end();
+  } catch (err) {
+    console.error('Analytics deleteEvents:', err.message);
+    res.status(500).json({ error: 'Failed to delete events' });
+  }
 });
 
 /**

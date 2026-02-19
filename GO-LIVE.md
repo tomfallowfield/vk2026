@@ -4,6 +4,8 @@ Use this **one task at a time**. Do each step, then the next.
 You’re moving from `/var/www/html/vk2026` to `/var/www/vanillakiller.com/public_html`. The live site will be **https://vanillakiller.com** (no path).  
 Web server: **Apache**. SSL with Let’s Encrypt.
 
+**Right now you’re still in `html/vk2026`** – use that path for deploy and day-to-day commands until you finish the go-live tasks and switch to `vanillakiller.com/public_html`.
+
 ---
 
 ## Before you start
@@ -177,13 +179,39 @@ cd /var/www/vanillakiller.com/public_html
 
 ---
 
-## Quick reference after go-live
+## Deploy failing?
+
+**See where it failed:** Run the script by hand and watch the output. Use the path where the app actually lives (e.g. still `html/vk2026` until you’ve done go-live):
+
+```bash
+cd /var/www/html/vk2026 && ./deploy.sh
+```
+
+- **Fails at "Pulling latest" or "Updating to origin/main"** – Server’s `main` may be behind or detached. Check `git status` and `git branch`. The script now uses `git reset --hard origin/main` after fetch so you always match the remote.
+- **Fails at "Installing dependencies"** – Run `npm install --omit=dev` yourself and check the error (network, Node version, or a broken dependency).
+- **Fails at "Restarting app..."** – PM2 might not have an app named `vk2026` yet. The script now starts it if missing: `pm2 start server.js --name vk2026`. If you use a different path, run that once from the app directory, then `pm2 save`.
+- **Webhook returns 202 but nothing happens** – On the server, check `pm2 logs vk2026` and the process that runs the webhook (e.g. the same Node app). Ensure `DEPLOY_WEBHOOK_SECRET` in `.env` matches the secret in GitHub repo secrets.
+
+---
+
+## Quick reference
+
+**Current (still in html/vk2026):**
+
+| What            | Value |
+|-----------------|--------|
+| App directory   | `/var/www/html/vk2026` |
+| Manual deploy   | `cd /var/www/html/vk2026 && ./deploy.sh` |
+| PM2 app name    | `vk2026` |
+| Site URL        | Your server URL (e.g. `https://yourserver/vk2026/` or IP) |
+| .env            | In app dir; set `SITE_BASE_URL` to match how you access the site |
+| Deploy webhook  | `https://yourserver/vk2026/api/webhooks/deploy` (or without `/vk2026` if not under path) |
+
+**After go-live (vanillakiller.com):**
 
 | What            | Value |
 |-----------------|--------|
 | App directory   | `/var/www/vanillakiller.com/public_html` |
 | Manual deploy   | `cd /var/www/vanillakiller.com/public_html && ./deploy.sh` |
-| PM2 app name    | `vk2026` |
 | Site URL        | **https://vanillakiller.com** |
-| .env            | In `public_html`; keep `SITE_BASE_URL=https://vanillakiller.com` |
 | Deploy webhook  | `https://vanillakiller.com/api/webhooks/deploy` |

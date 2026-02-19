@@ -176,6 +176,21 @@ async function enrichVisitor(visitor_id, data) {
 }
 
 /**
+ * Delete events by id (e.g. from demo viewer). No-op if not configured or ids empty.
+ * @param {number[]} ids - event ids to delete
+ * @returns {Promise<number>} number of rows deleted
+ */
+async function deleteEvents(ids) {
+  const p = getPool();
+  if (!p || !Array.isArray(ids) || ids.length === 0) return 0;
+  const safeIds = ids.map(id => parseInt(id, 10)).filter(n => Number.isInteger(n) && n > 0);
+  if (safeIds.length === 0) return 0;
+  const placeholders = safeIds.map(() => '?').join(',');
+  const [result] = await p.execute('DELETE FROM events WHERE id IN (' + placeholders + ')', safeIds);
+  return result && result.affectedRows != null ? result.affectedRows : 0;
+}
+
+/**
  * Get recent events for demo/viewer (newest first).
  * @param {number} limit - max rows (default 200, cap 500)
  * @returns {Promise<Array<object>>}
@@ -255,6 +270,7 @@ module.exports = {
   writeEvents,
   enrichVisitor,
   getRecentEvents,
+  deleteEvents,
   getVisitorForReturnCheck,
   setReturnVisitNotified,
   ALLOWED_EVENT_TYPES

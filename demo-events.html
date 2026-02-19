@@ -199,7 +199,7 @@
       <p class="meta">Live view · one row per event</p>
     </div>
     <div class="header-actions">
-      <button type="button" class="btn-delete" id="deleteSelected" disabled title="Remove selected rows from view (reappear on next refresh)">Delete selected</button>
+      <button type="button" class="btn-delete" id="deleteSelected" disabled title="Permanently delete selected events">Delete selected</button>
       <label>
         <input type="checkbox" id="live" checked>
         Auto-refresh every 5s
@@ -480,18 +480,39 @@
 
       deleteBtn.addEventListener('click', function () {
         if (deleteBtn.disabled) return;
-        var idsToRemove = new Set();
+        var idsToRemove = [];
         tbody.querySelectorAll('input.row-select:checked').forEach(function (cb) {
           var id = cb.getAttribute('data-event-id');
-          if (id) idsToRemove.add(id);
+          if (id) {
+            var n = parseInt(id, 10);
+            if (Number.isInteger(n) && n > 0) idsToRemove.push(n);
+          }
         });
-        if (idsToRemove.size === 0) return;
-        allEvents = allEvents.filter(function (e) {
-          return e.id == null || !idsToRemove.has(String(e.id));
+        if (idsToRemove.length === 0) return;
+        var deleteUrl = (pathPrefix ? pathPrefix + '/' : '/') + 'api/analytics/events/delete';
+        if (viewKey) deleteUrl += '?view_key=' + encodeURIComponent(viewKey);
+        deleteBtn.disabled = true;
+        fetch(deleteUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ids: idsToRemove })
+        }).then(function (r) {
+          if (!r.ok) throw new Error(r.status === 401 ? 'Unauthorized' : r.status);
+          return r.json().catch(function () { return null; });
+        }).then(function (body) {
+          if (body && body.error) throw new Error(body.error);
+          var idSet = new Set(idsToRemove.map(String));
+          allEvents = allEvents.filter(function (e) { return e.id == null || !idSet.has(String(e.id)); });
+          render(allEvents);
+          selectAllEl.checked = false;
+          updateDeleteButton();
+        }).catch(function (err) {
+          errEl.textContent = err.message || 'Failed to delete events';
+          errEl.style.display = 'block';
+          updateDeleteButton();
+        }).then(function () {
+          deleteBtn.disabled = !(tbody.querySelectorAll('input.row-select:checked').length > 0);
         });
-        render(allEvents);
-        selectAllEl.checked = false;
-        updateDeleteButton();
       });
 
       fetchEvents();
