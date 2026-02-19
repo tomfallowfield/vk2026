@@ -685,17 +685,18 @@ if (video) {
   });
 }
 
-function closeVideoModal() {
+function closeVideoModal(opts) {
+  if (opts && opts.source) trackEvent('video_modal_close', { source: opts.source });
   modal.classList.remove('active');
   document.body.style.overflow = '';
   video.pause();
   video.src = '';
 }
 
-closeBtn.addEventListener('click', closeVideoModal);
+closeBtn.addEventListener('click', function () { closeVideoModal({ source: 'button' }); });
 
 modal.addEventListener('click', e => {
-  if (e.target === modal) closeVideoModal();
+  if (e.target === modal) closeVideoModal({ source: 'backdrop' });
 });
 
 // App modal (book a call, website review, lead magnets)
@@ -889,8 +890,12 @@ function openAppModal(panelId, opts) {
   }
 }
 
-function closeAppModal() {
+function closeAppModal(opts) {
   if (!appModal) return;
+  if (opts && opts.source) {
+    var activePanel = appModal.querySelector('.app-modal__panel.active');
+    trackEvent('modal_close', { source: opts.source, panel_id: activePanel ? activePanel.getAttribute('data-panel') : null });
+  }
   hideBookCallCalendarView();
   appModal.classList.remove('active');
   appModal.setAttribute('aria-hidden', 'true');
@@ -937,7 +942,7 @@ document.addEventListener('click', e => {
 });
 
 if (appModalCloseBtn) {
-  appModalCloseBtn.addEventListener('click', closeAppModal);
+  appModalCloseBtn.addEventListener('click', function () { closeAppModal({ source: 'button' }); });
 }
 
 var appModalCalendarClose = document.querySelector('.app-modal__calendar-close');
@@ -958,18 +963,18 @@ if (appModalShowCalendarLink) {
 
 if (appModal) {
   appModal.addEventListener('click', e => {
-    if (e.target === appModal) closeAppModal();
+    if (e.target === appModal) closeAppModal({ source: 'backdrop' });
   });
 }
 
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (modal && modal.classList.contains('active')) {
-    closeVideoModal();
+    closeVideoModal({ source: 'escape' });
     return;
   }
   if (appModal && appModal.classList.contains('active')) {
-    closeAppModal();
+    closeAppModal({ source: 'escape' });
   }
 });
 
@@ -1141,9 +1146,11 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
     var yearEl = document.getElementById('mobile-menu-year');
     if (yearEl && !yearEl.textContent) yearEl.textContent = new Date().getFullYear();
     if (closeBtn) closeBtn.focus();
+    trackEvent('menu_open', {});
   }
 
-  function closeMobileMenu() {
+  function closeMobileMenu(source) {
+    if (source) trackEvent('menu_close', { source: source });
     menu.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
   }
@@ -1151,16 +1158,16 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
   hamburger.addEventListener('click', function () {
     openMobileMenu();
   });
-  if (closeBtn) closeBtn.addEventListener('click', closeMobileMenu);
+  if (closeBtn) closeBtn.addEventListener('click', function () { closeMobileMenu('button'); });
 
   menu.addEventListener('click', function (e) {
-    if (e.target.closest('a')) closeMobileMenu();
+    if (e.target.closest('a')) closeMobileMenu('link');
   });
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
     if (menu.getAttribute('aria-hidden') === 'false') {
-      closeMobileMenu();
+      closeMobileMenu('escape');
     }
   });
 })();

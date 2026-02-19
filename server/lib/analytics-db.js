@@ -15,7 +15,11 @@ const ALLOWED_EVENT_TYPES = new Set([
   'tc_open',
   'privacy_open',
   'cal_link_click',
-  'time_on_site'
+  'time_on_site',
+  'menu_open',
+  'menu_close',
+  'modal_close',
+  'video_modal_close'
 ]);
 
 let pool = null;

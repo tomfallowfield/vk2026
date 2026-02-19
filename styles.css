@@ -4145,3 +4145,9 @@ html.dark-mode .easter-egg-tooltip::after {
   color: var(--text-muted);
 }
 
+/* Dark mode: success screen text must be white and readable */
+html.dark-mode .app-modal__success-message,
+html.dark-mode .app-modal__success-easter {
+  color: #fff;
+}
+
