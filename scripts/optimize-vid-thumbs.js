@@ -5,14 +5,14 @@
  * Requires: npm install sharp (or run with npx: npx sharp-cli ...)
  *
  * If you don't have sharp, you can generate WebP manually with:
- *   cwebp -q 80 vids/how-to-talk-about-your-business.png -o vids/how-to-talk-about-your-business.webp
+ *   cwebp -q 80 vids/how-to-talk-about-your-business.jpg -o vids/how-to-talk-about-your-business.webp
  * or use an online converter / Squoosh.
  */
 
 const path = require('path');
 const fs = require('fs');
 
-const inputPath = path.join(__dirname, '..', 'vids', 'how-to-talk-about-your-business.png');
+const inputPath = path.join(__dirname, '..', 'vids', 'how-to-talk-about-your-business.jpg');
 const outputPath = path.join(__dirname, '..', 'vids', 'how-to-talk-about-your-business.webp');
 
 if (!fs.existsSync(inputPath)) {
@@ -27,7 +27,7 @@ async function run() {
   } catch (e) {
     console.error('This script requires "sharp". Install with: npm install --save-dev sharp');
     console.error('Alternatively generate WebP manually:');
-    console.error('  cwebp -q 80 vids/how-to-talk-about-your-business.png -o vids/how-to-talk-about-your-business.webp');
+    console.error('  cwebp -q 80 vids/how-to-talk-about-your-business.jpg -o vids/how-to-talk-about-your-business.webp');
     process.exit(1);
   }
 

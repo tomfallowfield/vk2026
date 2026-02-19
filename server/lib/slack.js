@@ -11,13 +11,16 @@ async function sendSlackMessage(text) {
     return;
   }
   try {
+    console.log('Slack: sending notification…');
     const fetch = require('node-fetch');
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text })
     });
-    if (!res.ok) {
+    if (res.ok) {
+      console.log('Slack: sent OK', res.status);
+    } else {
       const body = await res.text();
       console.error('Slack webhook error:', res.status, body || res.statusText);
     }
