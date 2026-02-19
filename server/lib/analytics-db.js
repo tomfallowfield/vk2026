@@ -183,9 +183,9 @@ async function getRecentEvents(limit) {
   const p = getPool();
   if (!p) return [];
   const cap = Math.min(Math.max(1, parseInt(limit, 10) || 200), 500);
+  // LIMIT must be a literal integer for mysql2 execute(); bound param can cause "Incorrect arguments to mysqld_stmt_execute"
   const [rows] = await p.execute(
-    'SELECT id, visitor_id, event_type, occurred_at, page_url, referrer, utm_source, utm_medium, metadata FROM events ORDER BY occurred_at DESC LIMIT ?',
-    [cap]
+    'SELECT id, visitor_id, event_type, occurred_at, page_url, referrer, utm_source, utm_medium, metadata FROM events ORDER BY occurred_at DESC LIMIT ' + String(cap)
   );
   return (rows || []).map(r => {
     let meta = null;
