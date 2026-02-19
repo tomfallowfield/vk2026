@@ -1613,13 +1613,18 @@
       }
     }
 
-    /* Mobile: reduce top spacing */
+    /* Mobile: reduce top spacing; allow LinkedIn faces line to wrap on narrow screens */
     @media (max-width: 768px) {
       .hero {
         padding-top: 56px;
       }
       .hero-header {
         margin-bottom: 1rem;
+      }
+      .hero-social-proof-text {
+        white-space: normal;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
       }
     }
     /* Sub 700: hero padding-top 40, hide * and *ish in h1 */
@@ -2045,6 +2050,7 @@
       color: var(--brand-grey);
       font-weight: 500;
       white-space: nowrap;
+      min-width: 0; /* allow flex item to shrink so text can wrap on narrow screens */
     }
 
     .hero-features {
