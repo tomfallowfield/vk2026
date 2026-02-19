@@ -4278,6 +4278,7 @@ html.dark-mode .feels-and-testimonial-block section#how-it-feels:hover .containe
       inset: 0;
       z-index: 0;
       background-color: #a8c8e8;
+      background-image: url('images/clouds.jpg');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;

@@ -6,7 +6,9 @@ echo "==== DEPLOY START ===="
 date
 echo "Deploy PID: $$"
 
-cd /var/www/vanillakiller.com/public_html || exit 1
+# Run from the directory containing this script (works wherever the repo is cloned)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR" || exit 1
 
 echo "Resetting local changes..."
 git reset --hard HEAD

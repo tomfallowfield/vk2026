@@ -28,6 +28,8 @@ app.use(cookieParser());
 app.use(express.json({ limit: '100kb' }));
 
 app.use('/', express.static(path.join(__dirname), { index: 'index.html' }));
+// Serve same static files under /vk2026 so /vk2026/demo-events.html and /vk2026/ work
+app.use('/vk2026', express.static(path.join(__dirname), { index: 'index.html' }));
 
 const limiter = rateLimit({
   windowMs: 60 * 1000,
@@ -44,6 +46,8 @@ const analyticsLimiter = rateLimit({
 });
 // Analytics first so GET /analytics/events (viewer polling) uses 120/min, not 10/min
 app.use('/api/analytics', analyticsLimiter, analyticsRouter);
+// Also under /vk2026 so demo-events and main site work when served at /vk2026
+app.use('/vk2026/api/analytics', analyticsLimiter, analyticsRouter);
 app.use('/api', limiter);
 app.use('/api', submissionsRouter);
 app.use('/api/webhooks', webhooksRouter);
