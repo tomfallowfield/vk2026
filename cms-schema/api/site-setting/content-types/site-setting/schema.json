@@ -1,0 +1,92 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_settings",
+  "info": {
+    "singularName": "site-setting",
+    "pluralName": "site-settings",
+    "displayName": "Site settings",
+    "description": "Replaces settings.js. Controls behaviour, toggles, and config."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "autodialog_form_to_show": {
+      "type": "string",
+      "default": "wrv"
+    },
+    "autodialog_to_be_shown_on_exit_intent": {
+      "type": "boolean",
+      "default": true
+    },
+    "autodialog_to_be_shown_after_delay_s": {
+      "type": "integer",
+      "default": 30
+    },
+    "site_env": {
+      "type": "string",
+      "default": "temp"
+    },
+    "api_base": {
+      "type": "string"
+    },
+    "wrv_offer": {
+      "type": "boolean",
+      "default": true
+    },
+    "book_call_offer": {
+      "type": "boolean",
+      "default": true
+    },
+    "book_call_calendar_url": {
+      "type": "string"
+    },
+    "lead_magnets_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "lead_magnets": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.lead-magnet-config"
+    },
+    "show_pricing": {
+      "type": "boolean",
+      "default": true
+    },
+    "cookie_consent_enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "show_email": {
+      "type": "boolean",
+      "default": true
+    },
+    "cta_primary_black": {
+      "type": "boolean",
+      "default": true
+    },
+    "rescue_section_show_videos": {
+      "type": "boolean",
+      "default": false
+    },
+    "ga_id": {
+      "type": "string"
+    },
+    "maintenance_mode": {
+      "type": "boolean",
+      "default": false
+    },
+    "maintenance_message": {
+      "type": "text"
+    },
+    "default_modal": {
+      "type": "string"
+    },
+    "linkedin_faces": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.linkedin-face"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_shared_lead_magnet_configs",
+  "info": {
+    "displayName": "Lead magnet config",
+    "description": "Per-lead-magnet settings. id must match form id (e.g. lead-50things)."
+  },
+  "attributes": {
+    "form_id": {
+      "type": "string",
+      "required": true,
+      "description": "Must match form id e.g. lead-50things"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "success_message": {
+      "type": "string"
+    },
+    "mailchimp_tag": {
+      "type": "string",
+      "description": "Tag applied in Mailchimp for automation"
+    }
+  }
+}

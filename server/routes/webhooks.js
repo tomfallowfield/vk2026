@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require('path');
+const { exec } = require('child_process');
 const router = express.Router();
 const { createOrUpdateVkCrmPage } = require('../lib/notion-vkcrm');
 const config = require('../config');
@@ -12,7 +14,34 @@ function checkWebhookAuth(req) {
   return bearer === secret || headerSecret === secret;
 }
 
+function checkDeploySecret(req) {
+  const secret = config.DEPLOY_WEBHOOK_SECRET;
+  if (!secret) return false;
+  const header = (req.get('X-Deploy-Secret') || '').trim();
+  const query = (req.query && req.query.secret) || '';
+  return header === secret || query === secret;
+}
+
 router.use(express.json({ limit: '100kb' }));
+
+// POST /deploy – run deploy.sh (for GitHub Actions or other CI). Requires DEPLOY_WEBHOOK_SECRET.
+router.post('/deploy', (req, res) => {
+  if (!checkDeploySecret(req)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  const appRoot = path.resolve(__dirname, '../..');
+  const deployScript = path.join(appRoot, 'deploy.sh');
+  res.status(202).json({ ok: true, message: 'Deploy started' });
+  exec(`"${deployScript}"`, { cwd: appRoot, maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
+    if (err) {
+      console.error('Deploy script error:', err.message);
+      if (stderr) console.error('Deploy stderr:', stderr);
+      return;
+    }
+    if (stderr) console.error('Deploy stderr:', stderr);
+    console.log('Deploy completed successfully');
+  });
+});
 
 router.post('/booking-confirmed', async (req, res) => {
   if (!checkWebhookAuth(req)) {

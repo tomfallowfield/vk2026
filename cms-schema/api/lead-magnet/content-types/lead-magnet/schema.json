@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "lead_magnets",
+  "info": {
+    "singularName": "lead-magnet",
+    "pluralName": "lead-magnets",
+    "displayName": "Lead magnet",
+    "description": "Free tools / lead magnet cards. slug must match form id."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

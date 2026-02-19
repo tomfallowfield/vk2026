@@ -7,6 +7,7 @@ const config = require('./server/config');
 const { isConfigured: isVkCrmConfigured } = require('./server/lib/notion-vkcrm');
 const submissionsRouter = require('./server/routes/submissions');
 const webhooksRouter = require('./server/routes/webhooks');
+const analyticsRouter = require('./server/routes/analytics');
 
 const app = express();
 const PORT = config.PORT;
@@ -35,7 +36,14 @@ const limiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false
 });
+const analyticsLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false
+});
 app.use('/vk2026/api', limiter);
+app.use('/vk2026/api/analytics', analyticsLimiter, analyticsRouter);
 app.use('/vk2026/api', submissionsRouter);
 app.use('/vk2026/api/webhooks', webhooksRouter);
 

@@ -27,7 +27,8 @@ function getSettings() {
     default_modal: (s.default_modal && typeof s.default_modal === 'string') ? s.default_modal : null,
     api_base: typeof s.api_base === 'string' ? s.api_base.trim() : '',
     book_call_calendar_url: typeof s.book_call_calendar_url === 'string' ? s.book_call_calendar_url.trim() : '',
-    lead_magnets: (s.lead_magnets && typeof s.lead_magnets === 'object') ? s.lead_magnets : {}
+    lead_magnets: (s.lead_magnets && typeof s.lead_magnets === 'object') ? s.lead_magnets : {},
+    easter_eggs_competition_showing: s.easter_eggs_competition_showing === true
   };
 }
 
@@ -47,6 +48,99 @@ function getLeadMagnetConfig(id) {
   const lm = getSettings().lead_magnets[id];
   return lm && typeof lm === 'object' ? lm : {};
 }
+
+// Strapi richtext blocks to HTML (paragraph, text, link, bold, italic)
+function blocksToHtml(blocks) {
+  if (!blocks || !Array.isArray(blocks)) return '';
+  function textNode(n) {
+    if (!n) return '';
+    if (n.type === 'text') {
+      var t = (n.text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      if (n.bold) t = '<strong>' + t + '</strong>';
+      if (n.italic) t = '<em>' + t + '</em>';
+      return t;
+    }
+    if (n.type === 'link') {
+      var href = (n.url || '#').replace(/"/g, '&quot;');
+      var children = (n.children || []).map(textNode).join('');
+      return '<a href="' + href + '" target="_blank" rel="noopener noreferrer">' + children + '</a>';
+    }
+    return (n.children || []).map(textNode).join('');
+  }
+  return blocks.map(function (b) {
+    var children = (b.children || []).map(textNode).join('');
+    if (b.type === 'paragraph') return '<p>' + children + '</p>';
+    if (b.type === 'heading' && b.level) return '<h' + b.level + '>' + children + '</h' + b.level + '>';
+    if (b.type === 'list') {
+      var tag = b.format === 'ordered' ? 'ol' : 'ul';
+      var items = (b.children || []).map(function (li) {
+        var c = (li.children || []).map(textNode).join('');
+        return '<li>' + c + '</li>';
+      }).join('');
+      return '<' + tag + '>' + items + '</' + tag + '>';
+    }
+    return '<p>' + children + '</p>';
+  }).join('');
+}
+
+// CMS content render (FAQs, testimonials, lead magnets) – runs when window.FAQS etc from load-cms.js
+(function () {
+  var list = window.FAQS;
+  if (Array.isArray(list) && list.length > 0) {
+    var el = document.getElementById('faq-list');
+    if (el) {
+      el.innerHTML = '';
+      list.forEach(function (item) {
+        var q = (item.question || '').trim();
+        var a = item.answer;
+        var aHtml = typeof a === 'string' ? a : (Array.isArray(a) ? blocksToHtml(a) : '');
+        var div = document.createElement('div');
+        div.className = 'faq';
+        div.innerHTML = '<button class="faq-trigger"><span>' + q.replace(/</g, '&lt;').replace(/&/g, '&amp;') + '</span><span>+</span></button><div class="faq-panel">' + aHtml + '</div>';
+        el.appendChild(div);
+      });
+    }
+  }
+
+  var testimonials = window.TESTIMONIALS;
+  if (testimonials && Array.isArray(testimonials) && testimonials.length > 0) {
+    /* Hero uses hardcoded carousel (Mike, Matthew Creed, lorem) - no CMS overwrite */
+    /* Hero testimonial is now a hardcoded carousel - skip hero CMS overwrite */
+    var testimonialSection = document.querySelector('.testimonial-section .testimonial-wrap');
+    if (testimonialSection && testimonials.length > 1) {
+      var t2 = testimonials[1];
+      var q2 = (t2.quote || '').trim().replace(/^["']|["']$/g, '');
+      var img2 = t2.avatar_path ? ((t2.avatar_path.indexOf('images/') === 0 || t2.avatar_path.indexOf('http') === 0) ? t2.avatar_path : 'images/testimonial_mugs/' + t2.avatar_path.replace(/^.*\//, '')) : '';
+      testimonialSection.innerHTML = '<img src="' + (img2 || 'images/testimonial_mugs/mike.png') + '" alt="' + (t2.author_name || '').replace(/"/g, '&quot;') + '" class="testimonial-avatar" /><blockquote class="testimonial">"' + q2.replace(/</g, '&lt;').replace(/"/g, '&quot;') + '"<br><strong>' + (t2.author_name || '').replace(/</g, '&lt;') + (t2.author_role ? ', ' + (t2.author_role || '').replace(/</g, '&lt;') : '') + '</strong></blockquote>';
+    }
+  }
+
+  var magnets = window.LEAD_MAGNETS;
+  if (magnets && Array.isArray(magnets) && magnets.length > 0) {
+    var settings = getSettings();
+    var enabledIds = getEnabledLeadMagnetIds();
+    magnets = magnets.filter(function (m) {
+      return m.enabled !== false && enabledIds.indexOf(m.slug) >= 0;
+    });
+    var grid = document.getElementById('resources-grid');
+    if (grid) {
+      grid.innerHTML = '';
+      magnets.forEach(function (m) {
+        var slug = (m.slug || '').trim();
+        var title = (m.title || '').replace(/</g, '&lt;');
+        var desc = m.description;
+        var descHtml = typeof desc === 'string' ? desc : (Array.isArray(desc) ? blocksToHtml(desc) : '');
+        var card = document.createElement('a');
+        card.href = '#';
+        card.id = 'button-' + slug + '-resources';
+        card.className = 'resource-card';
+        card.setAttribute('data-modal', slug);
+        card.innerHTML = '<h3>' + title + '</h3><p>' + descHtml + '</p>';
+        grid.appendChild(card);
+      });
+    }
+  }
+})();
 
 // Cookie consent & visitor context (graceful degradation if declined)
 const COOKIE_CONSENT_KEY = 'vk_cookie_consent';
@@ -167,6 +261,111 @@ function recordFormSubmission(formId) {
   } catch (_) {}
 }
 
+// Analytics: send event to server immediately (fire-and-forget). Only when cookie consent given.
+function getAnalyticsContext() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    page_url: window.location.href,
+    referrer: document.referrer || '',
+    utm_source: params.get('utm_source') || '',
+    utm_medium: params.get('utm_medium') || '',
+    utm_campaign: params.get('utm_campaign') || '',
+    utm_term: params.get('utm_term') || '',
+    utm_content: params.get('utm_content') || ''
+  };
+}
+
+function trackEvent(eventType, metadata) {
+  if (!hasAcceptedCookies()) return;
+  const v = getOrCreateVisitor();
+  if (!v || !v.visitor_id) return;
+  const ctx = getAnalyticsContext();
+  const event = {
+    event_type: eventType,
+    timestamp: new Date().toISOString(),
+    page_url: ctx.page_url,
+    referrer: ctx.referrer,
+    utm_source: ctx.utm_source,
+    utm_medium: ctx.utm_medium,
+    utm_campaign: ctx.utm_campaign,
+    utm_term: ctx.utm_term,
+    utm_content: ctx.utm_content,
+    metadata: metadata && typeof metadata === 'object' ? metadata : null
+  };
+  const payload = { visitor_id: v.visitor_id, events: [event] };
+  const url = window.API_BASE + '/analytics/events';
+  const body = JSON.stringify(payload);
+  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+    navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
+  } else {
+    fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true }).catch(function () {});
+  }
+}
+
+function trackEvents(events) {
+  if (!hasAcceptedCookies() || !events || events.length === 0) return;
+  const v = getOrCreateVisitor();
+  if (!v || !v.visitor_id) return;
+  const ctx = getAnalyticsContext();
+  const payload = {
+    visitor_id: v.visitor_id,
+    events: events.map(function (ev) {
+      return {
+        event_type: ev.event_type,
+        timestamp: (ev.timestamp && new Date(ev.timestamp).toISOString()) || new Date().toISOString(),
+        page_url: ev.page_url != null ? ev.page_url : ctx.page_url,
+        referrer: ev.referrer != null ? ev.referrer : ctx.referrer,
+        utm_source: ev.utm_source != null ? ev.utm_source : ctx.utm_source,
+        utm_medium: ev.utm_medium != null ? ev.utm_medium : ctx.utm_medium,
+        utm_campaign: ev.utm_campaign != null ? ev.utm_campaign : ctx.utm_campaign,
+        utm_term: ev.utm_term != null ? ev.utm_term : ctx.utm_term,
+        utm_content: ev.utm_content != null ? ev.utm_content : ctx.utm_content,
+        metadata: ev.metadata && typeof ev.metadata === 'object' ? ev.metadata : null
+      };
+    })
+  };
+  const url = window.API_BASE + '/analytics/events';
+  const body = JSON.stringify(payload);
+  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+    navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
+  } else {
+    fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true }).catch(function () {});
+  }
+}
+
+// Time on site: heartbeat every 30s, final send on visibility hidden / beforeunload
+(function () {
+  var sessionStart = Date.now();
+  var heartbeatInterval = null;
+  function sendTimeOnSite() {
+    if (!hasAcceptedCookies()) return;
+    var seconds = Math.round((Date.now() - sessionStart) / 1000);
+    trackEvent('time_on_site', { seconds: seconds });
+  }
+  function startHeartbeat() {
+    if (heartbeatInterval) return;
+    heartbeatInterval = setInterval(sendTimeOnSite, 30000);
+  }
+  function stopHeartbeat() {
+    if (heartbeatInterval) {
+      clearInterval(heartbeatInterval);
+      heartbeatInterval = null;
+    }
+  }
+  if (typeof document.visibilityState !== 'undefined') {
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') {
+        sendTimeOnSite();
+        stopHeartbeat();
+      } else {
+        startHeartbeat();
+      }
+    });
+  }
+  window.addEventListener('beforeunload', function () { sendTimeOnSite(); });
+  if (document.visibilityState === 'visible') startHeartbeat();
+})();
+
 // Cookie bar UI (only when cookie_consent_enabled is true)
 (function () {
   const bar = document.getElementById('cookie-bar');
@@ -240,29 +439,69 @@ window._programmaticScrollActive = false;
   }, { passive: true });
 })();
 
-// FAQ toggles
+// FAQ toggles (click and linger >1s to expand)
 (function () {
   const faqs = document.querySelectorAll('.faq');
-  faqs.forEach((faq) => {
+  const LINGER_MS = 1000;
+  function getFaqQuestion(faqEl) {
+    var t = faqEl && faqEl.querySelector('.faq-trigger');
+    var span = t && t.firstElementChild;
+    return (span && span.textContent ? span.textContent.trim() : '').slice(0, 200);
+  }
+  faqs.forEach((faq, index) => {
     const trigger = faq.querySelector('.faq-trigger');
     const panel = faq.querySelector('.faq-panel');
     if (!trigger || !panel) return;
+    let lingerTimer = null;
+    function openThis() {
+      faqs.forEach((f) => f.classList.remove('open'));
+      faq.classList.add('open');
+      trackEvent('faq_open', { faq_question: getFaqQuestion(faq), faq_index: index, trigger: 'linger' });
+    }
     trigger.addEventListener('click', () => {
       const isOpen = faq.classList.contains('open');
       faqs.forEach((f) => f.classList.remove('open'));
-      if (!isOpen) faq.classList.add('open');
+      if (!isOpen) {
+        faq.classList.add('open');
+        trackEvent('faq_open', { faq_question: getFaqQuestion(faq), faq_index: index, trigger: 'click' });
+      }
+    });
+    trigger.addEventListener('mouseenter', () => {
+      lingerTimer = setTimeout(openThis, LINGER_MS);
+    });
+    trigger.addEventListener('mouseleave', () => {
+      if (lingerTimer) clearTimeout(lingerTimer);
+      lingerTimer = null;
     });
   });
 })();
 
-// Pricing feature toggles (click to expand/collapse, one open at a time per list)
+// Pricing feature toggles (click or linger >1s to expand, one open at a time per list)
 (function () {
   const featureLists = document.querySelectorAll('.pricing-features');
+  const LINGER_MS = 1000;
   if (!featureLists.length) return;
 
   featureLists.forEach(list => {
     const toggles = list.querySelectorAll('.feature-toggle');
     toggles.forEach(button => {
+      let lingerTimer = null;
+      function openThisItem() {
+        const item = button.closest('.feature-item');
+        const desc = document.getElementById(button.getAttribute('aria-controls'));
+        if (item.classList.contains('is-open')) return;
+        list.querySelectorAll('.feature-item').forEach(other => {
+          other.classList.remove('is-open');
+          const otherBtn = other.querySelector('.feature-toggle');
+          const otherDesc = otherBtn && document.getElementById(otherBtn.getAttribute('aria-controls'));
+          if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+          if (otherDesc) otherDesc.hidden = true;
+        });
+        item.classList.add('is-open');
+        button.setAttribute('aria-expanded', 'true');
+        if (desc) desc.hidden = false;
+        trackEvent('scope_open', { scope_item_id: button.id || '', scope_item_label: (button.textContent || '').trim().slice(0, 200), trigger: 'linger' });
+      }
       button.addEventListener('click', () => {
         const item = button.closest('.feature-item');
         const desc = document.getElementById(button.getAttribute('aria-controls'));
@@ -280,7 +519,15 @@ window._programmaticScrollActive = false;
           item.classList.add('is-open');
           button.setAttribute('aria-expanded', 'true');
           if (desc) desc.hidden = false;
+          trackEvent('scope_open', { scope_item_id: button.id || '', scope_item_label: (button.textContent || '').trim().slice(0, 200), trigger: 'click' });
         }
+      });
+      button.addEventListener('mouseenter', () => {
+        lingerTimer = setTimeout(openThisItem, LINGER_MS);
+      });
+      button.addEventListener('mouseleave', () => {
+        if (lingerTimer) clearTimeout(lingerTimer);
+        lingerTimer = null;
       });
     });
   });
@@ -312,6 +559,40 @@ const modal = document.getElementById('videoModal');
 const video = document.getElementById('modalVideo');
 const closeBtn = modal.querySelector('.video-close');
 
+// Load clouds.jpg for how-it-feels section after hero video has loaded; bg fades in on section hover (CSS)
+(function () {
+  var heroVideoSrc = 'vids/hero-video.mp4';
+  var cloudsUrl = 'images/clouds.jpg';
+  var bgEl = document.getElementById('how-it-feels-bg');
+  if (!bgEl) return;
+  var preloadVideo = document.createElement('video');
+  preloadVideo.preload = 'auto';
+  preloadVideo.src = heroVideoSrc;
+  function onVideoReady() {
+    preloadVideo.removeEventListener('canplaythrough', onVideoReady);
+    preloadVideo.removeEventListener('error', onVideoError);
+    var img = new Image();
+    img.onload = function () {
+      bgEl.style.backgroundImage = 'url(' + cloudsUrl + ')';
+    };
+    img.onerror = function () { /* clouds.jpg missing or failed */ };
+    img.src = cloudsUrl;
+  }
+  function onVideoError() {
+    preloadVideo.removeEventListener('canplaythrough', onVideoReady);
+    preloadVideo.removeEventListener('error', onVideoError);
+    var img = new Image();
+    img.onload = function () {
+      bgEl.style.backgroundImage = 'url(' + cloudsUrl + ')';
+    };
+    img.onerror = function () {};
+    img.src = cloudsUrl;
+  }
+  preloadVideo.addEventListener('canplaythrough', onVideoReady);
+  preloadVideo.addEventListener('error', onVideoError);
+  preloadVideo.load();
+})();
+
 var videoProgressThrottle = null;
 var MAX_VIDEO_EVENTS_PER_SRC = 30;
 
@@ -339,6 +620,8 @@ function recordVideoEvent(src, type, pct) {
   entry.events.push({ type: type, ts: Date.now(), pct: pctNum });
   if (entry.events.length > MAX_VIDEO_EVENTS_PER_SRC) entry.events = entry.events.slice(-MAX_VIDEO_EVENTS_PER_SRC);
   setCookie(COOKIE_VISITOR_NAME, JSON.stringify(v), COOKIE_VISITOR_DAYS);
+  var analyticsType = type === 'start' ? 'video_play' : type === 'pause' ? 'video_pause' : type === 'ended' ? 'video_ended' : null;
+  if (analyticsType) trackEvent(analyticsType, { video_label: src, pct: pctNum });
 }
 
 function recordVideoProgressMax(src, progressPct) {
@@ -350,6 +633,7 @@ function recordVideoProgressMax(src, progressPct) {
   var pct = Math.round(Math.min(100, progressPct));
   if (pct > entry.max_pct) entry.max_pct = pct;
   setCookie(COOKIE_VISITOR_NAME, JSON.stringify(v), COOKIE_VISITOR_DAYS);
+  trackEvent('video_progress', { video_label: src, pct: pct });
 }
 
 document.querySelectorAll('.video-thumb').forEach(button => {
@@ -458,15 +742,113 @@ function applyRandomStarPlaceholders() {
     el.placeholder = star.email;
     el.dataset.placeholderOrig = star.email;
   });
+  trackEvent('easter_egg_star', { star_name: star.name });
 }
+
+// --- Easter egg competition: 10 hidden communicators (when easter_eggs_competition_showing) ---
+(function () {
+  var EASTER_EGG_COPY = {
+    formPlaceholder: 'e.g. [Name]',
+    formPlaceholderNoName: 'e.g. Your name',
+    rescueEyebrowTooltip: 'Why not let us turn your shit to [Name]?',
+    successAppend: 'P.S. Broad, sunlit uplands, here we come. As [Name] may have put it.',
+    guidePicTitle: 'Not exactly [Name]. But I\'ve come a long way.',
+    termsClause: 'As [Name] said, clarity is the first virtue of persuasion.',
+    mayaQuote: '"People will forget what you said, people will forget what you did, but people will never forget how you made them feel"',
+    mayaAttribution: ' ~ [Name] (not a client)',
+    deliverableAppend: 'In the spirit of [Name], we keep it clear and persuasive.',
+    heroEyebrowTooltip: '[Name] knew a thing or two about how to grow fast.',
+    heroEyebrowTooltipNoName: 'Knew a thing or two about messaging.',
+    rescueEyebrowDelaySec: 1,
+    heroEyebrowDelaySec: 1
+  };
+
+  var names = null;
+  function getEasterEggNames() {
+    if (names) return names;
+    if (!getSettings().easter_eggs_competition_showing) return null;
+    try {
+      var b64 = 'WyJXaW5zdG9uIENodXJjaGlsbCIsIlNoYWtlc3BlYXJlIiwiRGF2aWQgT2dpbHZ5IiwiU2V0aCBHb2RpbiIsIlN0ZXZlIEpvYnMiLCJPcHJhaCBXaW5mcmV5IiwiQnJlbmUgQnJvd24iLCJNYXJ0aW4gTHV0aGVyIEtpbmcgSnIuIiwiTWF5YSBBbmdlbG91IiwiVG9tIFdhaXRzIl0=';
+      names = JSON.parse(atob(b64));
+      return names;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function applyEasterEggPlaceholders() {
+    if (!appModal) return;
+    var n = getEasterEggNames();
+    if (!n || n.length < 10) return;
+    var formNames = {
+      'form-book-call': n[5],
+      'form-website-review': n[4],
+      'form-lead-50things': n[6],
+      'form-lead-offboarding': n[3],
+      'form-lead-socialproof': null
+    };
+    appModal.querySelectorAll('input[name="name"]').forEach(function (el) {
+      var form = el.closest('form');
+      var formId = form && form.id ? form.id : '';
+      var name = formNames[formId];
+      var ph = (name != null)
+        ? EASTER_EGG_COPY.formPlaceholder.replace('[Name]', name)
+        : (EASTER_EGG_COPY.formPlaceholderNoName || 'e.g. Your name');
+      el.placeholder = ph;
+      el.dataset.placeholderOrig = ph;
+    });
+    appModal.querySelectorAll('input[name="email"]').forEach(function (el) {
+      var form = el.closest('form');
+      var formId = form && form.id ? form.id : '';
+      el.placeholder = 'you@company.com';
+      el.dataset.placeholderOrig = 'you@company.com';
+    });
+  }
+
+  function runPlaceholders() {
+    if (getSettings().easter_eggs_competition_showing && getEasterEggNames()) {
+      applyEasterEggPlaceholders();
+    } else {
+      applyRandomStarPlaceholders();
+    }
+  }
+
+  window.applyEasterEggPlaceholders = applyEasterEggPlaceholders;
+  window.getEasterEggNames = getEasterEggNames;
+  window.EASTER_EGG_COPY = EASTER_EGG_COPY;
+  window.runPlaceholders = runPlaceholders;
+})();
 
 let lastAppModalTrigger = null;
 
-function openAppModal(panelId) {
-  if (!appModal || !appModalPanels) return;
-  appModalPanels.forEach(panel => resetPanelForm(panel));
+function getBookCallPanel() {
+  return appModal && appModal.querySelector('.app-modal__panel[data-panel="book-call"]');
+}
 
-  applyRandomStarPlaceholders();
+function showBookCallCalendarView() {
+  const panel = getBookCallPanel();
+  if (panel) panel.classList.add('app-modal__panel--calendar-view');
+  if (appModal) appModal.classList.add('app-modal--calendar-view');
+  const wrap = document.getElementById('app-modal-calendar-wrap');
+  if (wrap) wrap.setAttribute('aria-hidden', 'false');
+}
+
+function hideBookCallCalendarView() {
+  const panel = getBookCallPanel();
+  if (panel) panel.classList.remove('app-modal__panel--calendar-view');
+  if (appModal) appModal.classList.remove('app-modal--calendar-view');
+  const wrap = document.getElementById('app-modal-calendar-wrap');
+  if (wrap) wrap.setAttribute('aria-hidden', 'true');
+}
+
+function openAppModal(panelId, opts) {
+  if (!appModal || !appModalPanels) return;
+  opts = opts || {};
+  appModalPanels.forEach(panel => resetPanelForm(panel));
+  hideBookCallCalendarView();
+
+  if (typeof runPlaceholders === 'function') runPlaceholders();
+  else applyRandomStarPlaceholders();
 
   lastAppModalTrigger = document.activeElement;
   appModal.classList.add('active');
@@ -479,7 +861,26 @@ function openAppModal(panelId) {
     panel.setAttribute('aria-hidden', !isActive);
   });
 
+  if (panelId === 'book-call' && opts.showCalendar) showBookCallCalendarView();
+
   const activePanel = appModal.querySelector('.app-modal__panel.active');
+  if (activePanel) {
+    if (appModalDialog) appModalDialog.scrollTop = 0;
+    const scrollCol = activePanel.querySelector('.app-modal__one-col');
+    if (scrollCol && scrollCol.scrollHeight > scrollCol.clientHeight) scrollCol.scrollTop = 0;
+    const privacyBody = activePanel.querySelector('.app-modal__privacy-body');
+    if (privacyBody) privacyBody.scrollTop = 0;
+  }
+  if (panelId === 'privacy-policy') {
+    trackEvent('privacy_open', {});
+    history.replaceState(null, '', (window.location.pathname || '') + (window.location.search || '') + '#privacy');
+  } else if (panelId === 'terms-and-conditions') {
+    trackEvent('tc_open', {});
+    history.replaceState(null, '', (window.location.pathname || '') + (window.location.search || '') + '#terms');
+  } else if (['book-call', 'website-review', 'lead-50things', 'lead-offboarding', 'lead-socialproof'].indexOf(panelId) !== -1) {
+    trackEvent('form_open', { form_id: panelId, trigger: lastModalTriggerType || '' });
+  }
+
   const firstFocusable = activePanel
     ? (activePanel.querySelector(FOCUSABLE_SELECTOR) || appModalCloseBtn)
     : appModalCloseBtn;
@@ -490,6 +891,7 @@ function openAppModal(panelId) {
 
 function closeAppModal() {
   if (!appModal) return;
+  hideBookCallCalendarView();
   appModal.classList.remove('active');
   appModal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
@@ -497,6 +899,9 @@ function closeAppModal() {
     panel.classList.remove('active');
     panel.setAttribute('aria-hidden', 'true');
   });
+  if (window.location.hash === '#privacy' || window.location.hash === '#terms') {
+    history.replaceState(null, '', (window.location.pathname || '') + (window.location.search || ''));
+  }
   if (lastAppModalTrigger && typeof lastAppModalTrigger.focus === 'function') {
     lastAppModalTrigger.focus();
   }
@@ -511,6 +916,7 @@ function recordButtonClick(buttonId, modalPanelId) {
   v.buttons_clicked.push({ id: buttonId || '', modal: modalPanelId || '', ts: Date.now() });
   if (v.buttons_clicked.length > 30) v.buttons_clicked = v.buttons_clicked.slice(-30);
   setCookie(COOKIE_VISITOR_NAME, JSON.stringify(v), COOKIE_VISITOR_DAYS);
+  trackEvent('click', { button_id: buttonId || '', modal_panel: modalPanelId || '' });
 }
 
 document.addEventListener('click', e => {
@@ -522,12 +928,32 @@ document.addEventListener('click', e => {
     lastTriggerButtonId = trigger.id || null;
     const panelId = trigger.getAttribute('data-modal');
     recordButtonClick(trigger.id || null, panelId || null);
-    if (panelId) openAppModal(panelId);
+    const showCalendar = trigger.getAttribute('data-show-calendar') === 'true';
+    if (showCalendar && trigger.id === 'footer-calendar-link') {
+      trackEvent('cal_link_click', { source: 'footer' });
+    }
+    if (panelId) openAppModal(panelId, { showCalendar: showCalendar });
   }
 });
 
 if (appModalCloseBtn) {
   appModalCloseBtn.addEventListener('click', closeAppModal);
+}
+
+var appModalCalendarClose = document.querySelector('.app-modal__calendar-close');
+if (appModalCalendarClose) {
+  appModalCalendarClose.addEventListener('click', function () {
+    hideBookCallCalendarView();
+  });
+}
+
+var appModalShowCalendarLink = document.getElementById('app-modal-calendar-link');
+if (appModalShowCalendarLink) {
+  appModalShowCalendarLink.addEventListener('click', function (e) {
+    e.preventDefault();
+    trackEvent('cal_link_click', { source: 'modal' });
+    showBookCallCalendarView();
+  });
 }
 
 if (appModal) {
@@ -576,7 +1002,32 @@ function openModalFromUrl() {
   }, 0);
 }
 
-openModalFromUrl();
+function openAppModalFromHash() {
+  const hash = window.location.hash;
+  if (hash === '#privacy') {
+    openAppModal('privacy-policy');
+    return true;
+  }
+  if (hash === '#terms') {
+    openAppModal('terms-and-conditions');
+    return true;
+  }
+  return false;
+}
+if (!openAppModalFromHash()) {
+  openModalFromUrl();
+}
+
+window.addEventListener('hashchange', function () {
+  if (window.location.hash === '#privacy' || window.location.hash === '#terms') {
+    openAppModalFromHash();
+  } else if (appModal && appModal.classList.contains('active')) {
+    const activePanel = appModal.querySelector('.app-modal__panel.active');
+    if (activePanel && (activePanel.id === 'privacy' || activePanel.id === 'terms')) {
+      closeAppModal();
+    }
+  }
+});
 
 // Auto dialog: one modal, two optional triggers (exit intent + inactivity). Shown at most once per session.
 function isTouchDevice() {
@@ -714,11 +1165,11 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
   });
 })();
 
-// Nav anchor links: smooth scroll with ease-out (start fast, slow down at end)
+// Nav anchor links: smooth scroll with ease-out (fast start, slow at end; no ease-in-out)
 (function () {
-  var duration = 800;
+  var duration = 700;
   function easeOut(t) {
-    return 1 - (1 - t) * (1 - t);
+    return 1 - (1 - t) * (1 - t) * (1 - t);
   }
   function smoothScrollTo(targetY) {
     window._programmaticScrollActive = true;
@@ -739,10 +1190,19 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
     requestAnimationFrame(step);
   }
   document.addEventListener('click', function (e) {
-    var link = e.target.closest('.main-nav a[href^="#"], .mobile-menu__nav a[href^="#"]');
+    var link = e.target.closest('a[href^="#"]');
     if (!link || !link.hash) return;
     var id = link.hash.slice(1);
-    var target = id && document.getElementById(id);
+    // #top = scroll all the way to the top (0) so logo click doesn't leave a gap
+    if (id === 'top') {
+      e.preventDefault();
+      smoothScrollTo(0);
+      if (history.replaceState) history.replaceState(null, '', link.hash);
+      return;
+    }
+    // Only smooth-scroll other anchors when from main nav or mobile nav
+    if (!link.matches('.main-nav a[href^="#"], .mobile-menu__nav a[href^="#"]')) return;
+    var target = document.getElementById(id);
     if (!target) return;
     e.preventDefault();
     var headerOffset = 72;
@@ -754,12 +1214,15 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
 
 // Book-a-call calendar link (from settings)
 (function () {
-  const url = getSettings().book_call_calendar_url;
-  if (!url) return;
+  const url = getSettings().book_call_calendar_url || 'https://calendar.app.google/8jiSEYPb3YYouyXq9';
   const calLink = document.getElementById('app-modal-calendar-link');
-  if (calLink) calLink.href = url;
+  if (calLink && calLink.hasAttribute('href') && calLink.getAttribute('href') !== '#') calLink.href = url;
   const mobileCalLink = document.getElementById('mobile-menu-calendar-link');
-  if (mobileCalLink) mobileCalLink.href = url;
+  if (mobileCalLink) {
+    mobileCalLink.href = url;
+    mobileCalLink.addEventListener('click', function () { trackEvent('cal_link_click', { source: 'mobile' }); });
+  }
+  /* Footer calendar link opens modal with embedded calendar; do not set href */
 })();
 
 // Show/hide contact email; CTA style; rescue section layout
@@ -787,20 +1250,9 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
   document.body.appendChild(overlay);
 })();
 
-// Google Analytics (when ga_id is set)
-(function () {
-  const gaId = getSettings().ga_id;
-  if (!gaId) return;
-  window.dataLayer = window.dataLayer || [];
-  function gtag() { dataLayer.push(arguments); }
-  window.gtag = gtag;
-  gtag('js', new Date());
-  gtag('config', gaId);
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(gaId);
-  document.head.appendChild(script);
-})();
+// Google Analytics loaded in index.html <head> (uses ga_id from settings.js / CMS)
+// Keep gtag available for custom events; config is already applied in HTML
+window.gtag = window.gtag || function () { (window.dataLayer = window.dataLayer || []).push(arguments); };
 
 // Focus trap inside app modal
 if (appModalDialog) {
@@ -910,7 +1362,15 @@ function showSuccessScreen(panel, message) {
   contentEls.forEach(function (el) { el.hidden = true; });
   const successFull = panel.querySelector('.app-modal__success-full');
   if (successFull) {
-    successFull.innerHTML = '<div class="app-modal__success-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="app-modal__success-message">' + escapeHtml(message) + '</p>';
+    var html = '<div class="app-modal__success-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div><p class="app-modal__success-message">' + escapeHtml(message) + '</p>';
+    if (getSettings().easter_eggs_competition_showing && typeof getEasterEggNames === 'function') {
+      var n = getEasterEggNames();
+      if (n && n[0]) {
+        var copy = (typeof EASTER_EGG_COPY !== 'undefined' && EASTER_EGG_COPY.successAppend) ? EASTER_EGG_COPY.successAppend : 'P.S. [Name] would approve.';
+        html += '<p class="app-modal__success-easter">' + escapeHtml(copy.replace('[Name]', n[0])) + '</p>';
+      }
+    }
+    successFull.innerHTML = html;
     successFull.hidden = false;
   }
 }
@@ -1024,6 +1484,7 @@ if (formWebsiteReview) {
     const panel = getActiveAppModalPanel();
     const payload = buildSubmitPayload(this);
     setSubmitButtonLoading(this, true);
+    trackEvent('form_submit', { form_id: this.id || 'form-website-review', has_email: true });
 
     fetch(window.API_BASE + '/website-review', {
       method: 'POST',
@@ -1058,6 +1519,7 @@ if (formBookCall) {
     const panel = getActiveAppModalPanel();
     const payload = buildSubmitPayload(this);
     setSubmitButtonLoading(this, true);
+    trackEvent('form_submit', { form_id: this.id || 'form-book-call', has_email: true });
 
     fetch(window.API_BASE + '/book-a-call', {
       method: 'POST',
@@ -1122,6 +1584,7 @@ getEnabledLeadMagnetIds().forEach(function (id) {
     payload.source = this.getAttribute('data-source') || id;
     payload.mailchimp_tag = mailchimpTag;
     setSubmitButtonLoading(this, true);
+    trackEvent('form_submit', { form_id: this.id || ('form-' + id), has_email: true });
 
     fetch(window.API_BASE + '/lead', {
       method: 'POST',
@@ -1181,4 +1644,275 @@ getEnabledLeadMagnetIds().forEach(function (id) {
     container.appendChild(span);
   });
 })();
+
+// Dark mode: detect system on first load, then allow switch to override; detect system changes when following system
+(function () {
+  var STORAGE_KEY = 'vk_theme';
+  var OLD_KEY = 'vk_dark_mode';
+  var html = document.documentElement;
+  var input = document.getElementById('dark-mode-switch');
+  if (!input) return;
+
+  try {
+    if (!localStorage.getItem(STORAGE_KEY) && localStorage.getItem(OLD_KEY) !== null) {
+      var old = localStorage.getItem(OLD_KEY);
+      localStorage.setItem(STORAGE_KEY, old === 'true' ? 'dark' : 'light');
+      localStorage.removeItem(OLD_KEY);
+    }
+  } catch (e) {}
+
+  function prefersDark() {
+    try {
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function setDarkMode(on) {
+    if (on) {
+      html.classList.add('dark-mode');
+      input.checked = true;
+      input.setAttribute('aria-checked', 'true');
+    } else {
+      html.classList.remove('dark-mode');
+      input.checked = false;
+      input.setAttribute('aria-checked', 'false');
+    }
+  }
+
+  var saved = null;
+  try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+
+  if (saved === 'dark' || saved === 'light') {
+    setDarkMode(saved === 'dark');
+  } else {
+    setDarkMode(prefersDark());
+  }
+
+  input.addEventListener('change', function () {
+    var on = input.checked;
+    setDarkMode(on);
+    try { localStorage.setItem(STORAGE_KEY, on ? 'dark' : 'light'); } catch (e) {}
+  });
+
+  try {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+      try {
+        if (localStorage.getItem(STORAGE_KEY) === null || localStorage.getItem(STORAGE_KEY) === '') {
+          setDarkMode(prefersDark());
+        }
+      } catch (e) {}
+    });
+  } catch (e) {}
+})();
+
+// --- Light parallax and scroll-triggered reveal (cosmetic) ---
+(function () {
+  function ready(fn) {
+    if (document.readyState !== 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  }
+
+  ready(function () {
+    var hero = document.querySelector('.hero');
+    var heroHeader = hero && hero.querySelector('.hero-header');
+    var heroLeft = hero && hero.querySelector('.hero-left');
+    var heroRight = hero && hero.querySelector('.hero-right');
+
+    // Parallax: subtle movement for hero layers while scrolling through hero
+    var ticking = false;
+    var lastScrollY = window.scrollY || window.pageYOffset;
+
+    function updateParallax() {
+      if (!hero || !heroHeader) return;
+      var rect = hero.getBoundingClientRect();
+      var heroH = hero.offsetHeight;
+      var viewH = window.innerHeight;
+      // Only apply when hero is in view (top of hero above bottom of viewport)
+      if (rect.bottom < 0 || rect.top > viewH) {
+        heroHeader.style.transform = '';
+        if (heroLeft) heroLeft.style.transform = '';
+        if (heroRight) heroRight.style.transform = '';
+        ticking = false;
+        return;
+      }
+      var scrollY = window.scrollY || window.pageYOffset;
+      // How far through the hero we've scrolled (0 = top, 1 = bottom)
+      var t = Math.max(0, Math.min(1, scrollY / (heroH * 0.6)));
+      var drift = 52;
+      var y1 = t * drift * 0.35;
+      var y2 = t * drift * 0.7;
+      var y3 = t * drift;
+      heroHeader.style.transform = 'translate3d(0,' + y1 + 'px,0)';
+      if (heroLeft) heroLeft.style.transform = 'translate3d(0,' + y2 + 'px,0)';
+      if (heroRight) heroRight.style.transform = 'translate3d(0,' + y3 + 'px,0)';
+      ticking = false;
+    }
+
+    function onScroll() {
+      lastScrollY = window.scrollY || window.pageYOffset;
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(updateParallax);
+      }
+    }
+
+    var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (hero && heroHeader && !prefersReducedMotion) {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      updateParallax();
+    }
+
+    // Scroll reveal: add .scroll-reveal to blocks, then .is-visible when in view
+    var revealSelectors = [
+      '.problem-card',
+      '.rescue-block',
+      '.testimonial-section .testimonial-wrap',
+      '.pricing-panel',
+      '.resource-card',
+      '.rescue-guarantee-callout',
+      'section#problem .container > h2',
+      'section#problem .container > .eyebrow',
+      'section#rescue .container > h2',
+      'section#rescue .container > .eyebrow',
+      'section#pricing .container > h2',
+      'section#pricing .container > .eyebrow',
+      'section#pricing .subhead',
+      '.section-muted .container > h2',
+      '.faq'
+    ];
+    var revealRoot = document.body;
+    var seen = new Set();
+    var els = [];
+    revealSelectors.forEach(function (sel) {
+      try {
+        var nodes = revealRoot.querySelectorAll(sel);
+        for (var i = 0; i < nodes.length; i++) {
+          var el = nodes[i];
+          if (!seen.has(el)) {
+            seen.add(el);
+            els.push(el);
+          }
+        }
+      } catch (e) {}
+    });
+
+    function isInViewport(el) {
+      var r = el.getBoundingClientRect();
+      return r.top < window.innerHeight * 0.85 && r.bottom > 0;
+    }
+
+    els.forEach(function (el) {
+      el.classList.add('scroll-reveal');
+      if (isInViewport(el)) el.classList.add('is-visible');
+    });
+
+    var observer = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) entry.target.classList.add('is-visible');
+        });
+      },
+      { rootMargin: '0px 0px -8% 0px', threshold: 0 }
+    );
+    els.forEach(function (el) {
+      observer.observe(el);
+    });
+
+    if (typeof initEasterEggs === 'function') initEasterEggs();
+  });
+})();
+
+// Easter egg competition: init all placements (tooltips, injects, attribution)
+function initEasterEggs() {
+  if (!getSettings().easter_eggs_competition_showing) return;
+  var n = getEasterEggNames();
+  if (!n || n.length < 10) return;
+  var copy = typeof EASTER_EGG_COPY !== 'undefined' ? EASTER_EGG_COPY : {};
+  var delayRescue = (copy.rescueEyebrowDelaySec != null ? copy.rescueEyebrowDelaySec : 1) * 1000;
+  var delayHero = (copy.heroEyebrowDelaySec != null ? copy.heroEyebrowDelaySec : 1) * 1000;
+
+  function showTooltip(el, text) {
+    var tip = document.createElement('div');
+    tip.className = 'easter-egg-tooltip';
+    tip.textContent = text;
+    tip.setAttribute('role', 'tooltip');
+    el.appendChild(tip);
+    requestAnimationFrame(function () {
+      tip.classList.add('is-visible');
+    });
+    setTimeout(function () {
+      if (tip.parentNode) tip.parentNode.removeChild(tip);
+    }, 2500);
+  }
+
+  var rescueEyebrow = document.querySelector('#rescue .eyebrow');
+  if (rescueEyebrow) {
+    var rescueTimer = null;
+    var rescueTipText = (copy.rescueEyebrowTooltip || 'Why not let us turn your shit to [Name]?').replace('[Name]', n[1]);
+    rescueEyebrow.addEventListener('mouseenter', function () {
+      rescueTimer = setTimeout(function () {
+        rescueTimer = null;
+        showTooltip(rescueEyebrow, rescueTipText);
+      }, delayRescue);
+    });
+    rescueEyebrow.addEventListener('mouseleave', function () {
+      if (rescueTimer) clearTimeout(rescueTimer);
+    });
+  }
+
+  var heroEyebrow = document.querySelector('.hero-eyebrow');
+  if (heroEyebrow) {
+    var heroTimer = null;
+    var heroTipText = (copy.heroEyebrowTooltipNoName || 'Knew a thing or two about messaging.');
+    heroEyebrow.addEventListener('mouseenter', function () {
+      heroTimer = setTimeout(function () {
+        heroTimer = null;
+        showTooltip(heroEyebrow, heroTipText);
+      }, delayHero);
+    });
+    heroEyebrow.addEventListener('mouseleave', function () {
+      if (heroTimer) clearTimeout(heroTimer);
+    });
+  }
+
+  var guideImg = document.querySelector('#guide img');
+  if (guideImg) {
+    var guideTitle = (copy.guidePicTitle || 'Not exactly [Name]. But I\'ve come a long way.').replace('[Name]', n[2]);
+    guideImg.setAttribute('title', guideTitle);
+  }
+
+  /* T&Cs: Tom Waits is already in plain text on the page; no extra clause injected (each name only once). */
+
+  var footerMaya = document.getElementById('footer-maya-easter');
+  if (footerMaya && !footerMaya.textContent.trim()) {
+    var mayaLine = (copy.mayaQuote || '"People will forget what you said, people will forget what you did, but people will never forget how you made them feel"') + (copy.mayaAttribution || ' ~ [Name] (not a client)').replace('[Name]', n[8]);
+    footerMaya.textContent = mayaLine;
+  }
+
+  var featureDesc6 = document.getElementById('feature-desc-6');
+  if (featureDesc6 && !featureDesc6.querySelector('.easter-egg-deliverable')) {
+    var deliverableCopy = (copy.deliverableAppend || 'In the spirit of [Name], we keep it clear and persuasive.').replace('[Name]', n[7]);
+    var addDeliverableEaster = function () {
+      if (featureDesc6.querySelector('.easter-egg-deliverable')) return;
+      var p = document.createElement('p');
+      p.className = 'easter-egg-deliverable';
+      p.textContent = deliverableCopy;
+      featureDesc6.appendChild(p);
+    };
+    var btn6 = document.getElementById('feature-btn-6');
+    if (btn6) {
+      btn6.addEventListener('click', addDeliverableEaster);
+      var list6 = btn6.closest('.feature-list');
+      if (list6) {
+        list6.querySelectorAll('.feature-toggle').forEach(function (b) {
+          b.addEventListener('mouseenter', function () {
+            if (b === btn6) setTimeout(addDeliverableEaster, 1100);
+          });
+        });
+      }
+    }
+  }
+}
 

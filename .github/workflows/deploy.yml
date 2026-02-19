@@ -1,0 +1,21 @@
+# Trigger deploy on the server when code is pushed to main.
+# Requires repo secrets: DEPLOY_WEBHOOK_URL, DEPLOY_WEBHOOK_SECRET
+# Server .env must have DEPLOY_WEBHOOK_SECRET set to the same value.
+name: Deploy on push
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger deploy
+        env:
+          DEPLOY_WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+          DEPLOY_WEBHOOK_SECRET: ${{ secrets.DEPLOY_WEBHOOK_SECRET }}
+        run: |
+          curl -sSf -X POST \
+            -H "X-Deploy-Secret: $DEPLOY_WEBHOOK_SECRET" \
+            "$DEPLOY_WEBHOOK_URL"

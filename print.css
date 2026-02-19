@@ -1,0 +1,189 @@
+/* Print styles: readable content, pricing expanded, legal at bottom in small type */
+
+@media print {
+
+  /* Reset: white background, black text, no shadows or fancy backgrounds */
+  body,
+  .hero,
+  section,
+  footer,
+  .pricing-panel,
+  .addon-panel,
+  .rescue-block,
+  .problem-card,
+  .feels-card,
+  .testimonial-section,
+  .app-modal__dialog {
+    background: #fff !important;
+    color: #111 !important;
+    box-shadow: none !important;
+  }
+
+  a {
+    color: #111 !important;
+  }
+
+  /* Hide non-essential UI */
+  header,
+  .hamburger,
+  #mobile-menu,
+  .video-modal,
+  .app-modal__close,
+  .dark-mode-toggle,
+  .btn[data-modal],
+  .video-thumb,
+  .play-icon,
+  .cookie-consent,
+  .rescue-guarantee-callout .btn,
+  .imagine-ctas-wrap,
+  .hero-ctas,
+  .footer-ctas,
+  .footer-links a[data-modal] {
+    display: none !important;
+  }
+
+  /* Body: no padding for fixed header, show content from top */
+  body {
+    padding-top: 0 !important;
+  }
+
+  /* Pricing: ensure panels and text are readable */
+  section#pricing {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  section#pricing .container > .eyebrow,
+  section#pricing .container > h2,
+  section#pricing .container > .subhead,
+  section#pricing .pricing-subhead,
+  section#pricing .pricing-body,
+  section#pricing .addon-copy,
+  section#pricing .addon-title,
+  section#pricing .pricing-features-section-title,
+  section#pricing .feature-title,
+  section#pricing .feature-description,
+  section#pricing .pricing-delivery,
+  section#pricing .addon-price,
+  section#pricing .pricing-guarantee-label,
+  section#pricing .pricing-guarantee-detail,
+  section#pricing .pricing-guarantee-detail p {
+    color: #111 !important;
+  }
+  section#pricing .container > .eyebrow {
+    background: #eee !important;
+    border-color: #ccc !important;
+  }
+  .pricing-panel,
+  .addon-panel {
+    break-inside: avoid;
+    border: 1px solid #ddd;
+    padding: 1rem;
+  }
+
+  /* Expand all pricing feature descriptions for print */
+  .feature-description,
+  .feature-description[hidden] {
+    display: block !important;
+    visibility: visible !important;
+  }
+  .feature-toggle .feature-chevron {
+    display: none !important;
+  }
+  .feature-item {
+    break-inside: avoid;
+  }
+
+  /* Guarantee toggles: show content */
+  .pricing-guarantee-detail {
+    display: block !important;
+  }
+  .pricing-guarantee-chevron {
+    display: none !important;
+  }
+
+  /* Footer: compact, legal line small */
+  footer {
+    background: #fff !important;
+    color: #111 !important;
+    border-top: 1px solid #ccc;
+  }
+  .footer-meta {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #ddd;
+    font-size: 0.7rem !important;
+    color: #333 !important;
+  }
+  .footer-meta__copy {
+    flex: 1 1 auto;
+  }
+  .footer-grid {
+    margin-bottom: 0.5rem;
+  }
+  .footer-sub,
+  .footer-title,
+  .footer-links a {
+    color: #111 !important;
+  }
+
+  /* Legal: show privacy and terms panels at end of document, small type */
+  .app-modal {
+    display: block !important;
+    position: static !important;
+    background: none !important;
+    padding: 0 !important;
+  }
+  .app-modal__dialog {
+    max-width: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  .app-modal__panel {
+    display: none !important;
+  }
+  .app-modal__panel#privacy,
+  .app-modal__panel#terms {
+    display: block !important;
+    page-break-before: always;
+    padding: 0.5rem 0;
+  }
+  .app-modal__panel#privacy:first-of-type {
+    page-break-before: auto;
+  }
+  .app-modal__panel#terms {
+    page-break-before: always;
+  }
+  .app-modal__panel#privacy .app-modal__one-col,
+  .app-modal__panel#terms .app-modal__one-col {
+    max-width: none;
+  }
+  .app-modal__panel#privacy .app-modal__title,
+  .app-modal__panel#terms .app-modal__title {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .app-modal__panel#privacy .app-modal__eyebrow,
+  .app-modal__panel#terms .app-modal__eyebrow {
+    font-size: 0.65rem;
+  }
+  .app-modal__privacy-body,
+  .app-modal__panel#privacy .app-modal__privacy-body p,
+  .app-modal__panel#terms .app-modal__privacy-body p,
+  .app-modal__panel#privacy .app-modal__privacy-body ul,
+  .app-modal__panel#terms .app-modal__privacy-body ul {
+    font-size: 0.65rem !important;
+    line-height: 1.35;
+    color: #333 !important;
+  }
+  .app-modal__privacy-body h3 {
+    font-size: 0.7rem;
+  }
+
+  /* Avoid breaking key blocks across pages */
+  .rescue-block,
+  .pricing-panel--core,
+  .addon-panel {
+    page-break-inside: avoid;
+  }
+
+}

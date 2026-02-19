@@ -42,17 +42,20 @@
         enabled: true,
         success_message: 'Thanks! Check your email for the offboarding guide.',
         mailchimp_tag: 'requested_offboarding_guide'
-      },
-      'lead-socialproof': {
-        enabled: true,
-        success_message: 'Thanks! Check your email to get started with the course.',
-        mailchimp_tag: 'lead-socialproof'
       }
+      // ,
+      // 'lead-socialproof': {
+      //   enabled: true,
+      //   success_message: 'Thanks! Check your email to get started with the course.',
+      //   mailchimp_tag: 'lead-socialproof'
+      // }
     },
 
     // --- UI toggles ---
     show_pricing: true,
     cookie_consent_enabled: true,
+    // Easter egg competition: 10 hidden communicator names. true = show; false = off (use random star placeholders, no tooltips/injections).
+    easter_eggs_competition_showing: true,
     // Show contact email sitewide (footer, modals, mobile menu). false = hide everywhere.
     show_email: true,
     // Primary CTA: true = black button, secondary = white with black border. false = original pink primary.
@@ -62,7 +65,7 @@
 
     // --- Analytics ---
     // Google Analytics measurement ID (e.g. G-XXXXXXXXXX). Leave empty to disable.
-    ga_id: '',
+    ga_id: 'G-9MXLM3T6SH',
 
     // --- Maintenance ---
     maintenance_mode: false,

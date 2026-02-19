@@ -4,6 +4,7 @@ const { logSubmission } = require('../lib/logger');
 const { validateBookACall, validateWebsiteReview, validateLead } = require('../lib/validate');
 const { addOrUpdateContact } = require('../lib/mailchimp');
 const { createOrUpdateVkCrmPage } = require('../lib/notion-vkcrm');
+const { enrichVisitor, isConfigured: isAnalyticsConfigured } = require('../lib/analytics-db');
 const config = require('../config');
 
 const HONEYPOT_FIELD = '_hp';
@@ -92,6 +93,9 @@ router.post('/book-a-call', async (req, res) => {
   if (!mcResult.success && config.MAILCHIMP_API_KEY) {
     console.error('Mailchimp book-a-call:', mcResult.error);
   }
+  if (isAnalyticsConfigured() && payload._context?.visitor_id && data.email) {
+    enrichVisitor(payload._context.visitor_id, { email: data.email, name: data.name }).catch(() => {});
+  }
   const response = { message: 'Thanks — we\'ll be in touch soon.' };
   if (key) {
     idempotencyCache.set(key, { response, expiry: Date.now() + IDEMPOTENCY_WINDOW_MS });
@@ -144,6 +148,9 @@ router.post('/website-review', async (req, res) => {
   if (!mcResult.success && config.MAILCHIMP_API_KEY) {
     console.error('Mailchimp website-review:', mcResult.error);
   }
+  if (isAnalyticsConfigured() && payload._context?.visitor_id && data.email) {
+    enrichVisitor(payload._context.visitor_id, { email: data.email, name: data.name }).catch(() => {});
+  }
   const response = { message: 'Thanks — we\'ll be in touch with your review soon.' };
   if (key) {
     idempotencyCache.set(key, { response, expiry: Date.now() + IDEMPOTENCY_WINDOW_MS });
@@ -172,6 +179,9 @@ router.post('/lead', async (req, res) => {
   const mcResult = await addOrUpdateContact({ email: data.email, name: data.name, source: data.source, mailchimp_tag: data.mailchimp_tag });
   if (!mcResult.success && config.MAILCHIMP_API_KEY) {
     console.error('Mailchimp lead:', mcResult.error);
+  }
+  if (isAnalyticsConfigured() && payload._context?.visitor_id && data.email) {
+    enrichVisitor(payload._context.visitor_id, { email: data.email, name: data.name }).catch(() => {});
   }
   const successMessages = {
     'lead-50things': 'Thanks! Check your email for the checklist.',

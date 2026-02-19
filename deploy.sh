@@ -22,7 +22,10 @@ echo "Pulling latest..."
 git pull origin main
 
 echo "Installing dependencies..."
-npm install --production
+npm install --omit=dev
+
+echo "Syncing wiki to Notion..."
+node scripts/sync-wiki-to-notion.js || true
 
 echo "Restarting app..."
 pm2 restart vk2026

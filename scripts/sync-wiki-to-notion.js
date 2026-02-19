@@ -1,15 +1,12 @@
 #!/usr/bin/env node
 /**
- * Sync the website wiki (docs/wiki-content.js) to a Notion page.
+ * Sync the website wiki (docs/wiki-content.js) to Notion.
  * Requires: NOTION_TOKEN and NOTION_WIKI_PAGE_ID in .env
  *
- * 1. In Notion, create a page (e.g. "VK Website Wiki")
- * 2. Share it with your integration (Settings → Connections → Add connection)
- * 3. Copy the page ID from the URL: notion.so/workspace/PAGE_ID?...
- * 4. Add NOTION_WIKI_PAGE_ID=<PAGE_ID> to .env
- * 5. Run: node scripts/sync-wiki-to-notion.js
- *
- * This replaces the page body with the wiki content from the repo.
+ * Default: add-only, no overwrites. Existing content in Notion is never removed.
+ * - Root: intro blocks are appended only when the root page is empty.
+ * - Child pages: created and filled only when missing; existing pages are left as-is.
+ * Use --force to replace all wiki content from the repo (overwrites Notion edits).
  */
 
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
@@ -19,6 +16,8 @@ const wikiContent = require('../docs/wiki-content');
 
 const NOTION_MAX_RICH_TEXT_LEN = 2000;
 const NOTION_APPEND_CHUNK = 100;
+
+const force = process.argv.includes('--force');
 
 function richTextChunks(str) {
   const s = String(str || '');
@@ -69,11 +68,31 @@ async function getBlockChildren(client, blockId) {
   return all;
 }
 
+async function setPageContent(client, pageId, blocks) {
+  const notionBlocks = blocks.map(toNotionBlock);
+  const existing = await getBlockChildren(client, pageId);
+  for (const block of existing) {
+    await client.blocks.update({ block_id: block.id, archived: true });
+  }
+  for (let i = 0; i < notionBlocks.length; i += NOTION_APPEND_CHUNK) {
+    const chunk = notionBlocks.slice(i, i + NOTION_APPEND_CHUNK);
+    await client.blocks.children.append({ block_id: pageId, children: chunk });
+  }
+}
+
+async function appendPageContent(client, pageId, blocks) {
+  const notionBlocks = blocks.map(toNotionBlock);
+  for (let i = 0; i < notionBlocks.length; i += NOTION_APPEND_CHUNK) {
+    const chunk = notionBlocks.slice(i, i + NOTION_APPEND_CHUNK);
+    await client.blocks.children.append({ block_id: pageId, children: chunk });
+  }
+}
+
 async function main() {
   const token = config.NOTION_TOKEN || process.env.NOTION_TOKEN;
-  const pageId = config.NOTION_WIKI_PAGE_ID || process.env.NOTION_WIKI_PAGE_ID;
+  const rootId = config.NOTION_WIKI_PAGE_ID || process.env.NOTION_WIKI_PAGE_ID;
 
-  if (!token || !pageId) {
+  if (!token || !rootId) {
     console.error('Missing NOTION_TOKEN or NOTION_WIKI_PAGE_ID.');
     console.error('');
     console.error('Setup:');
@@ -86,22 +105,77 @@ async function main() {
   }
 
   const client = new Client({ auth: token });
-  const blocks = wikiContent.map(toNotionBlock);
+  const { rootBlocks, pages } = wikiContent;
 
-  console.log('Fetching existing blocks on wiki page...');
-  const existing = await getBlockChildren(client, pageId);
-  console.log('Deleting', existing.length, 'existing blocks...');
-  for (const block of existing) {
-    await client.blocks.update({ block_id: block.id, archived: true });
+  const rootChildren = await getBlockChildren(client, rootId);
+  const childPageIds = new Map();
+  const rootNonChildBlocks = [];
+
+  for (const block of rootChildren) {
+    if (block.type === 'child_page' && block.child_page && block.child_page.title) {
+      childPageIds.set(block.child_page.title, block.id);
+    } else {
+      rootNonChildBlocks.push(block);
+    }
   }
 
-  console.log('Appending', blocks.length, 'wiki blocks...');
-  for (let i = 0; i < blocks.length; i += NOTION_APPEND_CHUNK) {
-    const chunk = blocks.slice(i, i + NOTION_APPEND_CHUNK);
-    await client.blocks.children.append({ block_id: pageId, children: chunk });
+  if (force) {
+    // Overwrite: remove non–child_page blocks on root, then append intro
+    for (const block of rootNonChildBlocks) {
+      await client.blocks.update({ block_id: block.id, archived: true });
+    }
+    const rootNotionBlocks = rootBlocks.map(toNotionBlock);
+    for (let i = 0; i < rootNotionBlocks.length; i += NOTION_APPEND_CHUNK) {
+      const chunk = rootNotionBlocks.slice(i, i + NOTION_APPEND_CHUNK);
+      await client.blocks.children.append({ block_id: rootId, children: chunk });
+    }
+    console.log('Root: intro blocks replaced (--force).');
+  } else {
+    // Add-only: append intro only when root has no other content
+    if (rootNonChildBlocks.length === 0) {
+      const rootNotionBlocks = rootBlocks.map(toNotionBlock);
+      for (let i = 0; i < rootNotionBlocks.length; i += NOTION_APPEND_CHUNK) {
+        const chunk = rootNotionBlocks.slice(i, i + NOTION_APPEND_CHUNK);
+        await client.blocks.children.append({ block_id: rootId, children: chunk });
+      }
+      console.log('Root: intro blocks appended (empty root).');
+    } else {
+      console.log('Root: left unchanged (already has content).');
+    }
   }
 
-  console.log('Done. Wiki page updated.');
+  for (const page of pages) {
+    let pageId = childPageIds.get(page.title);
+    if (!pageId) {
+      const created = await client.pages.create({
+        parent: { page_id: rootId },
+        properties: {
+          title: {
+            title: [{ text: { content: page.title.slice(0, 2000) } }],
+          },
+        },
+      });
+      pageId = created.id;
+      childPageIds.set(page.title, pageId);
+      await appendPageContent(client, pageId, page.blocks);
+      console.log('Created:', page.title);
+      continue;
+    }
+    if (force) {
+      await setPageContent(client, pageId, page.blocks);
+      console.log('Updated:', page.title);
+    } else {
+      const existing = await getBlockChildren(client, pageId);
+      if (existing.length === 0) {
+        await appendPageContent(client, pageId, page.blocks);
+        console.log('Filled (was empty):', page.title);
+      } else {
+        console.log('Skipped (has content):', page.title);
+      }
+    }
+  }
+
+  console.log('Done.', force ? 'Wiki overwritten from repo (--force).' : 'Add-only sync; existing content preserved.');
 }
 
 main().catch((err) => {

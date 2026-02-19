@@ -30,6 +30,14 @@ const NOTION_WIKI_PAGE_ID = process.env.NOTION_WIKI_PAGE_ID || '';
 
 // Booking-confirmed webhook (optional; if set, route requires matching secret)
 const BOOKING_WEBHOOK_SECRET = process.env.BOOKING_WEBHOOK_SECRET || '';
+// Deploy webhook: when set, POST /api/webhooks/deploy requires this secret (X-Deploy-Secret header or ?secret=)
+const DEPLOY_WEBHOOK_SECRET = process.env.DEPLOY_WEBHOOK_SECRET || '';
+
+// MySQL (analytics: visitors, events)
+const DB_HOST = process.env.DB_HOST || 'localhost';
+const DB_USER = process.env.DB_USER || '';
+const DB_PASSWORD = process.env.DB_PASSWORD || '';
+const DB_NAME = process.env.DB_NAME || 'vk2026_analytics';
 
 module.exports = {
   SITE_BASE_URL,
@@ -41,5 +49,10 @@ module.exports = {
   NOTION_TOKEN,
   NOTION_DATABASE_ID,
   NOTION_WIKI_PAGE_ID,
-  BOOKING_WEBHOOK_SECRET
+  BOOKING_WEBHOOK_SECRET,
+  DEPLOY_WEBHOOK_SECRET,
+  DB_HOST,
+  DB_USER,
+  DB_PASSWORD,
+  DB_NAME
 };
