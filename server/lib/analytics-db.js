@@ -185,7 +185,7 @@ async function getRecentEvents(limit) {
   const cap = Math.min(Math.max(1, parseInt(limit, 10) || 200), 500);
   // LIMIT must be a literal integer for mysql2 execute(); bound param can cause "Incorrect arguments to mysqld_stmt_execute"
   const [rows] = await p.execute(
-    'SELECT id, visitor_id, event_type, occurred_at, page_url, referrer, utm_source, utm_medium, metadata FROM events ORDER BY occurred_at DESC LIMIT ' + String(cap)
+    'SELECT e.id, e.visitor_id, e.event_type, e.occurred_at, e.page_url, e.referrer, e.utm_source, e.utm_medium, e.metadata, v.email AS visitor_email, v.name AS visitor_name FROM events e LEFT JOIN visitors v ON v.visitor_id = e.visitor_id ORDER BY e.occurred_at DESC LIMIT ' + String(cap)
   );
   return (rows || []).map(r => {
     let meta = null;
@@ -198,6 +198,8 @@ async function getRecentEvents(limit) {
     return {
       id: r.id,
       visitor_id: r.visitor_id,
+      visitor_email: r.visitor_email || null,
+      visitor_name: r.visitor_name || null,
       event_type: r.event_type,
       occurred_at: r.occurred_at,
       page_url: r.page_url,

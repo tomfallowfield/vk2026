@@ -122,6 +122,36 @@
       color: #f85149;
       border-bottom: 1px solid var(--border);
     }
+    .filters {
+      padding: 0.75rem 1.5rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem 1rem;
+    }
+    .filters .label {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 0.25rem;
+    }
+    .filters label.filter {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 12px;
+      color: var(--text);
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+    .filters label.filter:hover { border-color: var(--accent); }
+    .filters label.filter input { accent-color: var(--accent); }
   </style>
 </head>
 <body>
@@ -135,13 +165,27 @@
       Auto-refresh every 5s
     </label>
   </header>
+  <div class="filters">
+    <span class="label">Show:</span>
+    <label class="filter"><input type="checkbox" name="filter" value="video" checked> Video</label>
+    <label class="filter"><input type="checkbox" name="filter" value="form" checked> Form</label>
+    <label class="filter"><input type="checkbox" name="filter" value="faq" checked> FAQ open</label>
+    <label class="filter"><input type="checkbox" name="filter" value="scope" checked> Scope open</label>
+    <label class="filter"><input type="checkbox" name="filter" value="time_on_site" checked> Time on site</label>
+    <label class="filter"><input type="checkbox" name="filter" value="click" checked> Clicks</label>
+    <label class="filter"><input type="checkbox" name="filter" value="modal" checked> Modal close</label>
+    <label class="filter"><input type="checkbox" name="filter" value="menu" checked> Menu</label>
+    <label class="filter"><input type="checkbox" name="filter" value="cal" checked> Calendar</label>
+    <label class="filter"><input type="checkbox" name="filter" value="legal" checked> Legal</label>
+    <label class="filter"><input type="checkbox" name="filter" value="easter_egg" checked> Easter egg</label>
+  </div>
   <div id="error" class="error" style="display:none"></div>
   <div class="wrap">
     <table>
       <thead>
         <tr>
           <th class="col-time">Time</th>
-          <th class="col-visitor">Visitor</th>
+          <th class="col-visitor">Visitor (email or cookie)</th>
           <th class="col-type">Event</th>
           <th class="col-details">Details</th>
           <th class="col-page">Page</th>
@@ -162,6 +206,39 @@
       var emptyEl = document.getElementById('empty');
       var errEl = document.getElementById('error');
       var refreshTimer = null;
+      var allEvents = [];
+
+      var EVENT_GROUPS = {
+        video: ['video_play', 'video_pause', 'video_ended', 'video_progress'],
+        form: ['form_open', 'form_submit'],
+        faq: ['faq_open'],
+        scope: ['scope_open'],
+        time_on_site: ['time_on_site'],
+        click: ['click'],
+        modal: ['modal_close', 'video_modal_close'],
+        menu: ['menu_open', 'menu_close'],
+        cal: ['cal_link_click'],
+        legal: ['tc_open', 'privacy_open'],
+        easter_egg: ['easter_egg_star']
+      };
+
+      function getSelectedFilters() {
+        var selected = [];
+        document.querySelectorAll('.filters input[name="filter"]:checked').forEach(function (cb) {
+          selected.push(cb.value);
+        });
+        return selected;
+      }
+
+      function filterEvents(events) {
+        var selected = getSelectedFilters();
+        if (selected.length === 0) return [];
+        var typesToShow = new Set();
+        selected.forEach(function (group) {
+          (EVENT_GROUPS[group] || []).forEach(function (t) { typesToShow.add(t); });
+        });
+        return events.filter(function (e) { return typesToShow.has(e.event_type); });
+      }
 
       function formatTime(iso) {
         if (!iso) return '—';
@@ -187,22 +264,32 @@
 
       function render(events) {
         errEl.style.display = 'none';
-        if (!events || events.length === 0) {
+        var filtered = filterEvents(events);
+        if (filtered.length === 0) {
           tbody.innerHTML = '';
           emptyEl.style.display = 'block';
+          emptyEl.textContent = events.length === 0
+            ? 'No events yet. Trigger some actions on the site to see them here.'
+            : 'No events match the selected filters.';
           return;
         }
         emptyEl.style.display = 'none';
-        tbody.innerHTML = events.map(function (e) {
+        tbody.innerHTML = filtered.map(function (e) {
           var details = formatDetails(e.metadata);
+          var visitorDisplay = (e.visitor_email && e.visitor_email.trim()) ? e.visitor_email.trim() : (e.visitor_id || '—');
+          var visitorTitle = (e.visitor_email ? e.visitor_email + (e.visitor_name ? ' (' + e.visitor_name + ')' : '') : '') + (e.visitor_id ? ' · cookie: ' + e.visitor_id : '');
           return '<tr>' +
             '<td class="col-time">' + formatTime(e.occurred_at) + '</td>' +
-            '<td class="col-visitor" title="' + (e.visitor_id || '') + '">' + (e.visitor_id || '—') + '</td>' +
+            '<td class="col-visitor" title="' + visitorTitle + '">' + visitorDisplay + '</td>' +
             '<td class="col-type"><span class="event-type ' + (e.event_type || '') + '">' + (e.event_type || '—') + '</span></td>' +
             '<td class="col-details"><span class="details">' + (details || '—') + '</span></td>' +
             '<td class="col-page" title="' + (e.page_url || '') + '">' + (e.page_url ? (e.page_url.replace(/^https?:\/\//, '').slice(0, 50) + (e.page_url.length > 50 ? '…' : '')) : '—') + '</td>' +
             '</tr>';
         }).join('');
+      }
+
+      function onFiltersChange() {
+        render(allEvents);
       }
 
       function fetchEvents() {
@@ -211,7 +298,10 @@
             if (!r.ok) throw new Error(r.status === 401 ? 'Unauthorized (add ?view_key= to URL if required)' : r.status);
             return r.json();
           })
-          .then(render)
+          .then(function (events) {
+            allEvents = events || [];
+            render(allEvents);
+          })
           .catch(function (err) {
             errEl.textContent = err.message || 'Failed to load events';
             errEl.style.display = 'block';
@@ -219,6 +309,10 @@
             emptyEl.style.display = 'none';
           });
       }
+
+      document.querySelectorAll('.filters input[name="filter"]').forEach(function (cb) {
+        cb.addEventListener('change', onFiltersChange);
+      });
 
       liveCheck.addEventListener('change', function () {
         if (refreshTimer) clearInterval(refreshTimer);
