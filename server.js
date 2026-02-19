@@ -51,6 +51,10 @@ app.use('/vk2026/api/analytics', analyticsLimiter, analyticsRouter);
 app.use('/api', limiter);
 app.use('/api', submissionsRouter);
 app.use('/api/webhooks', webhooksRouter);
+// Same API under /vk2026/api so forms and tracking work when site is at /vk2026/
+app.use('/vk2026/api', limiter);
+app.use('/vk2026/api', submissionsRouter);
+app.use('/vk2026/api/webhooks', webhooksRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/`);

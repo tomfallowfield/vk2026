@@ -127,42 +127,47 @@ router.post('/website-review', async (req, res) => {
   logSubmission('website-review', payload);
   logFormSubmissionLine(payload._server?.timestamp || new Date().toISOString(), data.email || '', 'website-review', payload);
   console.log('WRV received:', data.name || '(no name)');
-  const vkcrmPayload = {
-    submission_type: 'wrv_request',
-    submitted_at: payload._server?.timestamp || new Date().toISOString(),
-    form_id: payload.form_id,
-    trigger_button_id: payload.trigger_button_id,
-    modal_trigger_type: payload.modal_trigger_type,
-    name: data.name,
-    website: data.website,
-    linkedin_url: data.linkedin_url,
-    email: data.email,
-    company_name: data.company,
-    comments: data.comments
-  };
-  const notionResult = await createOrUpdateVkCrmPage(vkcrmPayload, payload._context || {});
-  if (!notionResult.success) {
-    console.error('Notion VKCRM website-review:', notionResult.error);
+  try {
+    const vkcrmPayload = {
+      submission_type: 'wrv_request',
+      submitted_at: payload._server?.timestamp || new Date().toISOString(),
+      form_id: payload.form_id,
+      trigger_button_id: payload.trigger_button_id,
+      modal_trigger_type: payload.modal_trigger_type,
+      name: data.name,
+      website: data.website,
+      linkedin_url: data.linkedin_url,
+      email: data.email,
+      company_name: data.company,
+      comments: data.comments
+    };
+    const notionResult = await createOrUpdateVkCrmPage(vkcrmPayload, payload._context || {});
+    if (!notionResult.success) {
+      console.error('Notion VKCRM website-review:', notionResult.error);
+    }
+    const mcResult = await addOrUpdateContact({
+      email: data.email,
+      name: data.name,
+      source: 'website-review',
+      mailchimp_tag: MAILCHIMP_TAG_CONTACT_FORM
+    });
+    if (!mcResult.success && config.MAILCHIMP_API_KEY) {
+      console.error('Mailchimp website-review:', mcResult.error);
+    }
+    if (isAnalyticsConfigured() && payload._context?.visitor_id && data.email) {
+      enrichVisitor(payload._context.visitor_id, { email: data.email, name: data.name }).catch(() => {});
+    }
+    const slackLine = ['Website review', data.name || '(no name)', data.email, data.website].filter(Boolean).join(' · ');
+    sendSlackMessage('🔍 ' + slackLine).catch(() => {});
+    const response = { message: 'Thanks — we\'ll be in touch with your review soon.' };
+    if (key) {
+      idempotencyCache.set(key, { response, expiry: Date.now() + IDEMPOTENCY_WINDOW_MS });
+    }
+    res.status(200).json(response);
+  } catch (err) {
+    console.error('website-review handler:', err);
+    res.status(500).json({ error: 'Server error. Please try again.' });
   }
-  const mcResult = await addOrUpdateContact({
-    email: data.email,
-    name: data.name,
-    source: 'website-review',
-    mailchimp_tag: MAILCHIMP_TAG_CONTACT_FORM
-  });
-  if (!mcResult.success && config.MAILCHIMP_API_KEY) {
-    console.error('Mailchimp website-review:', mcResult.error);
-  }
-  if (isAnalyticsConfigured() && payload._context?.visitor_id && data.email) {
-    enrichVisitor(payload._context.visitor_id, { email: data.email, name: data.name }).catch(() => {});
-  }
-  const slackLine = ['Website review', data.name || '(no name)', data.email, data.website].filter(Boolean).join(' · ');
-  sendSlackMessage('🔍 ' + slackLine).catch(() => {});
-  const response = { message: 'Thanks — we\'ll be in touch with your review soon.' };
-  if (key) {
-    idempotencyCache.set(key, { response, expiry: Date.now() + IDEMPOTENCY_WINDOW_MS });
-  }
-  res.status(200).json(response);
 });
 
 router.post('/lead', async (req, res) => {

@@ -1,8 +1,14 @@
-// API base URL (same origin: /api) – can be overridden by settings.api_base
+// API base URL (same origin). Uses settings.api_base if set; else if page is under a path (e.g. /vk2026/) uses that + '/api' so forms and tracking work.
 window.API_BASE = (function () {
   const s = window.SITE_SETTINGS || {};
   if (typeof s.api_base === 'string' && s.api_base.trim()) return s.api_base.trim();
-  return typeof window.API_BASE !== 'undefined' ? window.API_BASE : '/api';
+  if (typeof window.API_BASE === 'string' && window.API_BASE.trim()) return window.API_BASE.trim();
+  try {
+    const pathname = (typeof location !== 'undefined' && location.pathname) ? location.pathname : '';
+    const segment = pathname.replace(/^\/+|\/+$/g, '').split('/')[0];
+    if (segment) return '/' + segment + '/api';
+  } catch (_) {}
+  return '/api';
 })();
 
 // Site settings (from settings.js); defaults if missing
@@ -1448,6 +1454,7 @@ function getSubmitErrorMessage(err, res, data) {
     return data.error;
   }
   if (res && !res.ok) {
+    if (res.status >= 500) return 'Server error. Please try again — if it keeps happening, check server logs (pm2 logs vk2026).';
     return 'The server couldn\'t process your request. Please try again.';
   }
   return 'Your request couldn\'t be completed. Please try again.';
