@@ -142,6 +142,29 @@
       border-color: rgba(0, 0, 0, 0.12);
       --ink: #111;
       --text-muted: #555;
+      --card-bg: #f8f8f8;
+      --border: rgba(0, 0, 0, 0.1);
+    }
+    /* Feature list and items inside panels: light bg like panel (no dark text on dark bg) */
+    html.dark-mode #pricing .pricing-features,
+    html.dark-mode #pricing .pricing-features-expander__head,
+    html.dark-mode #pricing .pricing-features-expander__body {
+      background: var(--card-bg);
+      color: var(--ink);
+      border-color: var(--border);
+    }
+    html.dark-mode #pricing .feature-item:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    html.dark-mode #pricing .feature-toggle,
+    html.dark-mode #pricing .feature-title,
+    html.dark-mode #pricing .feature-description,
+    html.dark-mode #pricing .pricing-features-section-title {
+      color: var(--ink);
+    }
+    html.dark-mode #pricing .feature-chevron,
+    html.dark-mode #pricing .feature-icon {
+      color: var(--text-muted);
     }
     html.dark-mode #pricing .pricing-panel__left h2,
     html.dark-mode #pricing .addon-panel .addon-panel__left .addon-title {
