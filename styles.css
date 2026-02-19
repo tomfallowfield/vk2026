@@ -278,7 +278,7 @@
     }
     /* Child .how-it-feels-bg has clouds.jpg set by JS – hide it in dark mode so the block’s overlay shows */
     html.dark-mode .feels-and-testimonial-block .how-it-feels-bg {
-      background-image: none !important;
+      background: none !important;
     }
     html.dark-mode .feels-and-testimonial-block #how-it-feels .container h2,
     html.dark-mode .feels-and-testimonial-block #how-it-feels .container .subhead,
@@ -4289,8 +4289,8 @@ html.dark-mode .feels-and-testimonial-block section#how-it-feels:hover .containe
       inset: 0;
       z-index: 0.5;
       pointer-events: none;
-      /* Match hero overlay exactly for same sky lightness (light mode) */
-      background: linear-gradient(to bottom, rgba(220,235,255,0.58), rgba(220,235,255,0.58));
+      /* Match hero overlay exactly for same sky (light mode) */
+      background: linear-gradient(to bottom, rgba(255,255,255,0.72) 0%, rgba(245,250,255,0.62) 35%, rgba(220,235,255,0.58) 100%);
     }
     .feels-and-testimonial-block section#how-it-feels {
       background: transparent;

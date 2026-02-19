@@ -296,6 +296,7 @@
       }
 
       function filterEvents(events) {
+        if (!Array.isArray(events)) return [];
         var selected = getSelectedFilters();
         if (selected.length === 0) return [];
         var typesToShow = new Set();
@@ -373,7 +374,7 @@
           emptyEl.textContent = events.length === 0
             ? 'No events yet. Trigger some actions on the site to see them here.'
             : getVisitorSearch() ? 'No events for that email or visitor ID (try clearing the search).' : getUtmSearch() ? 'No events for that UTM (try clearing the UTM filter).' : 'No events match the selected filters.';
-          if (typeof updateDeleteButton === 'function') updateDeleteButton();
+          try { if (typeof updateDeleteButton === 'function') updateDeleteButton(); } catch (_) {}
           return;
         }
         emptyEl.style.display = 'none';
@@ -394,7 +395,7 @@
             '<td class="col-page" title="' + (e.page_url || '') + '">' + (e.page_url ? (e.page_url.replace(/^https?:\/\//, '').slice(0, 50) + (e.page_url.length > 50 ? '…' : '')) : '—') + '</td>' +
             '</tr>';
         }).join('');
-        if (typeof updateDeleteButton === 'function') updateDeleteButton();
+        try { if (typeof updateDeleteButton === 'function') updateDeleteButton(); } catch (_) {}
       }
 
       function onFiltersChange() {
@@ -408,7 +409,7 @@
             return r.json();
           })
           .then(function (events) {
-            allEvents = events || [];
+            allEvents = Array.isArray(events) ? events : [];
             render(allEvents);
           })
           .catch(function (err) {
@@ -443,6 +444,7 @@
       var deleteBtn = document.getElementById('deleteSelected');
 
       function updateDeleteButton() {
+        if (!deleteBtn) return;
         var any = tbody.querySelectorAll('input.row-select:checked').length > 0;
         deleteBtn.disabled = !any;
       }
