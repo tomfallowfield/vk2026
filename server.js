@@ -27,7 +27,7 @@ app.use(cors({
 app.use(cookieParser());
 app.use(express.json({ limit: '100kb' }));
 
-app.use('/vk2026', express.static(path.join(__dirname), { index: 'index.html' }));
+app.use('/', express.static(path.join(__dirname), { index: 'index.html' }));
 
 const limiter = rateLimit({
   windowMs: 60 * 1000,
@@ -43,13 +43,13 @@ const analyticsLimiter = rateLimit({
   legacyHeaders: false
 });
 // Analytics first so GET /analytics/events (viewer polling) uses 120/min, not 10/min
-app.use('/vk2026/api/analytics', analyticsLimiter, analyticsRouter);
-app.use('/vk2026/api', limiter);
-app.use('/vk2026/api', submissionsRouter);
-app.use('/vk2026/api/webhooks', webhooksRouter);
+app.use('/api/analytics', analyticsLimiter, analyticsRouter);
+app.use('/api', limiter);
+app.use('/api', submissionsRouter);
+app.use('/api/webhooks', webhooksRouter);
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/vk2026`);
-  console.log(`API at http://localhost:${PORT}/vk2026/api`);
+  console.log(`Server running at http://localhost:${PORT}/`);
+  console.log(`API at http://localhost:${PORT}/api`);
   console.log(`Notion VKCRM: ${isVkCrmConfigured() ? 'configured' : 'NOT configured (set NOTION_TOKEN and NOTION_DATABASE_ID in .env)'}`);
 });

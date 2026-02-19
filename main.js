@@ -1,8 +1,8 @@
-// API base URL (same origin: /vk2026/api) – can be overridden by settings.api_base
+// API base URL (same origin: /api) – can be overridden by settings.api_base
 window.API_BASE = (function () {
   const s = window.SITE_SETTINGS || {};
   if (typeof s.api_base === 'string' && s.api_base.trim()) return s.api_base.trim();
-  return typeof window.API_BASE !== 'undefined' ? window.API_BASE : '/vk2026/api';
+  return typeof window.API_BASE !== 'undefined' ? window.API_BASE : '/api';
 })();
 
 // Site settings (from settings.js); defaults if missing
@@ -174,8 +174,9 @@ function getOrCreateVisitor() {
   const now = Date.now();
   const referrer = document.referrer || '';
   const params = new URLSearchParams(window.location.search);
+  var utmSource = params.get('utm_source') || params.get('utm') || '';
   const utm = {
-    utm_source: params.get('utm_source') || '',
+    utm_source: utmSource,
     utm_medium: params.get('utm_medium') || '',
     utm_campaign: params.get('utm_campaign') || '',
     utm_term: params.get('utm_term') || '',
@@ -203,7 +204,7 @@ function getOrCreateVisitor() {
     if (referrer && data.referrers && data.referrers.indexOf(referrer) === -1) {
       data.referrers = (data.referrers || []).slice(-4).concat(referrer);
     }
-    if (params.has('utm_source') || params.has('utm_medium')) data.utm = utm;
+    if (params.has('utm_source') || params.has('utm_medium') || params.has('utm')) data.utm = utm;
   }
   setCookie(COOKIE_VISITOR_NAME, JSON.stringify(data), COOKIE_VISITOR_DAYS);
   return data;
@@ -241,7 +242,7 @@ function getContextForSubmit(triggerButtonId) {
     buttons_clicked: buttons_clicked,
     videos_watched: videos_watched,
     first_visit_utm: firstVisitUtm,
-    utm_source: params.get('utm_source') || null,
+    utm_source: params.get('utm_source') || params.get('utm') || null,
     utm_medium: params.get('utm_medium') || null,
     utm_campaign: params.get('utm_campaign') || null,
     utm_term: params.get('utm_term') || null,
@@ -267,7 +268,7 @@ function getAnalyticsContext() {
   return {
     page_url: window.location.href,
     referrer: document.referrer || '',
-    utm_source: params.get('utm_source') || '',
+    utm_source: params.get('utm_source') || params.get('utm') || '',
     utm_medium: params.get('utm_medium') || '',
     utm_campaign: params.get('utm_campaign') || '',
     utm_term: params.get('utm_term') || '',
@@ -762,10 +763,8 @@ function applyRandomStarPlaceholders() {
     mayaQuote: '"People will forget what you said, people will forget what you did, but people will never forget how you made them feel"',
     mayaAttribution: ' ~ [Name] (not a client)',
     deliverableAppend: 'In the spirit of [Name], we keep it clear and persuasive.',
-    heroEyebrowTooltip: '[Name] knew a thing or two about how to grow fast.',
-    heroEyebrowTooltipNoName: 'Knew a thing or two about messaging.',
     rescueEyebrowDelaySec: 1,
-    heroEyebrowDelaySec: 1
+    menuFooterProud: '[Name] would be proud.'
   };
 
   var names = null;
@@ -1750,13 +1749,16 @@ getEnabledLeadMagnetIds().forEach(function (id) {
     var on = input.checked;
     setDarkMode(on);
     try { localStorage.setItem(STORAGE_KEY, on ? 'dark' : 'light'); } catch (e) {}
+    if (typeof trackEvent === 'function') trackEvent('theme_switch', { trigger: 'manual', to: on ? 'dark' : 'light' });
   });
 
   try {
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
       try {
         if (localStorage.getItem(STORAGE_KEY) === null || localStorage.getItem(STORAGE_KEY) === '') {
-          setDarkMode(prefersDark());
+          var on = prefersDark();
+          setDarkMode(on);
+          if (typeof trackEvent === 'function') trackEvent('theme_switch', { trigger: 'system', to: on ? 'dark' : 'light' });
         }
       } catch (e) {}
     });
@@ -1887,7 +1889,6 @@ function initEasterEggs() {
   if (!n || n.length < 10) return;
   var copy = typeof EASTER_EGG_COPY !== 'undefined' ? EASTER_EGG_COPY : {};
   var delayRescue = (copy.rescueEyebrowDelaySec != null ? copy.rescueEyebrowDelaySec : 1) * 1000;
-  var delayHero = (copy.heroEyebrowDelaySec != null ? copy.heroEyebrowDelaySec : 1) * 1000;
 
   function showTooltip(el, text) {
     var tip = document.createElement('div');
@@ -1918,21 +1919,6 @@ function initEasterEggs() {
     });
   }
 
-  var heroEyebrow = document.querySelector('.hero-eyebrow');
-  if (heroEyebrow) {
-    var heroTimer = null;
-    var heroTipText = (copy.heroEyebrowTooltipNoName || 'Knew a thing or two about messaging.');
-    heroEyebrow.addEventListener('mouseenter', function () {
-      heroTimer = setTimeout(function () {
-        heroTimer = null;
-        showTooltip(heroEyebrow, heroTipText);
-      }, delayHero);
-    });
-    heroEyebrow.addEventListener('mouseleave', function () {
-      if (heroTimer) clearTimeout(heroTimer);
-    });
-  }
-
   var guideImg = document.querySelector('#guide img');
   if (guideImg) {
     var guideTitle = (copy.guidePicTitle || 'Not exactly [Name]. But I\'ve come a long way.').replace('[Name]', n[2]);
@@ -1945,6 +1931,12 @@ function initEasterEggs() {
   if (footerMaya && !footerMaya.textContent.trim()) {
     var mayaLine = (copy.mayaQuote || '"People will forget what you said, people will forget what you did, but people will never forget how you made them feel"') + (copy.mayaAttribution || ' ~ [Name] (not a client)').replace('[Name]', n[8]);
     footerMaya.textContent = mayaLine;
+  }
+
+  var menuProud = document.getElementById('mobile-menu-easter-proud');
+  if (menuProud) {
+    var proudText = (copy.menuFooterProud || '[Name] would be proud.').replace('[Name]', n[0]);
+    menuProud.textContent = ' · ' + proudText;
   }
 
   var featureDesc6 = document.getElementById('feature-desc-6');

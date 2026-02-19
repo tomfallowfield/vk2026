@@ -19,7 +19,8 @@ const ALLOWED_EVENT_TYPES = new Set([
   'menu_open',
   'menu_close',
   'modal_close',
-  'video_modal_close'
+  'video_modal_close',
+  'theme_switch'
 ]);
 
 let pool = null;

@@ -6,7 +6,7 @@ echo "==== DEPLOY START ===="
 date
 echo "Deploy PID: $$"
 
-cd /var/www/html/vk2026 || exit 1
+cd /var/www/vanillakiller.com/public_html || exit 1
 
 echo "Resetting local changes..."
 git reset --hard HEAD

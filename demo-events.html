@@ -76,8 +76,9 @@
       letter-spacing: 0.05em;
     }
     tr:hover td { background: rgba(255,255,255,0.02); }
+    .col-sel { width: 2.5%; text-align: center; }
     .col-time { width: 10%; white-space: nowrap; }
-    .col-visitor { width: 14%; overflow: hidden; text-overflow: ellipsis; }
+    .col-visitor { width: 13%; overflow: hidden; text-overflow: ellipsis; }
     .col-type { width: 14%; }
     .col-details { width: 30%; }
     .col-utm { width: 18%; overflow: hidden; text-overflow: ellipsis; font-size: 11px; color: var(--muted); }
@@ -107,6 +108,7 @@
     .event-type.tc_open,
     .event-type.privacy_open { background: #6e7681; color: #fff; }
     .event-type.easter_egg_star { background: #db61a2; color: #fff; }
+    .event-type.theme_switch { background: #6e7681; color: #fff; }
     .details {
       font-size: 12px;
       color: var(--muted);
@@ -174,6 +176,20 @@
       outline: none;
       border-color: var(--accent);
     }
+    .header-actions { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .btn-delete {
+      padding: 0.4rem 0.75rem;
+      font: inherit;
+      font-size: 12px;
+      background: rgba(248, 81, 73, 0.2);
+      color: #f85149;
+      border: 1px solid rgba(248, 81, 73, 0.5);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-delete:hover { background: rgba(248, 81, 73, 0.35); }
+    .btn-delete:disabled { opacity: 0.4; cursor: not-allowed; }
+    tbody input[type="checkbox"] { accent-color: var(--accent); cursor: pointer; }
   </style>
 </head>
 <body>
@@ -182,10 +198,13 @@
       <h1>Visitor events</h1>
       <p class="meta">Live view · one row per event</p>
     </div>
-    <label>
-      <input type="checkbox" id="live" checked>
-      Auto-refresh every 5s
-    </label>
+    <div class="header-actions">
+      <button type="button" class="btn-delete" id="deleteSelected" disabled title="Remove selected rows from view (reappear on next refresh)">Delete selected</button>
+      <label>
+        <input type="checkbox" id="live" checked>
+        Auto-refresh every 5s
+      </label>
+    </div>
   </header>
   <div class="filters">
     <span class="label">Show:</span>
@@ -200,6 +219,7 @@
     <label class="filter"><input type="checkbox" name="filter" value="cal" checked> Calendar</label>
     <label class="filter"><input type="checkbox" name="filter" value="legal" checked> Legal</label>
     <label class="filter"><input type="checkbox" name="filter" value="easter_egg" checked> Easter egg</label>
+    <label class="filter"><input type="checkbox" name="filter" value="theme" checked> Theme switch</label>
     <span class="search-wrap">
       <span class="label">UTM:</span>
       <input type="text" id="utmSearch" placeholder="e.g. lucy or google" autocomplete="off">
@@ -214,6 +234,9 @@
     <table>
       <thead>
         <tr>
+          <th class="col-sel" title="Select all visible">
+            <input type="checkbox" id="selectAll" title="Select all visible">
+          </th>
           <th class="col-time">Time</th>
           <th class="col-visitor">Visitor (email or cookie)</th>
           <th class="col-type">Event</th>
@@ -250,7 +273,8 @@
         menu: ['menu_open', 'menu_close'],
         cal: ['cal_link_click'],
         legal: ['tc_open', 'privacy_open'],
-        easter_egg: ['easter_egg_star']
+        easter_egg: ['easter_egg_star'],
+        theme: ['theme_switch']
       };
 
       function getSelectedFilters() {
@@ -331,7 +355,9 @@
         if (meta.button_id) parts.push('button: ' + meta.button_id);
         if (meta.modal_panel) parts.push('modal: ' + meta.modal_panel);
         if (meta.faq_question) parts.push('FAQ: ' + (meta.faq_question.length > 40 ? meta.faq_question.slice(0, 40) + '…' : meta.faq_question));
-        if (meta.scope_item_id) parts.push('scope: ' + meta.scope_item_id);
+        if (meta.scope_item_label || meta.scope_item_id) parts.push('scope: ' + (meta.scope_item_label || meta.scope_item_id));
+        if (meta.trigger) parts.push(meta.trigger);
+        if (meta.to) parts.push('→ ' + meta.to);
         if (meta.star_name) parts.push('star: ' + meta.star_name);
         if (meta.seconds != null) parts.push(meta.seconds + 's');
         if (meta.video_label) parts.push(meta.video_label + (meta.pct != null ? ' ' + meta.pct + '%' : ''));
@@ -347,6 +373,7 @@
           emptyEl.textContent = events.length === 0
             ? 'No events yet. Trigger some actions on the site to see them here.'
             : getVisitorSearch() ? 'No events for that email or visitor ID (try clearing the search).' : getUtmSearch() ? 'No events for that UTM (try clearing the UTM filter).' : 'No events match the selected filters.';
+          if (typeof updateDeleteButton === 'function') updateDeleteButton();
           return;
         }
         emptyEl.style.display = 'none';
@@ -356,7 +383,9 @@
           var visitorTitle = (e.visitor_email ? e.visitor_email + (e.visitor_name ? ' (' + e.visitor_name + ')' : '') : '') + (e.visitor_id ? ' · cookie: ' + e.visitor_id : '');
           var utmStr = formatUtm(e);
           var utmTitle = [e.utm_source, e.utm_medium, e.utm_campaign, e.utm_term, e.utm_content].filter(Boolean).join(' · ') || '';
-          return '<tr>' +
+          var id = (e.id != null) ? String(e.id) : '';
+          return '<tr data-event-id="' + (id ? id : '') + '">' +
+            '<td class="col-sel"><input type="checkbox" class="row-select" data-event-id="' + id + '" aria-label="Select row"></td>' +
             '<td class="col-time">' + formatTime(e.occurred_at) + '</td>' +
             '<td class="col-visitor" title="' + visitorTitle + '">' + visitorDisplay + '</td>' +
             '<td class="col-type"><span class="event-type ' + (e.event_type || '') + '">' + (e.event_type || '—') + '</span></td>' +
@@ -365,6 +394,7 @@
             '<td class="col-page" title="' + (e.page_url || '') + '">' + (e.page_url ? (e.page_url.replace(/^https?:\/\//, '').slice(0, 50) + (e.page_url.length > 50 ? '…' : '')) : '—') + '</td>' +
             '</tr>';
         }).join('');
+        if (typeof updateDeleteButton === 'function') updateDeleteButton();
       }
 
       function onFiltersChange() {
@@ -407,6 +437,42 @@
         if (refreshTimer) clearInterval(refreshTimer);
         refreshTimer = null;
         if (liveCheck.checked) refreshTimer = setInterval(fetchEvents, 5000);
+      });
+
+      var selectAllEl = document.getElementById('selectAll');
+      var deleteBtn = document.getElementById('deleteSelected');
+
+      function updateDeleteButton() {
+        var any = tbody.querySelectorAll('input.row-select:checked').length > 0;
+        deleteBtn.disabled = !any;
+      }
+
+      function onSelectAllChange() {
+        var checked = selectAllEl.checked;
+        tbody.querySelectorAll('input.row-select').forEach(function (cb) { cb.checked = checked; });
+        updateDeleteButton();
+      }
+
+      selectAllEl.addEventListener('change', onSelectAllChange);
+
+      tbody.addEventListener('change', function (e) {
+        if (e.target && e.target.classList.contains('row-select')) updateDeleteButton();
+      });
+
+      deleteBtn.addEventListener('click', function () {
+        if (deleteBtn.disabled) return;
+        var idsToRemove = new Set();
+        tbody.querySelectorAll('input.row-select:checked').forEach(function (cb) {
+          var id = cb.getAttribute('data-event-id');
+          if (id) idsToRemove.add(id);
+        });
+        if (idsToRemove.size === 0) return;
+        allEvents = allEvents.filter(function (e) {
+          return e.id == null || !idsToRemove.has(String(e.id));
+        });
+        render(allEvents);
+        selectAllEl.checked = false;
+        updateDeleteButton();
       });
 
       fetchEvents();

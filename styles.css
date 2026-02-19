@@ -113,25 +113,53 @@
     html.dark-mode section#how-it-feels {
       background: var(--paper);
     }
+    /* Dark mode: keep same pricing section as light – dark bg, white text */
     html.dark-mode section#pricing {
-      background: #f0efed url('images/pricing-pattern-light.svg') repeat;
+      background: #141414 url('images/pricing-pattern.svg') repeat;
       background-size: 60px 36.043px;
-      color: var(--ink);
+      color: rgba(255, 255, 255, 0.92);
     }
     html.dark-mode section#pricing .container > .eyebrow,
     html.dark-mode section#pricing .container > h2,
     html.dark-mode section#pricing .container > .subhead {
-      color: #1a1a1a;
+      color: #fff;
     }
     html.dark-mode section#pricing .container > .eyebrow {
-      background: linear-gradient(135deg, #e8e7e5 0%, #dddcd9 100%);
-      border-color: #d0cecb;
-      box-shadow: 0 2px 14px rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.25);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
     }
     html.dark-mode section#pricing:hover .container > .eyebrow {
-      background: linear-gradient(135deg, #f0efed 0%, #e5e4e2 100%);
-      color: #222;
-      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+      background: rgba(255, 255, 255, 0.22);
+      color: #fff;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.28);
+    }
+    /* Price tier panels: same white bg and dark text as light mode */
+    html.dark-mode #pricing .pricing-panel--core,
+    html.dark-mode #pricing .addon-panel {
+      background: #fff;
+      color: #111;
+      border-color: rgba(0, 0, 0, 0.12);
+      --ink: #111;
+      --text-muted: #555;
+    }
+    html.dark-mode #pricing .pricing-panel__left h2,
+    html.dark-mode #pricing .addon-panel .addon-panel__left .addon-title {
+      color: #111;
+    }
+    html.dark-mode #pricing .pricing-tier-eyebrow {
+      color: #383838;
+      background: linear-gradient(
+        135deg,
+        #e8a0b8 0%,
+        #d89ac8 18%,
+        #a8bddb 38%,
+        #8dd4ad 55%,
+        #e8c078 72%,
+        #e0b040 88%,
+        #e8a0b8 100%
+      );
+      border-color: rgba(255, 255, 255, 0.5);
     }
     html.dark-mode section#faqs {
       background: var(--paper);
@@ -291,20 +319,6 @@
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
       border-color: rgba(255, 255, 255, 0.2);
       color: #fff;
-    }
-
-    /* Pricing tier rainbow eyebrows: dark text (white for readability) */
-    html.dark-mode #pricing .pricing-tier-eyebrow {
-      color: #fff;
-      background: linear-gradient(
-        135deg,
-        #5a4050 0%,
-        #4a4565 35%,
-        #2d4565 55%,
-        #2d5540 75%,
-        #5a4530 100%
-      );
-      border-color: rgba(255, 255, 255, 0.2);
     }
 
     /* Primary CTA brand yellow, secondary CTA black (sitewide in dark mode) */
@@ -524,9 +538,14 @@
       font-family: Inter, system-ui, sans-serif;
 /*      background: var(--bg-main);
       color: var(--text-main);*/
-      background:
-        linear-gradient(to bottom, rgba(220,235,255,0.58), rgba(220,235,255,0.58)),
-        url('images/clouds.jpg') center top / cover no-repeat;
+      /* Same sky + overlay as hero so overscroll above header has no hard edge */
+      background-color: #a8c8e8;
+      background-image:
+        linear-gradient(to bottom, rgba(255,255,255,0.72) 0%, rgba(245,250,255,0.62) 35%, rgba(220,235,255,0.58) 100%),
+        url('images/clouds.jpg');
+      background-position: center top;
+      background-size: cover;
+      background-repeat: no-repeat;
       color: var(--ink);
       line-height: 1.6;
     }
@@ -3181,11 +3200,6 @@
       color: #fff;
       box-shadow: 0 2px 16px rgba(0, 0, 0, 0.28);
     }
-    /* Dark mode: pricing section has light bg so heading and subhead must be dark */
-    html.dark-mode section#pricing .container > h2,
-    html.dark-mode section#pricing .container > .subhead {
-      color: #1a1a1a;
-    }
     section#faqs {
       background: #fff;
     }
@@ -5010,10 +5024,17 @@ html.dark-mode .footer-maya-easter:not(:empty) {
 }
 html.dark-mode .easter-egg-tooltip {
   color: #fff;
-  background: var(--brand-grey);
+  background: #333;
 }
 html.dark-mode .easter-egg-tooltip::after {
-  border-top-color: var(--brand-grey);
+  border-top-color: #333;
+}
+
+html.dark-mode .avatar-stack .avatar .avatar-tooltip {
+  background: #333;
+}
+html.dark-mode .avatar-stack .avatar .avatar-tooltip::after {
+  border-top-color: #333;
 }
 
 .app-modal__success-easter {
