@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "testimonials",
+  "info": {
+    "singularName": "testimonial",
+    "pluralName": "testimonials",
+    "displayName": "Testimonial",
+    "description": "Customer testimonials"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "quote": {
+      "type": "text",
+      "required": true
+    },
+    "author_name": {
+      "type": "string",
+      "required": true
+    },
+    "author_role": {
+      "type": "string"
+    },
+    "avatar_path": {
+      "type": "string",
+      "description": "Path to image e.g. images/testimonial_mugs/mike.png"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}
