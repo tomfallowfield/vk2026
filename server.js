@@ -42,8 +42,9 @@ const analyticsLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false
 });
-app.use('/vk2026/api', limiter);
+// Analytics first so GET /analytics/events (viewer polling) uses 120/min, not 10/min
 app.use('/vk2026/api/analytics', analyticsLimiter, analyticsRouter);
+app.use('/vk2026/api', limiter);
 app.use('/vk2026/api', submissionsRouter);
 app.use('/vk2026/api/webhooks', webhooksRouter);
 
