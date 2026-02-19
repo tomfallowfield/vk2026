@@ -72,6 +72,10 @@
   }
 
   function useFallback() {
+    if (window.SITE_SETTINGS) {
+      loadMain();
+      return;
+    }
     fallbackScript.onload = loadMain;
     document.body.appendChild(fallbackScript);
   }

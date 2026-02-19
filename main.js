@@ -295,9 +295,11 @@ function trackEvent(eventType, metadata) {
   const payload = { visitor_id: v.visitor_id, events: [event] };
   const url = window.API_BASE + '/analytics/events';
   const body = JSON.stringify(payload);
-  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+  var protocol = typeof window !== 'undefined' && window.location && window.location.protocol;
+  var useBeacon = protocol === 'http:' || protocol === 'https:';
+  if (useBeacon && typeof navigator !== 'undefined' && navigator.sendBeacon) {
     navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
-  } else {
+  } else if (useBeacon) {
     fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true }).catch(function () {});
   }
 }
@@ -326,9 +328,11 @@ function trackEvents(events) {
   };
   const url = window.API_BASE + '/analytics/events';
   const body = JSON.stringify(payload);
-  if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+  var protocol = typeof window !== 'undefined' && window.location && window.location.protocol;
+  var useBeacon = protocol === 'http:' || protocol === 'https:';
+  if (useBeacon && typeof navigator !== 'undefined' && navigator.sendBeacon) {
     navigator.sendBeacon(url, new Blob([body], { type: 'application/json' }));
-  } else {
+  } else if (useBeacon) {
     fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true }).catch(function () {});
   }
 }
@@ -561,7 +565,7 @@ const closeBtn = modal.querySelector('.video-close');
 
 // Load clouds.jpg for how-it-feels section after hero video has loaded; bg fades in on section hover (CSS)
 (function () {
-  var heroVideoSrc = 'vids/hero-video.mp4';
+  var heroVideoSrc = 'vids/how-to-talk-about-your-business.mp4';
   var cloudsUrl = 'images/clouds.jpg';
   var bgEl = document.getElementById('how-it-feels-bg');
   if (!bgEl) return;
@@ -1158,16 +1162,54 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
   hamburger.addEventListener('click', function () {
     openMobileMenu();
   });
-  if (closeBtn) closeBtn.addEventListener('click', function () { closeMobileMenu('button'); });
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      closeMobileMenu('button');
+    });
+  }
 
   menu.addEventListener('click', function (e) {
     if (e.target.closest('a')) closeMobileMenu('link');
   });
 
+  // Close menu when any link inside it is clicked (capture phase so menu closes before modal/navigation)
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('#mobile-menu a');
+    if (link && menu.getAttribute('aria-hidden') === 'false') {
+      closeMobileMenu('link');
+    }
+  }, true);
+
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
     if (menu.getAttribute('aria-hidden') === 'false') {
       closeMobileMenu('escape');
+    }
+  });
+})();
+
+// Problem & Rescue expanders (sub 900px): toggle on + or header click, track in analytics
+(function () {
+  document.addEventListener('click', function (e) {
+    var block = e.target.closest('[data-expander]');
+    if (!block) return;
+    var btn = block.querySelector('[data-expander-toggle]');
+    var clickedToggle = e.target.closest('[data-expander-toggle]');
+    var clickedHeader = e.target.closest('.problem-card__header, .rescue-block__head, .pricing-features-expander__head');
+    var interactive = e.target.closest('a, button:not(.expander-toggle), .video-thumb, input, textarea, select');
+    if (!clickedToggle && !clickedHeader && interactive) return;
+    e.preventDefault();
+    var expanded = block.classList.toggle('is-expanded');
+    if (btn) btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    if (expanded) {
+      var section = block.getAttribute('data-expander-section') ||
+        (block.classList.contains('problem-card') ? 'problem' : block.classList.contains('pricing-features-expander') ? 'pricing' : 'rescue');
+      var parent = block.parentNode;
+      var siblings = parent ? parent.querySelectorAll('[data-expander]') : [];
+      var index = 1 + Array.prototype.indexOf.call(siblings, block);
+      trackEvent('expander_open', { section: section, index: index });
     }
   });
 })();
