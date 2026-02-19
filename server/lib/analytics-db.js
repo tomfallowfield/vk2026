@@ -187,17 +187,26 @@ async function getRecentEvents(limit) {
     'SELECT id, visitor_id, event_type, occurred_at, page_url, referrer, utm_source, utm_medium, metadata FROM events ORDER BY occurred_at DESC LIMIT ?',
     [cap]
   );
-  return (rows || []).map(r => ({
-    id: r.id,
-    visitor_id: r.visitor_id,
-    event_type: r.event_type,
-    occurred_at: r.occurred_at,
-    page_url: r.page_url,
-    referrer: r.referrer,
-    utm_source: r.utm_source,
-    utm_medium: r.utm_medium,
-    metadata: typeof r.metadata === 'string' ? (r.metadata ? JSON.parse(r.metadata) : null) : r.metadata
-  }));
+  return (rows || []).map(r => {
+    let meta = null;
+    if (r.metadata != null) {
+      if (typeof r.metadata === 'object') meta = r.metadata;
+      else if (typeof r.metadata === 'string' && r.metadata.trim()) {
+        try { meta = JSON.parse(r.metadata); } catch (_) { meta = null; }
+      }
+    }
+    return {
+      id: r.id,
+      visitor_id: r.visitor_id,
+      event_type: r.event_type,
+      occurred_at: r.occurred_at,
+      page_url: r.page_url,
+      referrer: r.referrer,
+      utm_source: r.utm_source,
+      utm_medium: r.utm_medium,
+      metadata: meta
+    };
+  });
 }
 
 module.exports = {
