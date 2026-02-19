@@ -5,6 +5,7 @@ const { validateBookACall, validateWebsiteReview, validateLead } = require('../l
 const { addOrUpdateContact } = require('../lib/mailchimp');
 const { createOrUpdateVkCrmPage } = require('../lib/notion-vkcrm');
 const { enrichVisitor, isConfigured: isAnalyticsConfigured } = require('../lib/analytics-db');
+const { sendSlackMessage } = require('../lib/slack');
 const config = require('../config');
 
 const HONEYPOT_FIELD = '_hp';
@@ -97,6 +98,8 @@ router.post('/book-a-call', async (req, res) => {
   if (isAnalyticsConfigured() && payload._context?.visitor_id && data.email) {
     enrichVisitor(payload._context.visitor_id, { email: data.email, name: data.name }).catch(() => {});
   }
+  const slackLine = ['Book a call', data.name || '(no name)', data.email].filter(Boolean).join(' · ');
+  sendSlackMessage('📞 ' + slackLine).catch(() => {});
   const response = { message: 'Thanks — we\'ll be in touch soon.' };
   if (key) {
     idempotencyCache.set(key, { response, expiry: Date.now() + IDEMPOTENCY_WINDOW_MS });
@@ -153,6 +156,8 @@ router.post('/website-review', async (req, res) => {
   if (isAnalyticsConfigured() && payload._context?.visitor_id && data.email) {
     enrichVisitor(payload._context.visitor_id, { email: data.email, name: data.name }).catch(() => {});
   }
+  const slackLine = ['Website review', data.name || '(no name)', data.email, data.website].filter(Boolean).join(' · ');
+  sendSlackMessage('🔍 ' + slackLine).catch(() => {});
   const response = { message: 'Thanks — we\'ll be in touch with your review soon.' };
   if (key) {
     idempotencyCache.set(key, { response, expiry: Date.now() + IDEMPOTENCY_WINDOW_MS });
@@ -186,6 +191,8 @@ router.post('/lead', async (req, res) => {
   if (isAnalyticsConfigured() && payload._context?.visitor_id && data.email) {
     enrichVisitor(payload._context.visitor_id, { email: data.email, name: data.name }).catch(() => {});
   }
+  const slackLine = ['Lead: ' + (data.source || 'lead'), data.email, data.name].filter(Boolean).join(' · ');
+  sendSlackMessage('📥 ' + slackLine).catch(() => {});
   const successMessages = {
     'lead-50things': 'Thanks! Check your email for the checklist.',
     'lead-offboarding': 'Thanks! Check your email for the offboarding guide.',

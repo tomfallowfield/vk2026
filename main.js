@@ -1521,6 +1521,19 @@ function setSubmitButtonLoading(form, loading) {
   if (!btn) return;
   btn.disabled = loading;
   btn.classList.toggle('is-loading', loading);
+  if (loading) {
+    btn._loadingOriginalContent = btn.innerHTML;
+    var img = document.createElement('img');
+    img.src = 'images/throbber.gif';
+    img.alt = '';
+    img.className = 'btn-throbber';
+    img.onerror = function () { this.src = 'images/throbber.svg'; };
+    btn.innerHTML = '';
+    btn.appendChild(img);
+  } else if (btn._loadingOriginalContent !== undefined) {
+    btn.innerHTML = btn._loadingOriginalContent;
+    delete btn._loadingOriginalContent;
+  }
 }
 
 // Website review form

@@ -4,6 +4,7 @@
  */
 const config = require('../config');
 const { getVisitorForReturnCheck, setReturnVisitNotified } = require('./analytics-db');
+const { sendSlackMessage } = require('./slack');
 
 const RETURN_VISIT_COOLDOWN_MS = 60 * 60 * 1000; // 1 hour
 
@@ -40,21 +41,8 @@ async function sendEmail(payload) {
 }
 
 async function sendSlack(payload) {
-  const url = config.SLACK_WEBHOOK_URL && config.SLACK_WEBHOOK_URL.trim();
-  if (!url) return;
-  try {
-    const fetch = require('node-fetch');
-    const label = payload.name && payload.name.trim() ? payload.name + ' (' + payload.email + ')' : payload.email;
-    await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text: 'Return visit: ' + label + ' – ' + payload.text
-      })
-    });
-  } catch (err) {
-    console.error('Return-visit Slack:', err.message);
-  }
+  const label = payload.name && payload.name.trim() ? payload.name + ' (' + payload.email + ')' : payload.email;
+  await sendSlackMessage('Return visit: ' + label + ' – ' + payload.text);
 }
 
 async function addToNotion(payload) {

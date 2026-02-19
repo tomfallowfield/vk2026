@@ -147,7 +147,7 @@
     html.dark-mode .header-cta {
       background: var(--brand-yellow);
       color: #111;
-      border: 2px solid #111;
+      border: 1px solid #111;
     }
     html.dark-mode header .btn-primary:hover {
       background: #e0b535;
@@ -302,7 +302,7 @@
     html.dark-mode .hero-ctas .btn-primary {
       background: var(--brand-yellow);
       color: #111;
-      border: 2px solid #111;
+      border: 1px solid #111;
     }
     html.dark-mode .btn-primary:hover,
     html.dark-mode .btn-primary:active,
@@ -319,7 +319,7 @@
     html.dark-mode .hero-ctas .btn-secondary {
       background: #111;
       color: #fff;
-      border: 2px solid #fff;
+      border: 1px solid #fff;
     }
     html.dark-mode .btn-secondary:hover,
     html.dark-mode .btn-secondary:active,
@@ -340,7 +340,7 @@
     html.dark-mode body.cta-primary-black .app-modal__form .btn-primary {
       background: var(--brand-yellow);
       color: #111;
-      border: 2px solid #111;
+      border: 1px solid #111;
     }
     html.dark-mode body.cta-primary-black .btn-primary:hover {
       background: #e0b535;
@@ -351,7 +351,7 @@
     html.dark-mode body.cta-primary-black .footer-ctas .btn-secondary {
       background: #111;
       color: #fff;
-      border: 2px solid #fff;
+      border: 1px solid #fff;
     }
     html.dark-mode body.cta-primary-black .btn-secondary:hover {
       background: #333;
@@ -697,6 +697,18 @@
       color: transparent;
       pointer-events: none;
     }
+    .btn.is-loading .btn-throbber {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+    }
+    body.cta-primary-black .btn-primary.is-loading .btn-throbber {
+      filter: invert(1);
+    }
+    .btn.is-loading:has(.btn-throbber)::after {
+      display: none;
+    }
     .btn.is-loading::after {
       content: '';
       position: absolute;
@@ -722,14 +734,14 @@
       to { transform: rotate(360deg); }
     }
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.92);
-      color: var(--brand-grey);
-      border: 2px solid rgba(56, 56, 56, 0.4);
+      background: var(--brand-yellow);
+      color: #111;
+      border: 1px solid rgba(0, 0, 0, 0.25);
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     }
     .btn-secondary:hover {
-      background: #fff;
-      border-color: var(--brand-grey);
+      background: #e0b535;
+      border-color: rgba(0, 0, 0, 0.3);
       transform: translateY(-3px);
       box-shadow: 0 6px 20px rgba(56, 56, 56, 0.15);
     }
@@ -737,11 +749,11 @@
       transform: translateY(-1px);
     }
 
-    /* Optional: black primary, white + black border secondary (set cta_primary_black: true in settings.js) */
+    /* Optional: black primary, yellow secondary (set cta_primary_black: true in settings.js) */
     body.cta-primary-black .btn-primary {
       background: #111;
       color: #fff;
-      border: 2px solid #fff;
+      border: 1px solid #fff;
     }
     body.cta-primary-black .btn-primary:hover {
       box-shadow: 0 8px 24px rgba(17, 17, 17, 0.35);
@@ -750,12 +762,12 @@
       box-shadow: 0 4px 12px rgba(17, 17, 17, 0.25);
     }
     body.cta-primary-black .btn-secondary {
-      background: #fff;
+      background: var(--brand-yellow);
       color: #111;
-      border: 2px solid #111;
+      border: 1px solid #111;
     }
     body.cta-primary-black .btn-secondary:hover {
-      background: #f5f5f5;
+      background: #e0b535;
       border-color: #111;
       box-shadow: 0 6px 20px rgba(17, 17, 17, 0.12);
     }
@@ -1732,7 +1744,7 @@
         padding: 12px 20px;
       }
       .hero-ctas .btn-secondary {
-        padding: 10px 18px;
+        padding: 11px 19px;
       }
       .cta-pair .btn,
       .imagine-ctas .btn {
@@ -1740,7 +1752,7 @@
       }
       .cta-pair .btn-secondary,
       .imagine-ctas .btn-secondary {
-        padding: 10px 18px;
+        padding: 11px 19px;
       }
     }
 
@@ -1811,18 +1823,19 @@
       flex-wrap: wrap;
       gap: 12px;
       justify-content: center;
+      width: 100%;
+      max-width: 100%;
     }
 
-    .hero-ctas .btn { margin-right: 0; }
+    .hero-ctas .btn { margin-right: 0; flex: 1 1 0; min-width: 120px; }
 
     .hero-ctas .btn {
       padding: 16px 32px;
-      min-width: max-content;
       overflow: visible; /* don’t clip text – base .btn has overflow:hidden */
     }
-    /* Secondary has 2px border – reduce padding so total size matches primary */
+    /* Secondary has 1px border – reduce padding so total size matches primary */
     .hero-ctas .btn-secondary {
-      padding: 14px 30px;
+      padding: 15px 31px;
     }
     .hero-ctas .btn-primary {
       font-weight: 600;
@@ -4339,25 +4352,28 @@ html.dark-mode .feels-and-testimonial-block section#how-it-feels:hover .containe
       text-align: center;
     }
 
-    .imagine-ctas {
+    .imagine-ctas,
+    .cta-pair {
       display: flex;
       flex-wrap: wrap;
       gap: 16px;
       justify-content: center;
       margin-top: 0;
+      width: 100%;
+      max-width: 100%;
     }
-
     .imagine-ctas .btn,
     .cta-pair .btn {
       margin: 0;
       position: relative;
       overflow: visible;
       padding: 16px 32px;
-      min-width: max-content;
+      flex: 1 1 0;
+      min-width: 120px;
     }
     .imagine-ctas .btn-secondary,
     .cta-pair .btn-secondary {
-      padding: 14px 30px;
+      padding: 15px 31px;
     }
 
     /* Sub 700px: two CTAs stacked, same width */
@@ -4609,9 +4625,9 @@ body.cta-primary-black .footer-ctas .btn-primary:hover {
   box-shadow: 0 4px 14px rgba(17, 17, 17, 0.4);
 }
 body.cta-primary-black .footer-ctas .btn-secondary {
-  background: #fff;
+  background: var(--brand-yellow);
   color: #111;
-  border-color: #111;
+  border: 1px solid #111;
 }
 body.cta-primary-black .footer-ctas .btn-secondary:hover {
   background: #f5f5f5;
