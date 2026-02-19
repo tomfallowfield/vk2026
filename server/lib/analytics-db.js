@@ -174,10 +174,37 @@ async function enrichVisitor(visitor_id, data) {
   return true;
 }
 
+/**
+ * Get recent events for demo/viewer (newest first).
+ * @param {number} limit - max rows (default 200, cap 500)
+ * @returns {Promise<Array<object>>}
+ */
+async function getRecentEvents(limit) {
+  const p = getPool();
+  if (!p) return [];
+  const cap = Math.min(Math.max(1, parseInt(limit, 10) || 200), 500);
+  const [rows] = await p.execute(
+    'SELECT id, visitor_id, event_type, occurred_at, page_url, referrer, utm_source, utm_medium, metadata FROM events ORDER BY occurred_at DESC LIMIT ?',
+    [cap]
+  );
+  return (rows || []).map(r => ({
+    id: r.id,
+    visitor_id: r.visitor_id,
+    event_type: r.event_type,
+    occurred_at: r.occurred_at,
+    page_url: r.page_url,
+    referrer: r.referrer,
+    utm_source: r.utm_source,
+    utm_medium: r.utm_medium,
+    metadata: typeof r.metadata === 'string' ? (r.metadata ? JSON.parse(r.metadata) : null) : r.metadata
+  }));
+}
+
 module.exports = {
   isConfigured,
   isValidEventType,
   writeEvents,
   enrichVisitor,
+  getRecentEvents,
   ALLOWED_EVENT_TYPES
 };

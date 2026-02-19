@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Events – Visitor tracking</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --border: #2d3a4d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --green: #3fb950;
+      --orange: #d29922;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .header {
+      padding: 1rem 1.5rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .header .meta {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .header label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .header input[type="checkbox"] { accent-color: var(--accent); }
+    .wrap {
+      padding: 1rem 1.5rem;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+    th, td {
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .col-time { width: 10%; white-space: nowrap; }
+    .col-visitor { width: 14%; overflow: hidden; text-overflow: ellipsis; }
+    .col-type { width: 14%; }
+    .col-details { width: 36%; }
+    .col-page { width: 26%; overflow: hidden; text-overflow: ellipsis; }
+    .event-type {
+      display: inline-block;
+      padding: 0.15em 0.5em;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .event-type.click { background: #238636; color: #fff; }
+    .event-type.form_open,
+    .event-type.form_submit { background: #1f6feb; color: #fff; }
+    .event-type.faq_open,
+    .event-type.scope_open { background: #8957e5; color: #fff; }
+    .event-type.modal_close,
+    .event-type.video_modal_close { background: #9e6a03; color: #fff; }
+    .event-type.menu_open,
+    .event-type.menu_close { background: #6e7681; color: #fff; }
+    .event-type.cal_link_click { background: #bf8700; color: #fff; }
+    .event-type.time_on_site { background: #2d4; color: #000; }
+    .event-type.video_play,
+    .event-type.video_pause,
+    .event-type.video_ended,
+    .event-type.video_progress { background: #da3633; color: #fff; }
+    .event-type.tc_open,
+    .event-type.privacy_open { background: #6e7681; color: #fff; }
+    .event-type.easter_egg_star { background: #db61a2; color: #fff; }
+    .details {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .details span { margin-right: 0.75em; }
+    .empty {
+      padding: 3rem;
+      text-align: center;
+      color: var(--muted);
+    }
+    .error {
+      padding: 1rem 1.5rem;
+      background: rgba(248,81,73,0.1);
+      color: #f85149;
+      border-bottom: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div>
+      <h1>Visitor events</h1>
+      <p class="meta">Live view · one row per event</p>
+    </div>
+    <label>
+      <input type="checkbox" id="live" checked>
+      Auto-refresh every 5s
+    </label>
+  </header>
+  <div id="error" class="error" style="display:none"></div>
+  <div class="wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="col-time">Time</th>
+          <th class="col-visitor">Visitor</th>
+          <th class="col-type">Event</th>
+          <th class="col-details">Details</th>
+          <th class="col-page">Page</th>
+        </tr>
+      </thead>
+      <tbody id="body"></tbody>
+    </table>
+    <p id="empty" class="empty" style="display:none">No events yet. Trigger some actions on the site to see them here.</p>
+  </div>
+  <script>
+    (function () {
+      var API = '/vk2026/api/analytics/events';
+      var params = new URLSearchParams(window.location.search);
+      var viewKey = params.get('view_key');
+      if (viewKey) API += '?view_key=' + encodeURIComponent(viewKey);
+      var liveCheck = document.getElementById('live');
+      var tbody = document.getElementById('body');
+      var emptyEl = document.getElementById('empty');
+      var errEl = document.getElementById('error');
+      var refreshTimer = null;
+
+      function formatTime(iso) {
+        if (!iso) return '—';
+        var d = new Date(iso);
+        return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }) +
+          '.' + String(d.getMilliseconds()).padStart(3, '0');
+      }
+
+      function formatDetails(meta) {
+        if (!meta || typeof meta !== 'object') return '';
+        var parts = [];
+        if (meta.source) parts.push('source: ' + meta.source);
+        if (meta.panel_id) parts.push('panel: ' + meta.panel_id);
+        if (meta.button_id) parts.push('button: ' + meta.button_id);
+        if (meta.modal_panel) parts.push('modal: ' + meta.modal_panel);
+        if (meta.faq_question) parts.push('FAQ: ' + (meta.faq_question.length > 40 ? meta.faq_question.slice(0, 40) + '…' : meta.faq_question));
+        if (meta.scope_item_id) parts.push('scope: ' + meta.scope_item_id);
+        if (meta.star_name) parts.push('star: ' + meta.star_name);
+        if (meta.seconds != null) parts.push(meta.seconds + 's');
+        if (meta.video_label) parts.push(meta.video_label + (meta.pct != null ? ' ' + meta.pct + '%' : ''));
+        return parts.join(' · ');
+      }
+
+      function render(events) {
+        errEl.style.display = 'none';
+        if (!events || events.length === 0) {
+          tbody.innerHTML = '';
+          emptyEl.style.display = 'block';
+          return;
+        }
+        emptyEl.style.display = 'none';
+        tbody.innerHTML = events.map(function (e) {
+          var details = formatDetails(e.metadata);
+          return '<tr>' +
+            '<td class="col-time">' + formatTime(e.occurred_at) + '</td>' +
+            '<td class="col-visitor" title="' + (e.visitor_id || '') + '">' + (e.visitor_id || '—') + '</td>' +
+            '<td class="col-type"><span class="event-type ' + (e.event_type || '') + '">' + (e.event_type || '—') + '</span></td>' +
+            '<td class="col-details"><span class="details">' + (details || '—') + '</span></td>' +
+            '<td class="col-page" title="' + (e.page_url || '') + '">' + (e.page_url ? (e.page_url.replace(/^https?:\/\//, '').slice(0, 50) + (e.page_url.length > 50 ? '…' : '')) : '—') + '</td>' +
+            '</tr>';
+        }).join('');
+      }
+
+      function fetchEvents() {
+        fetch(API + (API.indexOf('?') !== -1 ? '&' : '?') + 'limit=100')
+          .then(function (r) {
+            if (!r.ok) throw new Error(r.status === 401 ? 'Unauthorized (add ?view_key= to URL if required)' : r.status);
+            return r.json();
+          })
+          .then(render)
+          .catch(function (err) {
+            errEl.textContent = err.message || 'Failed to load events';
+            errEl.style.display = 'block';
+            tbody.innerHTML = '';
+            emptyEl.style.display = 'none';
+          });
+      }
+
+      liveCheck.addEventListener('change', function () {
+        if (refreshTimer) clearInterval(refreshTimer);
+        refreshTimer = null;
+        if (liveCheck.checked) refreshTimer = setInterval(fetchEvents, 5000);
+      });
+
+      fetchEvents();
+      if (liveCheck.checked) refreshTimer = setInterval(fetchEvents, 5000);
+    })();
+  </script>
+</body>
+</html>

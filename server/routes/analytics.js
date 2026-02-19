@@ -1,9 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const { writeEvents, enrichVisitor, isConfigured, isValidEventType } = require('../lib/analytics-db');
+const { writeEvents, enrichVisitor, getRecentEvents, isConfigured, isValidEventType } = require('../lib/analytics-db');
 const { logEvents } = require('../lib/analytics-logger');
 
 const MAX_EVENTS_PER_REQUEST = 20;
+
+/**
+ * GET /events?limit=200&view_key=...
+ * Returns recent events (newest first) for demo/viewer. Requires MySQL. If DEMO_VIEW_KEY is set in env, ?view_key must match.
+ */
+router.get('/events', async (req, res) => {
+  const viewKey = process.env.DEMO_VIEW_KEY || '';
+  if (viewKey && req.query.view_key !== viewKey) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  if (!isConfigured()) {
+    return res.status(200).json([]);
+  }
+  try {
+    const events = await getRecentEvents(req.query.limit);
+    res.set('Cache-Control', 'no-store');
+    res.json(events);
+  } catch (err) {
+    console.error('Analytics getRecentEvents:', err.message);
+    res.status(500).json({ error: 'Failed to load events' });
+  }
+});
 
 /**
  * POST /events
