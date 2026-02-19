@@ -79,8 +79,9 @@
     .col-time { width: 10%; white-space: nowrap; }
     .col-visitor { width: 14%; overflow: hidden; text-overflow: ellipsis; }
     .col-type { width: 14%; }
-    .col-details { width: 36%; }
-    .col-page { width: 26%; overflow: hidden; text-overflow: ellipsis; }
+    .col-details { width: 30%; }
+    .col-utm { width: 18%; overflow: hidden; text-overflow: ellipsis; font-size: 11px; color: var(--muted); }
+    .col-page { width: 22%; overflow: hidden; text-overflow: ellipsis; }
     .event-type {
       display: inline-block;
       padding: 0.15em 0.5em;
@@ -200,6 +201,10 @@
     <label class="filter"><input type="checkbox" name="filter" value="legal" checked> Legal</label>
     <label class="filter"><input type="checkbox" name="filter" value="easter_egg" checked> Easter egg</label>
     <span class="search-wrap">
+      <span class="label">UTM:</span>
+      <input type="text" id="utmSearch" placeholder="e.g. lucy or google" autocomplete="off">
+    </span>
+    <span class="search-wrap">
       <span class="label">Email or visitor:</span>
       <input type="text" id="visitorSearch" placeholder="e.g. tom@example.com or v_abc123…" autocomplete="off">
     </span>
@@ -213,6 +218,7 @@
           <th class="col-visitor">Visitor (email or cookie)</th>
           <th class="col-type">Event</th>
           <th class="col-details">Details</th>
+          <th class="col-utm">UTM</th>
           <th class="col-page">Page</th>
         </tr>
       </thead>
@@ -260,6 +266,11 @@
         return (el && el.value) ? el.value.trim() : '';
       }
 
+      function getUtmSearch() {
+        var el = document.getElementById('utmSearch');
+        return (el && el.value) ? el.value.trim() : '';
+      }
+
       function filterEvents(events) {
         var selected = getSelectedFilters();
         if (selected.length === 0) return [];
@@ -268,15 +279,41 @@
           (EVENT_GROUPS[group] || []).forEach(function (t) { typesToShow.add(t); });
         });
         var byType = events.filter(function (e) { return typesToShow.has(e.event_type); });
-        var search = getVisitorSearch();
-        if (!search) return byType;
-        search = search.toLowerCase();
-        return byType.filter(function (e) {
-          var email = (e.visitor_email || '').toLowerCase();
-          var name = (e.visitor_name || '').toLowerCase();
-          var id = (e.visitor_id || '').toLowerCase();
-          return email.indexOf(search) !== -1 || name.indexOf(search) !== -1 || id.indexOf(search) !== -1;
-        });
+        var visitorSearch = getVisitorSearch();
+        if (visitorSearch) {
+          visitorSearch = visitorSearch.toLowerCase();
+          byType = byType.filter(function (e) {
+            var email = (e.visitor_email || '').toLowerCase();
+            var name = (e.visitor_name || '').toLowerCase();
+            var id = (e.visitor_id || '').toLowerCase();
+            return email.indexOf(visitorSearch) !== -1 || name.indexOf(visitorSearch) !== -1 || id.indexOf(visitorSearch) !== -1;
+          });
+        }
+        var utmSearch = getUtmSearch();
+        if (utmSearch) {
+          utmSearch = utmSearch.toLowerCase();
+          byType = byType.filter(function (e) {
+            var src = (e.utm_source || '').toLowerCase();
+            var med = (e.utm_medium || '').toLowerCase();
+            var camp = (e.utm_campaign || '').toLowerCase();
+            var term = (e.utm_term || '').toLowerCase();
+            var content = (e.utm_content || '').toLowerCase();
+            return src.indexOf(utmSearch) !== -1 || med.indexOf(utmSearch) !== -1 || camp.indexOf(utmSearch) !== -1 || term.indexOf(utmSearch) !== -1 || content.indexOf(utmSearch) !== -1;
+          });
+        }
+        return byType;
+      }
+
+      function formatUtm(e) {
+        var parts = [];
+        if (e.utm_source) parts.push(e.utm_source);
+        if (e.utm_medium) parts.push(e.utm_medium);
+        if (e.utm_campaign) parts.push(e.utm_campaign);
+        if (e.utm_term) parts.push(e.utm_term);
+        if (e.utm_content) parts.push(e.utm_content);
+        if (parts.length === 0) return '—';
+        var s = parts.join(' · ');
+        return s.length > 45 ? s.slice(0, 45) + '…' : s;
       }
 
       function formatTime(iso) {
@@ -309,7 +346,7 @@
           emptyEl.style.display = 'block';
           emptyEl.textContent = events.length === 0
             ? 'No events yet. Trigger some actions on the site to see them here.'
-            : getVisitorSearch() ? 'No events for that email or visitor ID (try clearing the search).' : 'No events match the selected filters.';
+            : getVisitorSearch() ? 'No events for that email or visitor ID (try clearing the search).' : getUtmSearch() ? 'No events for that UTM (try clearing the UTM filter).' : 'No events match the selected filters.';
           return;
         }
         emptyEl.style.display = 'none';
@@ -317,11 +354,14 @@
           var details = formatDetails(e.metadata);
           var visitorDisplay = (e.visitor_email && e.visitor_email.trim()) ? e.visitor_email.trim() : (e.visitor_id || '—');
           var visitorTitle = (e.visitor_email ? e.visitor_email + (e.visitor_name ? ' (' + e.visitor_name + ')' : '') : '') + (e.visitor_id ? ' · cookie: ' + e.visitor_id : '');
+          var utmStr = formatUtm(e);
+          var utmTitle = [e.utm_source, e.utm_medium, e.utm_campaign, e.utm_term, e.utm_content].filter(Boolean).join(' · ') || '';
           return '<tr>' +
             '<td class="col-time">' + formatTime(e.occurred_at) + '</td>' +
             '<td class="col-visitor" title="' + visitorTitle + '">' + visitorDisplay + '</td>' +
             '<td class="col-type"><span class="event-type ' + (e.event_type || '') + '">' + (e.event_type || '—') + '</span></td>' +
             '<td class="col-details"><span class="details">' + (details || '—') + '</span></td>' +
+            '<td class="col-utm" title="' + utmTitle + '">' + utmStr + '</td>' +
             '<td class="col-page" title="' + (e.page_url || '') + '">' + (e.page_url ? (e.page_url.replace(/^https?:\/\//, '').slice(0, 50) + (e.page_url.length > 50 ? '…' : '')) : '—') + '</td>' +
             '</tr>';
         }).join('');
@@ -356,6 +396,11 @@
       if (visitorSearchEl) {
         visitorSearchEl.addEventListener('input', onFiltersChange);
         visitorSearchEl.addEventListener('keyup', onFiltersChange);
+      }
+      var utmSearchEl = document.getElementById('utmSearch');
+      if (utmSearchEl) {
+        utmSearchEl.addEventListener('input', onFiltersChange);
+        utmSearchEl.addEventListener('keyup', onFiltersChange);
       }
 
       liveCheck.addEventListener('change', function () {
