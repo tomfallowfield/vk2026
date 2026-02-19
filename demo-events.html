@@ -152,6 +152,27 @@
     }
     .filters label.filter:hover { border-color: var(--accent); }
     .filters label.filter input { accent-color: var(--accent); }
+    .filters .search-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-left: auto;
+    }
+    .filters .search-wrap input {
+      width: 220px;
+      padding: 0.35rem 0.6rem;
+      font: inherit;
+      font-size: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+    }
+    .filters .search-wrap input::placeholder { color: var(--muted); }
+    .filters .search-wrap input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -178,6 +199,10 @@
     <label class="filter"><input type="checkbox" name="filter" value="cal" checked> Calendar</label>
     <label class="filter"><input type="checkbox" name="filter" value="legal" checked> Legal</label>
     <label class="filter"><input type="checkbox" name="filter" value="easter_egg" checked> Easter egg</label>
+    <span class="search-wrap">
+      <span class="label">Email or visitor:</span>
+      <input type="text" id="visitorSearch" placeholder="e.g. tom@example.com or v_abc123…" autocomplete="off">
+    </span>
   </div>
   <div id="error" class="error" style="display:none"></div>
   <div class="wrap">
@@ -230,6 +255,11 @@
         return selected;
       }
 
+      function getVisitorSearch() {
+        var el = document.getElementById('visitorSearch');
+        return (el && el.value) ? el.value.trim() : '';
+      }
+
       function filterEvents(events) {
         var selected = getSelectedFilters();
         if (selected.length === 0) return [];
@@ -237,7 +267,16 @@
         selected.forEach(function (group) {
           (EVENT_GROUPS[group] || []).forEach(function (t) { typesToShow.add(t); });
         });
-        return events.filter(function (e) { return typesToShow.has(e.event_type); });
+        var byType = events.filter(function (e) { return typesToShow.has(e.event_type); });
+        var search = getVisitorSearch();
+        if (!search) return byType;
+        search = search.toLowerCase();
+        return byType.filter(function (e) {
+          var email = (e.visitor_email || '').toLowerCase();
+          var name = (e.visitor_name || '').toLowerCase();
+          var id = (e.visitor_id || '').toLowerCase();
+          return email.indexOf(search) !== -1 || name.indexOf(search) !== -1 || id.indexOf(search) !== -1;
+        });
       }
 
       function formatTime(iso) {
@@ -270,7 +309,7 @@
           emptyEl.style.display = 'block';
           emptyEl.textContent = events.length === 0
             ? 'No events yet. Trigger some actions on the site to see them here.'
-            : 'No events match the selected filters.';
+            : getVisitorSearch() ? 'No events for that email or visitor ID (try clearing the search).' : 'No events match the selected filters.';
           return;
         }
         emptyEl.style.display = 'none';
@@ -313,6 +352,11 @@
       document.querySelectorAll('.filters input[name="filter"]').forEach(function (cb) {
         cb.addEventListener('change', onFiltersChange);
       });
+      var visitorSearchEl = document.getElementById('visitorSearch');
+      if (visitorSearchEl) {
+        visitorSearchEl.addEventListener('input', onFiltersChange);
+        visitorSearchEl.addEventListener('keyup', onFiltersChange);
+      }
 
       liveCheck.addEventListener('change', function () {
         if (refreshTimer) clearInterval(refreshTimer);

@@ -39,6 +39,17 @@ const DB_USER = process.env.DB_USER || '';
 const DB_PASSWORD = process.env.DB_PASSWORD || '';
 const DB_NAME = process.env.DB_NAME || 'vk2026_analytics';
 
+// Return-visit notifications (email + Slack + Notion when someone with email comes back)
+const NOTIFICATION_EMAIL_TO = process.env.NOTIFICATION_EMAIL_TO || '';
+const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL || '';
+const NOTION_RETURN_VISITS_DATABASE_ID = process.env.NOTION_RETURN_VISITS_DATABASE_ID || '';
+// SMTP for return-visit email (e.g. SMTP_HOST=smtp.gmail.com SMTP_PORT=587 SMTP_USER= SMTP_PASS=)
+const SMTP_HOST = process.env.SMTP_HOST || '';
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587', 10);
+const SMTP_SECURE = process.env.SMTP_SECURE === 'true';
+const SMTP_USER = process.env.SMTP_USER || '';
+const SMTP_PASS = process.env.SMTP_PASS || '';
+
 module.exports = {
   SITE_BASE_URL,
   PORT,
@@ -54,5 +65,13 @@ module.exports = {
   DB_HOST,
   DB_USER,
   DB_PASSWORD,
-  DB_NAME
+  DB_NAME,
+  NOTIFICATION_EMAIL_TO,
+  SLACK_WEBHOOK_URL,
+  NOTION_RETURN_VISITS_DATABASE_ID,
+  SMTP_HOST,
+  SMTP_PORT,
+  SMTP_SECURE,
+  SMTP_USER,
+  SMTP_PASS
 };

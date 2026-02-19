@@ -211,11 +211,47 @@ async function getRecentEvents(limit) {
   });
 }
 
+/**
+ * Get visitor email, name, and return_visit_notified_at for return-visit notification check.
+ * @param {string} visitor_id
+ * @returns {Promise<{ email: string, name: string, return_visit_notified_at: Date|null }|null>}
+ */
+async function getVisitorForReturnCheck(visitor_id) {
+  const p = getPool();
+  if (!p || !visitor_id) return null;
+  const [rows] = await p.execute(
+    'SELECT email, name, return_visit_notified_at FROM visitors WHERE visitor_id = ? AND email IS NOT NULL AND email != ""',
+    [truncate(visitor_id, 64)]
+  );
+  const r = rows && rows[0];
+  if (!r) return null;
+  return {
+    email: r.email || '',
+    name: r.name || '',
+    return_visit_notified_at: r.return_visit_notified_at || null
+  };
+}
+
+/**
+ * Mark that we sent a return-visit notification for this visitor (throttle: at most once per hour).
+ * @param {string} visitor_id
+ */
+async function setReturnVisitNotified(visitor_id) {
+  const p = getPool();
+  if (!p || !visitor_id) return;
+  await p.execute(
+    'UPDATE visitors SET return_visit_notified_at = NOW() WHERE visitor_id = ?',
+    [truncate(visitor_id, 64)]
+  );
+}
+
 module.exports = {
   isConfigured,
   isValidEventType,
   writeEvents,
   enrichVisitor,
   getRecentEvents,
+  getVisitorForReturnCheck,
+  setReturnVisitNotified,
   ALLOWED_EVENT_TYPES
 };

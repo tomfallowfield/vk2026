@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { writeEvents, enrichVisitor, getRecentEvents, isConfigured, isValidEventType } = require('../lib/analytics-db');
 const { logEvents } = require('../lib/analytics-logger');
+const { maybeNotifyReturnVisit } = require('../lib/return-visit-notify');
 
 const MAX_EVENTS_PER_REQUEST = 20;
 
@@ -108,6 +109,9 @@ router.post('/events', async (req, res) => {
     metadata: e.metadata
   }));
   logEvents(logLines);
+
+  // If this visitor has an email (submitted a form), notify once per hour when they return (email + Slack + Notion)
+  void maybeNotifyReturnVisit(visitor_id);
 
   res.status(204).end();
 });
