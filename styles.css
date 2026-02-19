@@ -1016,6 +1016,9 @@
   color: var(--brand-yellow);
   font-size: 1em;
   font-weight: 800;
+  -webkit-text-stroke: 1px #000;
+  paint-order: stroke fill;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 .hero h1 .hero-h1-asterisk {
   display: inline-block;

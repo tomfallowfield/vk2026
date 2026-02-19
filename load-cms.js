@@ -13,23 +13,7 @@
   var fallbackScript = document.createElement('script');
   fallbackScript.src = 'settings.js';
 
-  function injectGa() {
-    var s = window.SITE_SETTINGS;
-    var gaId = (s && typeof s.ga_id === 'string') ? s.ga_id.trim() : '';
-    if (!gaId) return;
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    window.gtag = gtag;
-    gtag('js', new Date());
-    gtag('config', gaId);
-    var script = document.createElement('script');
-    script.async = true;
-    script.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(gaId);
-    document.head.appendChild(script);
-  }
-
   function loadMain() {
-    injectGa();
     var m = document.createElement('script');
     m.src = 'main.js';
     document.body.appendChild(m);

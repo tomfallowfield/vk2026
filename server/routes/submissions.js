@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { logSubmission } = require('../lib/logger');
+const { logSubmission, logFormSubmissionLine } = require('../lib/logger');
 const { validateBookACall, validateWebsiteReview, validateLead } = require('../lib/validate');
 const { addOrUpdateContact } = require('../lib/mailchimp');
 const { createOrUpdateVkCrmPage } = require('../lib/notion-vkcrm');
@@ -64,6 +64,7 @@ router.post('/book-a-call', async (req, res) => {
   }
   const payload = enrichPayload(req, data, 'book-a-call', 'book-a-call');
   logSubmission('book-a-call', payload);
+  logFormSubmissionLine(payload._server?.timestamp || new Date().toISOString(), data.email || '', 'book-a-call', payload);
   console.log('Book a call received:', data.name || '(no name)');
   const vkcrmPayload = {
     submission_type: 'call_booking',
@@ -121,6 +122,7 @@ router.post('/website-review', async (req, res) => {
   }
   const payload = enrichPayload(req, data, 'website-review', 'website-review');
   logSubmission('website-review', payload);
+  logFormSubmissionLine(payload._server?.timestamp || new Date().toISOString(), data.email || '', 'website-review', payload);
   console.log('WRV received:', data.name || '(no name)');
   const vkcrmPayload = {
     submission_type: 'wrv_request',
@@ -176,6 +178,7 @@ router.post('/lead', async (req, res) => {
   }
   const payload = enrichPayload(req, data, 'lead', 'lead');
   logSubmission('lead', payload);
+  logFormSubmissionLine(payload._server?.timestamp || new Date().toISOString(), data.email || '', 'lead', payload);
   const mcResult = await addOrUpdateContact({ email: data.email, name: data.name, source: data.source, mailchimp_tag: data.mailchimp_tag });
   if (!mcResult.success && config.MAILCHIMP_API_KEY) {
     console.error('Mailchimp lead:', mcResult.error);
