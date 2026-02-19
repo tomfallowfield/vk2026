@@ -443,6 +443,7 @@
 
       var selectAllEl = document.getElementById('selectAll');
       var deleteBtn = document.getElementById('deleteSelected');
+      var lastClickedIndex = null;
 
       function updateDeleteButton() {
         if (!deleteBtn) return;
@@ -457,6 +458,21 @@
       }
 
       selectAllEl.addEventListener('change', onSelectAllChange);
+
+      tbody.addEventListener('click', function (e) {
+        if (!e.target || !e.target.classList.contains('row-select')) return;
+        var boxes = Array.prototype.slice.call(tbody.querySelectorAll('input.row-select'));
+        var currentIdx = boxes.indexOf(e.target);
+        if (currentIdx === -1) return;
+        if (e.shiftKey && lastClickedIndex !== null) {
+          e.preventDefault();
+          var min = Math.min(lastClickedIndex, currentIdx);
+          var max = Math.max(lastClickedIndex, currentIdx);
+          for (var i = min; i <= max; i++) boxes[i].checked = true;
+          updateDeleteButton();
+        }
+        lastClickedIndex = currentIdx;
+      });
 
       tbody.addEventListener('change', function (e) {
         if (e.target && e.target.classList.contains('row-select')) updateDeleteButton();

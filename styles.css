@@ -4267,11 +4267,26 @@ html.dark-mode .feels-and-testimonial-block section#how-it-feels:hover .containe
       background: rgba(0, 0, 0, 0.35);
       box-shadow: var(--shadow-soft);
     }
-    /* Feels + bottom testimonial: always same sky as hero (light or dark), no hover */
+    /* Feels + bottom testimonial: same sky as hero (light or dark), no hover */
     .feels-and-testimonial-block {
       position: relative;
       overflow: hidden;
-      background: #f7f3ea;
+    }
+    /* Light mode: same stacked background as hero (faded sky, no blue flash) */
+    html:not(.dark-mode) .feels-and-testimonial-block {
+      background-color: #a8c8e8;
+      background-image:
+        linear-gradient(to bottom, rgba(255,255,255,0.72) 0%, rgba(245,250,255,0.62) 35%, rgba(220,235,255,0.58) 100%),
+        url('images/clouds.jpg');
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    html:not(.dark-mode) .feels-and-testimonial-block .how-it-feels-bg {
+      visibility: hidden;
+    }
+    html:not(.dark-mode) .feels-and-testimonial-block::before {
+      display: none;
     }
     .feels-and-testimonial-block .how-it-feels-bg {
       position: absolute;
@@ -4282,7 +4297,6 @@ html.dark-mode .feels-and-testimonial-block section#how-it-feels:hover .containe
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      opacity: 1;
     }
     .feels-and-testimonial-block::before {
       content: '';
@@ -4290,7 +4304,6 @@ html.dark-mode .feels-and-testimonial-block section#how-it-feels:hover .containe
       inset: 0;
       z-index: 0.5;
       pointer-events: none;
-      /* Match hero overlay exactly for same sky (light mode) */
       background: linear-gradient(to bottom, rgba(255,255,255,0.72) 0%, rgba(245,250,255,0.62) 35%, rgba(220,235,255,0.58) 100%);
     }
     .feels-and-testimonial-block section#how-it-feels {
