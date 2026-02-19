@@ -157,16 +157,24 @@
 
     /* Hero: sky image with semi-transparent black overlay */
     html.dark-mode .hero {
-      background:
+      background-color: #142840;
+      background-image:
         linear-gradient(to bottom, rgba(0,0,0,var(--dark-sky-overlay)), rgba(0,0,0,var(--dark-sky-overlay))),
-        url('images/clouds.jpg') center / cover no-repeat;
+        url('images/clouds.jpg');
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
 
     /* Body bg = clouds with same overlay so overscroll matches */
     html.dark-mode body {
-      background:
+      background-color: #142840;
+      background-image:
         linear-gradient(to bottom, rgba(0,0,0,var(--dark-sky-overlay)), rgba(0,0,0,var(--dark-sky-overlay))),
-        url('images/clouds.jpg') center top / cover no-repeat;
+        url('images/clouds.jpg');
+      background-position: center top;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
 
     /* Hero eyebrow: dark bg, white text */
@@ -225,9 +233,13 @@
     }
     /* Feels + testimonial block: always same sky as hero (dark overlay + clouds), white text */
     html.dark-mode .feels-and-testimonial-block {
-      background:
+      background-color: #142840;
+      background-image:
         linear-gradient(to bottom, rgba(0,0,0,var(--dark-sky-overlay)), rgba(0,0,0,var(--dark-sky-overlay))),
-        url('images/clouds.jpg') center / cover no-repeat;
+        url('images/clouds.jpg');
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
     html.dark-mode .feels-and-testimonial-block::before {
       display: none;
@@ -697,37 +709,26 @@
       color: transparent;
       pointer-events: none;
     }
-    .btn.is-loading .btn-throbber {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      vertical-align: middle;
-    }
-    body.cta-primary-black .btn-primary.is-loading .btn-throbber {
-      filter: invert(1);
-    }
-    .btn.is-loading:has(.btn-throbber)::after {
-      display: none;
-    }
     .btn.is-loading::after {
       content: '';
       position: absolute;
       left: 50%;
       top: 50%;
-      width: 20px;
-      height: 20px;
-      margin: -10px 0 0 -10px;
+      width: 18px;
+      height: 18px;
+      margin: -9px 0 0 -9px;
       border: 2px solid currentColor;
       border-right-color: transparent;
       border-radius: 50%;
       animation: btn-throbber 0.6s linear infinite;
+      opacity: 0.9;
     }
     .btn-primary.is-loading::after {
-      border-color: rgba(17, 17, 17, 0.4);
+      border-color: rgba(17, 17, 17, 0.5);
       border-right-color: transparent;
     }
     .btn-secondary.is-loading::after {
-      border-color: rgba(56, 56, 56, 0.4);
+      border-color: rgba(17, 17, 17, 0.5);
       border-right-color: transparent;
     }
     @keyframes btn-throbber {
@@ -1003,9 +1004,13 @@
         box-sizing: border-box;
       }
       .hero {
-        background:
+        background-color: #a8c8e8;
+        background-image:
           linear-gradient(to bottom, rgba(255,255,255,0.72) 0%, rgba(245,250,255,0.62) 35%, rgba(220,235,255,0.58) 100%),
-          url('images/clouds.jpg') center / cover no-repeat;
+          url('images/clouds.jpg');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
       }
       
 
@@ -1827,7 +1832,7 @@
       max-width: 100%;
     }
 
-    .hero-ctas .btn { margin-right: 0; flex: 1 1 0; min-width: 120px; }
+    .hero-ctas .btn { margin-right: 0; flex: 0 0 280px; width: 280px; max-width: 280px; }
 
     .hero-ctas .btn {
       padding: 16px 32px;
@@ -1884,7 +1889,7 @@
     .hero-handwritten-annotation {
       position: absolute;
       top: 50%;
-      left: calc(50% + 270px);
+      left: calc(50% + 340px);
       transform: translateY(-50%);
       pointer-events: none;
       z-index: 2;
@@ -3200,9 +3205,13 @@
     .testimonial-section {
       position: relative;
       overflow: hidden;
-      background:
+      background-color: #a8c8e8;
+      background-image:
         linear-gradient(to bottom, rgba(220,235,255,0.58), rgba(220,235,255,0.58)),
-        url('images/clouds.jpg') center / cover no-repeat;
+        url('images/clouds.jpg');
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
     .testimonial-section .container {
       position: relative;
@@ -4254,6 +4263,7 @@ html.dark-mode .feels-and-testimonial-block section#how-it-feels:hover .containe
       position: absolute;
       inset: 0;
       z-index: 0;
+      background-color: #a8c8e8;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -4368,37 +4378,42 @@ html.dark-mode .feels-and-testimonial-block section#how-it-feels:hover .containe
       position: relative;
       overflow: visible;
       padding: 16px 32px;
-      flex: 1 1 0;
-      min-width: 120px;
+      flex: 0 0 280px;
+      width: 280px;
+      max-width: 280px;
     }
     .imagine-ctas .btn-secondary,
     .cta-pair .btn-secondary {
       padding: 15px 31px;
     }
 
-    /* Sub 700px: two CTAs stacked, same width */
+    /* Sub 700px: two CTAs stacked, fixed width and centered (not full-width on phone) */
     @media (max-width: 700px) {
       .hero-ctas {
         flex-direction: column;
-        align-items: stretch;
+        align-items: center;
         width: 100%;
       }
       .hero-ctas .btn {
-        width: 100%;
+        width: 280px;
+        max-width: 100%;
         min-width: 0;
         justify-content: center;
+        flex: none;
       }
       .cta-pair,
       .imagine-ctas {
         flex-direction: column;
-        align-items: stretch;
+        align-items: center;
         width: 100%;
       }
       .cta-pair .btn,
       .imagine-ctas .btn {
-        width: 100%;
+        width: 280px;
+        max-width: 100%;
         min-width: 0;
         justify-content: center;
+        flex: none;
       }
       .mobile-menu__ctas .btn {
         width: 100%;
@@ -4490,6 +4505,13 @@ html.dark-mode .feels-and-testimonial-block section#how-it-feels:hover .containe
     .resource-card .btn {
       margin-top: 0;
       pointer-events: none; /* card is the link; button is visual only */
+      background: #fff;
+      color: #111;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+    .resource-card:hover .btn {
+      background: #f5f5f5;
+      border-color: rgba(0, 0, 0, 0.25);
     }
 
     @media (max-width: 900px) {
