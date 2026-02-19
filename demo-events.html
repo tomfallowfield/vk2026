@@ -251,7 +251,8 @@
   </div>
   <script>
     (function () {
-      var API = '/vk2026/api/analytics/events';
+      var pathPrefix = window.location.pathname.replace(/\/[^/]*$/, '') || '';
+      var API = (pathPrefix ? pathPrefix + '/' : '/') + 'api/analytics/events';
       var params = new URLSearchParams(window.location.search);
       var viewKey = params.get('view_key');
       if (viewKey) API += '?view_key=' + encodeURIComponent(viewKey);
