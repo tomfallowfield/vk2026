@@ -132,6 +132,39 @@ Follow the prompts (email, agree to terms). Certbot will add HTTPS and usually r
 
 ---
 
+## Task 6b – Redirects: HTTP → HTTPS and www → non-www
+
+**HTTP → HTTPS:** When you ran Certbot, it likely asked “Redirect HTTP to HTTPS?” — if you chose Yes, port 80 already redirects to HTTPS. If not, the port-80 vhost should contain something like `Redirect permanent / https://vanillakiller.com/`.
+
+**www → non-www:** So that `https://www.vanillakiller.com` goes to `https://vanillakiller.com`, add a redirect in the **HTTPS** vhost (the one Certbot created, e.g. `vanillakiller.com-le-ssl.conf`).
+
+On the server:
+
+```bash
+sudo nano /etc/apache2/sites-available/vanillakiller.com-le-ssl.conf
+```
+
+Inside the `<VirtualHost *:443>...</VirtualHost>` block, add these lines **right after** the opening `<VirtualHost *:443>` (before `ServerName` is fine):
+
+```apache
+    RewriteEngine On
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+```
+
+Enable `rewrite` if needed, then reload Apache:
+
+```bash
+sudo a2enmod rewrite
+sudo systemctl reload apache2
+```
+
+**Check:**  
+`curl -sI https://www.vanillakiller.com/` → `Location: https://vanillakiller.com/` and **301**.  
+`curl -sI http://vanillakiller.com/` → **301** to `https://vanillakiller.com/`.
+
+---
+
 ## Task 7 – Update the deploy script on the server
 
 The repo’s `deploy.sh` is already updated to use the new path. On the server, either pull the change or edit in place:
@@ -179,6 +212,35 @@ cd /var/www/vanillakiller.com/public_html
 ```
 
 **Check:** Script finishes without errors; `pm2 list` still shows `vk-form-handler` running; https://vanillakiller.com/ loads.
+
+---
+
+## Before you change DNS – checklist
+
+Tick these off so nothing’s missing when the domain flips to your server:
+
+**On the server**
+
+- [ ] App lives in `/var/www/vanillakiller.com/public_html` with latest code (`git pull` if needed).
+- [ ] `.env` exists there and has `SITE_BASE_URL=https://vanillakiller.com` (and other secrets: Mailchimp, Notion, `DEPLOY_WEBHOOK_SECRET`, etc.).
+- [ ] PM2: `vk-form-handler` is running (`pm2 list`); you’ve run `pm2 save`.
+- [ ] Apache vhost for vanillakiller.com (port 80) is enabled and reloaded; test:  
+  `curl -sI -H "Host: vanillakiller.com" http://139.59.113.186/` → **200 OK**.
+
+**GitHub (repo Settings → Secrets and variables → Actions)**
+
+- [ ] **DEPLOY_WEBHOOK_URL** = `https://vanillakiller.com/api/webhooks/deploy` (no `/vk2026`, same as new site URL).
+- [ ] **DEPLOY_WEBHOOK_SECRET** = same value as `DEPLOY_WEBHOOK_SECRET` in server `.env`.
+
+**After DNS**
+
+- [ ] Change DNS: A records for `vanillakiller.com` and `www.vanillakiller.com` → your server IP (`139.59.113.186`).
+- [ ] When propagated, run Certbot:  
+  `sudo certbot --apache -d vanillakiller.com -d www.vanillakiller.com`.
+
+**Optional**
+
+- [ ] PM2 starts on reboot: `pm2 startup` (if not already done).
 
 ---
 
