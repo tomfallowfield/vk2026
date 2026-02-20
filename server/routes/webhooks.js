@@ -3,7 +3,10 @@ const path = require('path');
 const { exec } = require('child_process');
 const router = express.Router();
 const { createOrUpdateVkCrmPage } = require('../lib/notion-vkcrm');
+const { sendSlackMessage } = require('../lib/slack');
 const config = require('../config');
+
+const DEPLOY_SITE_LABEL = (config.SITE_BASE_URL || 'vk2026').replace(/^https?:\/\//, '').replace(/\/.*$/, '') || 'vk2026';
 
 function checkWebhookAuth(req) {
   const secret = config.BOOKING_WEBHOOK_SECRET;
@@ -32,14 +35,21 @@ router.post('/deploy', (req, res) => {
   const appRoot = path.resolve(__dirname, '../..');
   const deployScript = path.join(appRoot, 'deploy.sh');
   res.status(202).json({ ok: true, message: 'Deploy started' });
+
+  sendSlackMessage(`:rocket: Deploy *started* – ${DEPLOY_SITE_LABEL}`).catch(() => {});
+
   exec(`"${deployScript}"`, { cwd: appRoot, maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
     if (err) {
       console.error('Deploy script error:', err.message);
       if (stderr) console.error('Deploy stderr:', stderr);
+      const detail = [stderr, err.message].filter(Boolean).join('\n').slice(0, 500);
+      const msg = `:x: Deploy *failed* – ${DEPLOY_SITE_LABEL}\n\`\`\`${detail || err.message}\`\`\``;
+      sendSlackMessage(msg).catch(() => {});
       return;
     }
     if (stderr) console.error('Deploy stderr:', stderr);
     console.log('Deploy completed successfully');
+    sendSlackMessage(`:white_check_mark: Deploy *completed* – ${DEPLOY_SITE_LABEL}`).catch(() => {});
   });
 });
 

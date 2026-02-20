@@ -1,6 +1,7 @@
 # Trigger deploy on the server when code is pushed to main.
 # Requires repo secrets: DEPLOY_WEBHOOK_URL, DEPLOY_WEBHOOK_SECRET
 # Server .env must have DEPLOY_WEBHOOK_SECRET set to the same value.
+# Optional: set SLACK_WEBHOOK_URL in repo secrets to get Slack alerts when the trigger fails.
 name: Deploy on push
 
 on:
@@ -12,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger deploy
+        id: trigger
         env:
           DEPLOY_WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
           DEPLOY_WEBHOOK_SECRET: ${{ secrets.DEPLOY_WEBHOOK_SECRET }}
@@ -19,3 +21,14 @@ jobs:
           curl -sSf -X POST \
             -H "X-Deploy-Secret: $DEPLOY_WEBHOOK_SECRET" \
             "$DEPLOY_WEBHOOK_URL"
+
+      - name: Notify Slack on trigger failure
+        if: failure() && steps.trigger.outcome == 'failure'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            curl -sSf -X POST -H "Content-Type: application/json" \
+              -d "{\"text\": \":warning: Deploy *trigger* failed (GitHub Actions) – check webhook URL and secret.\"}" \
+              "$SLACK_WEBHOOK_URL" || true
+          fi

@@ -420,6 +420,26 @@ function trackEvents(events) {
   });
 })();
 
+// UTM / tracking params: store in visitor cookie (when consent given) then replace URL with clean one (no reload).
+// Only tracking params are stripped; deeplink params (e.g. modal=website-review) are kept.
+// Gives GA ~1.5s to send the page_view with UTM URL before we strip it from the address bar.
+(function () {
+  var TRACKING_PARAMS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+  var params = new URLSearchParams(window.location.search);
+  var hasTracking = TRACKING_PARAMS.some(function (k) { return params.has(k); });
+  if (!hasTracking) return;
+  if (hasAcceptedCookies()) getOrCreateVisitor();
+  setTimeout(function () {
+    var kept = new URLSearchParams();
+    params.forEach(function (value, key) {
+      if (TRACKING_PARAMS.indexOf(key) === -1) kept.set(key, value);
+    });
+    var qs = kept.toString();
+    var clean = window.location.origin + window.location.pathname + (qs ? '?' + qs : '') + (window.location.hash || '');
+    if (clean !== window.location.href) window.history.replaceState(null, '', clean);
+  }, 1500);
+})();
+
 // How the modal was opened (for logging on submit): 'button' | 'url' | 'exit_intent' | 'inactivity'
 let lastModalTriggerType = null;
 // Which button opened the modal (for trigger_button_id)

@@ -313,3 +313,5 @@ cd /var/www/vanillakiller.com/public_html && ./deploy.sh
 | PM2 app name    | `vk-form-handler` |
 | Site URL        | **https://vanillakiller.com** |
 | Deploy webhook  | `https://vanillakiller.com/api/webhooks/deploy` |
+
+**Slack deploy logging:** To log deployments (and failures) to a Slack channel, set `SLACK_WEBHOOK_URL` in the server `.env` to an [Incoming Webhook](https://api.slack.com/messaging/webhooks) URL. You’ll get messages when a deploy starts, when it completes, and when it fails (with error detail). Optional: add `SLACK_WEBHOOK_URL` to the repo’s GitHub Actions secrets to get a Slack alert if the deploy *trigger* fails (e.g. wrong URL or 401).
