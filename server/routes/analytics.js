@@ -70,7 +70,8 @@ router.post('/events', async (req, res) => {
   }
 
   try {
-    await writeEvents(valid, visitor_id);
+    const requestContext = { userAgent: req.get('user-agent'), ip: req.ip };
+    await writeEvents(valid, visitor_id, requestContext);
   } catch (err) {
     console.error('Analytics writeEvents:', err.message);
     // Still log to file on DB error

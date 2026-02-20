@@ -14,6 +14,9 @@ CREATE TABLE IF NOT EXISTS visitors (
   name VARCHAR(255) DEFAULT NULL,
   enriched_at DATETIME DEFAULT NULL,
   return_visit_notified_at DATETIME DEFAULT NULL,
+  device_display VARCHAR(128) DEFAULT NULL,
+  browser_display VARCHAR(128) DEFAULT NULL,
+  location_display VARCHAR(128) DEFAULT NULL,
   UNIQUE KEY uk_visitor_id (visitor_id),
   KEY idx_last_seen (last_seen_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

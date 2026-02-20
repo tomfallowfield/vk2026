@@ -327,12 +327,18 @@
         return (el && el.value) ? el.value : '';
       }
 
-      /** Build label for a visitor: email if known, else "#shortId via UTM" (e.g. "#a1b2c3d4 via LinkedIn"). */
-      function visitorLabel(visitorId, email, name, utmSource) {
+      /** Build label for a visitor: email if known, else "#shortId Device/Browser nr Location via UTM" (e.g. "#a1b2c3d4 Mac/Chrome nr Bristol via LinkedIn"). */
+      function visitorLabel(visitorId, email, name, utmSource, deviceDisplay, browserDisplay, locationDisplay) {
         if (email && String(email).trim()) return String(email).trim();
         var shortId = (visitorId && visitorId.length >= 8) ? visitorId.slice(-8) : (visitorId || '?');
+        var deviceBrowser = (browserDisplay && String(browserDisplay).trim()) || (deviceDisplay && String(deviceDisplay).trim()) || null;
+        var loc = (locationDisplay && String(locationDisplay).trim()) ? String(locationDisplay).trim() : null;
         var via = (utmSource && String(utmSource).trim()) ? ' via ' + String(utmSource).trim() : '';
-        return '#' + shortId + via;
+        var mid = '';
+        if (deviceBrowser && loc) mid = ' ' + deviceBrowser + ' nr ' + loc;
+        else if (deviceBrowser) mid = ' ' + deviceBrowser;
+        else if (loc) mid = ' nr ' + loc;
+        return '#' + shortId + mid + via;
       }
 
       /** From events, get unique "current" visitors (latest event within CURRENT_USER_MS). Returns [{ visitor_id, label, latestAt }, ...]. */
@@ -347,7 +353,7 @@
           if (!byVisitor[vid] || at > (byVisitor[vid].latestAt || 0)) {
             byVisitor[vid] = {
               visitor_id: vid,
-              label: visitorLabel(vid, e.visitor_email, e.visitor_name, e.utm_source),
+              label: visitorLabel(vid, e.visitor_email, e.visitor_name, e.utm_source, e.visitor_device_display, e.visitor_browser_display, e.visitor_location_display),
               latestAt: at
             };
           }
@@ -447,8 +453,8 @@
         emptyEl.style.display = 'none';
         tbody.innerHTML = filtered.map(function (e) {
           var details = formatDetails(e.metadata);
-          var visitorDisplay = (e.visitor_email && e.visitor_email.trim()) ? e.visitor_email.trim() : (e.visitor_id || '—');
-          var visitorTitle = (e.visitor_email ? e.visitor_email + (e.visitor_name ? ' (' + e.visitor_name + ')' : '') : '') + (e.visitor_id ? ' · cookie: ' + e.visitor_id : '');
+          var visitorDisplay = visitorLabel(e.visitor_id, e.visitor_email, e.visitor_name, e.utm_source, e.visitor_device_display, e.visitor_browser_display, e.visitor_location_display) || '—';
+          var visitorTitle = (e.visitor_email ? e.visitor_email + (e.visitor_name ? ' (' + e.visitor_name + ')' : '') : '') + (e.visitor_id ? ' · cookie: ' + e.visitor_id : '') + (e.visitor_browser_display ? ' · ' + e.visitor_browser_display : '') + (e.visitor_location_display ? ' · ' + e.visitor_location_display : '');
           var utmStr = formatUtm(e);
           var utmTitle = [e.utm_source, e.utm_medium, e.utm_campaign, e.utm_term, e.utm_content].filter(Boolean).join(' · ') || '';
           var id = (e.id != null) ? String(e.id) : '';

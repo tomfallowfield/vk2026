@@ -789,7 +789,7 @@ function applyRandomStarPlaceholders() {
     mayaQuote: '"People will forget what you said, people will forget what you did, but people will never forget how you made them feel"',
     mayaAttribution: ' ~ [Name] (not a client)',
     deliverableAppend: 'In the spirit of [Name], we keep it clear and persuasive.',
-    rescueEyebrowDelaySec: 1,
+    rescueEyebrowDelaySec: 0.2,
     menuFooterProud: '[Name] would be proud.'
   };
 
@@ -1910,7 +1910,7 @@ function initEasterEggs() {
   var n = getEasterEggNames();
   if (!n || n.length < 10) return;
   var copy = typeof EASTER_EGG_COPY !== 'undefined' ? EASTER_EGG_COPY : {};
-  var delayRescue = (copy.rescueEyebrowDelaySec != null ? copy.rescueEyebrowDelaySec : 1) * 1000;
+  var delayRescue = (copy.rescueEyebrowDelaySec != null ? copy.rescueEyebrowDelaySec : 0.2) * 1000;
 
   function showTooltip(el, text) {
     var tip = document.createElement('div');

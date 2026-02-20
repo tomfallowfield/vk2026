@@ -57,8 +57,9 @@ function truncate(str, maxLen) {
 
 /**
  * Upsert visitor (insert or update last_seen_at; set first_seen/referrer/utm on insert).
+ * Optionally updates device_display, browser_display, location_display when provided.
  * @param {object} conn - mysql2 connection
- * @param {object} params - { visitor_id, occurred_at, referrer, utm_source, utm_medium, utm_campaign, utm_term, utm_content }
+ * @param {object} params - { visitor_id, occurred_at, referrer, utm_*, device_display?, browser_display?, location_display? }
  */
 async function upsertVisitor(conn, params) {
   const vid = truncate(params.visitor_id, 64);
@@ -69,12 +70,19 @@ async function upsertVisitor(conn, params) {
   const uCampaign = truncate(params.utm_campaign, 256);
   const uTerm = truncate(params.utm_term, 256);
   const uContent = truncate(params.utm_content, 256);
+  const deviceDisplay = truncate(params.device_display, 128);
+  const browserDisplay = truncate(params.browser_display, 128);
+  const locationDisplay = truncate(params.location_display, 128);
 
   await conn.execute(
-    `INSERT INTO visitors (visitor_id, first_seen_at, last_seen_at, referrer, utm_source, utm_medium, utm_campaign, utm_term, utm_content)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-     ON DUPLICATE KEY UPDATE last_seen_at = VALUES(last_seen_at)`,
-    [vid, at, at, ref, uSource, uMedium, uCampaign, uTerm, uContent]
+    `INSERT INTO visitors (visitor_id, first_seen_at, last_seen_at, referrer, utm_source, utm_medium, utm_campaign, utm_term, utm_content, device_display, browser_display, location_display)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+     ON DUPLICATE KEY UPDATE
+       last_seen_at = VALUES(last_seen_at),
+       device_display = COALESCE(VALUES(device_display), device_display),
+       browser_display = COALESCE(VALUES(browser_display), browser_display),
+       location_display = COALESCE(VALUES(location_display), location_display)`,
+    [vid, at, at, ref, uSource, uMedium, uCampaign, uTerm, uContent, deviceDisplay, browserDisplay, locationDisplay]
   );
 }
 
@@ -108,14 +116,28 @@ async function insertEvent(conn, row) {
  * Process payload: upsert visitor for first event, insert all events.
  * @param {object[]} events - array of { event_type, timestamp, page_url, referrer, utm_*, metadata }
  * @param {string} visitor_id
+ * @param {{ userAgent?: string, ip?: string }} [requestContext] - optional; used to set device_display, browser_display, location_display
  * @returns {Promise<number>} number of events written
  */
-async function writeEvents(events, visitor_id) {
+async function writeEvents(events, visitor_id, requestContext) {
   const p = getPool();
   if (!p || !visitor_id || !events || events.length === 0) return 0;
 
   const valid = events.filter(e => isValidEventType(e.event_type));
   if (valid.length === 0) return 0;
+
+  let device_display = null;
+  let browser_display = null;
+  let location_display = null;
+  if (requestContext) {
+    try {
+      const { getVisitorContext } = require('./visitor-context');
+      const ctx = getVisitorContext(requestContext);
+      device_display = ctx.device_display;
+      browser_display = ctx.browser_display;
+      location_display = ctx.location_display;
+    } catch (_) { /* optional */ }
+  }
 
   const conn = await p.getConnection();
   try {
@@ -129,7 +151,10 @@ async function writeEvents(events, visitor_id) {
       utm_medium: first.utm_medium,
       utm_campaign: first.utm_campaign,
       utm_term: first.utm_term,
-      utm_content: first.utm_content
+      utm_content: first.utm_content,
+      device_display,
+      browser_display,
+      location_display
     });
 
     for (const e of valid) {
@@ -201,7 +226,7 @@ async function getRecentEvents(limit) {
   const cap = Math.min(Math.max(1, parseInt(limit, 10) || 200), 500);
   // LIMIT must be a literal integer for mysql2 execute(); bound param can cause "Incorrect arguments to mysqld_stmt_execute"
   const [rows] = await p.execute(
-    'SELECT e.id, e.visitor_id, e.event_type, e.occurred_at, e.page_url, e.referrer, e.utm_source, e.utm_medium, e.utm_campaign, e.utm_term, e.utm_content, e.metadata, v.email AS visitor_email, v.name AS visitor_name FROM events e LEFT JOIN visitors v ON v.visitor_id = e.visitor_id ORDER BY e.occurred_at DESC LIMIT ' + String(cap)
+    'SELECT e.id, e.visitor_id, e.event_type, e.occurred_at, e.page_url, e.referrer, e.utm_source, e.utm_medium, e.utm_campaign, e.utm_term, e.utm_content, e.metadata, v.email AS visitor_email, v.name AS visitor_name, v.device_display AS visitor_device_display, v.browser_display AS visitor_browser_display, v.location_display AS visitor_location_display FROM events e LEFT JOIN visitors v ON v.visitor_id = e.visitor_id ORDER BY e.occurred_at DESC LIMIT ' + String(cap)
   );
   return (rows || []).map(r => {
     let meta = null;
@@ -216,6 +241,9 @@ async function getRecentEvents(limit) {
       visitor_id: r.visitor_id,
       visitor_email: r.visitor_email || null,
       visitor_name: r.visitor_name || null,
+      visitor_device_display: r.visitor_device_display || null,
+      visitor_browser_display: r.visitor_browser_display || null,
+      visitor_location_display: r.visitor_location_display || null,
       event_type: r.event_type,
       occurred_at: r.occurred_at,
       page_url: r.page_url,
