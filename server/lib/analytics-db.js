@@ -74,16 +74,30 @@ async function upsertVisitor(conn, params) {
   const browserDisplay = truncate(params.browser_display, 128);
   const locationDisplay = truncate(params.location_display, 128);
 
-  await conn.execute(
-    `INSERT INTO visitors (visitor_id, first_seen_at, last_seen_at, referrer, utm_source, utm_medium, utm_campaign, utm_term, utm_content, device_display, browser_display, location_display)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-     ON DUPLICATE KEY UPDATE
-       last_seen_at = VALUES(last_seen_at),
-       device_display = COALESCE(VALUES(device_display), device_display),
-       browser_display = COALESCE(VALUES(browser_display), browser_display),
-       location_display = COALESCE(VALUES(location_display), location_display)`,
-    [vid, at, at, ref, uSource, uMedium, uCampaign, uTerm, uContent, deviceDisplay, browserDisplay, locationDisplay]
-  );
+  try {
+    await conn.execute(
+      `INSERT INTO visitors (visitor_id, first_seen_at, last_seen_at, referrer, utm_source, utm_medium, utm_campaign, utm_term, utm_content, device_display, browser_display, location_display)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE
+         last_seen_at = VALUES(last_seen_at),
+         device_display = COALESCE(VALUES(device_display), device_display),
+         browser_display = COALESCE(VALUES(browser_display), browser_display),
+         location_display = COALESCE(VALUES(location_display), location_display)`,
+      [vid, at, at, ref, uSource, uMedium, uCampaign, uTerm, uContent, deviceDisplay, browserDisplay, locationDisplay]
+    );
+  } catch (err) {
+    const unknownColumn = err.code === 'ER_BAD_FIELD_ERROR' || err.errno === 1054 || (err.message && err.message.includes('Unknown column'));
+    if (unknownColumn) {
+      await conn.execute(
+        `INSERT INTO visitors (visitor_id, first_seen_at, last_seen_at, referrer, utm_source, utm_medium, utm_campaign, utm_term, utm_content)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE last_seen_at = VALUES(last_seen_at)`,
+        [vid, at, at, ref, uSource, uMedium, uCampaign, uTerm, uContent]
+      );
+    } else {
+      throw err;
+    }
+  }
 }
 
 /**
@@ -215,8 +229,21 @@ async function deleteEvents(ids) {
   return result && result.affectedRows != null ? result.affectedRows : 0;
 }
 
+const GET_EVENTS_SQL = 'SELECT e.id, e.visitor_id, e.event_type, e.occurred_at, e.page_url, e.referrer, e.utm_source, e.utm_medium, e.utm_campaign, e.utm_term, e.utm_content, e.metadata, v.email AS visitor_email, v.name AS visitor_name FROM events e LEFT JOIN visitors v ON v.visitor_id = e.visitor_id ORDER BY e.occurred_at DESC LIMIT ';
+const GET_EVENTS_WITH_DEVICE_SQL = 'SELECT e.id, e.visitor_id, e.event_type, e.occurred_at, e.page_url, e.referrer, e.utm_source, e.utm_medium, e.utm_campaign, e.utm_term, e.utm_content, e.metadata, v.email AS visitor_email, v.name AS visitor_name, v.device_display AS visitor_device_display, v.browser_display AS visitor_browser_display, v.location_display AS visitor_location_display FROM events e LEFT JOIN visitors v ON v.visitor_id = e.visitor_id ORDER BY e.occurred_at DESC LIMIT ';
+
+function mapEventRow(r, withDevice) {
+  const hasDevice = withDevice && ('visitor_device_display' in r || 'visitor_browser_display' in r);
+  return {
+    visitor_device_display: hasDevice ? (r.visitor_device_display || null) : null,
+    visitor_browser_display: hasDevice ? (r.visitor_browser_display || null) : null,
+    visitor_location_display: hasDevice ? (r.visitor_location_display || null) : null
+  };
+}
+
 /**
  * Get recent events for demo/viewer (newest first).
+ * Tries to include device/browser/location; falls back to basic columns if migration not run.
  * @param {number} limit - max rows (default 200, cap 500)
  * @returns {Promise<Array<object>>}
  */
@@ -224,10 +251,19 @@ async function getRecentEvents(limit) {
   const p = getPool();
   if (!p) return [];
   const cap = Math.min(Math.max(1, parseInt(limit, 10) || 200), 500);
-  // LIMIT must be a literal integer for mysql2 execute(); bound param can cause "Incorrect arguments to mysqld_stmt_execute"
-  const [rows] = await p.execute(
-    'SELECT e.id, e.visitor_id, e.event_type, e.occurred_at, e.page_url, e.referrer, e.utm_source, e.utm_medium, e.utm_campaign, e.utm_term, e.utm_content, e.metadata, v.email AS visitor_email, v.name AS visitor_name, v.device_display AS visitor_device_display, v.browser_display AS visitor_browser_display, v.location_display AS visitor_location_display FROM events e LEFT JOIN visitors v ON v.visitor_id = e.visitor_id ORDER BY e.occurred_at DESC LIMIT ' + String(cap)
-  );
+  let rows;
+  let withDevice = true;
+  try {
+    [rows] = await p.execute(GET_EVENTS_WITH_DEVICE_SQL + String(cap));
+  } catch (err) {
+    const unknownColumn = err.code === 'ER_BAD_FIELD_ERROR' || err.errno === 1054 || (err.message && err.message.includes('Unknown column'));
+    if (unknownColumn) {
+      [rows] = await p.execute(GET_EVENTS_SQL + String(cap));
+      withDevice = false;
+    } else {
+      throw err;
+    }
+  }
   return (rows || []).map(r => {
     let meta = null;
     if (r.metadata != null) {
@@ -236,14 +272,15 @@ async function getRecentEvents(limit) {
         try { meta = JSON.parse(r.metadata); } catch (_) { meta = null; }
       }
     }
+    const deviceFields = mapEventRow(r, withDevice);
     return {
       id: r.id,
       visitor_id: r.visitor_id,
       visitor_email: r.visitor_email || null,
       visitor_name: r.visitor_name || null,
-      visitor_device_display: r.visitor_device_display || null,
-      visitor_browser_display: r.visitor_browser_display || null,
-      visitor_location_display: r.visitor_location_display || null,
+      visitor_device_display: deviceFields.visitor_device_display,
+      visitor_browser_display: deviceFields.visitor_browser_display,
+      visitor_location_display: deviceFields.visitor_location_display,
       event_type: r.event_type,
       occurred_at: r.occurred_at,
       page_url: r.page_url,
