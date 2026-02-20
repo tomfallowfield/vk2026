@@ -311,6 +311,31 @@ function trackEvent(eventType, metadata) {
   }
 }
 
+function sendGtagEvent(eventName, eventParams) {
+  if (typeof window.gtag !== 'function' || !hasAcceptedCookies()) return;
+  try {
+    window.gtag('event', eventName, eventParams || {});
+  } catch (e) {}
+}
+
+function getFormOpenGtagEvent(panelId) {
+  if (panelId === 'book-call') return 'book_call_form_open';
+  if (panelId === 'website-review') return 'wrv_form_open';
+  if (typeof panelId === 'string' && panelId.indexOf('lead-') === 0) return panelId.replace(/-/g, '_') + '_form_open';
+  return null;
+}
+
+function getFormSubmitGtagEvent(formId) {
+  if (!formId || typeof formId !== 'string') return null;
+  if (formId === 'form-website-review') return 'wrv_form_submit';
+  if (formId === 'form-book-call') return 'book_call_form_submit';
+  if (formId.indexOf('form-lead-') === 0) {
+    var id = formId.slice('form-'.length);
+    return id.replace(/-/g, '_') + '_form_submit';
+  }
+  return null;
+}
+
 function trackEvents(events) {
   if (!hasAcceptedCookies() || !events || events.length === 0) return;
   const v = getOrCreateVisitor();
@@ -626,6 +651,7 @@ const closeBtn = modal.querySelector('.video-close');
 
 var videoProgressThrottle = null;
 var MAX_VIDEO_EVENTS_PER_SRC = 30;
+var gtagVideoMilestones = {};
 
 function ensureVideoEntry(v, src) {
   v.videos_watched = v.videos_watched || {};
@@ -665,6 +691,14 @@ function recordVideoProgressMax(src, progressPct) {
   if (pct > entry.max_pct) entry.max_pct = pct;
   setCookie(COOKIE_VISITOR_NAME, JSON.stringify(v), COOKIE_VISITOR_DAYS);
   trackEvent('video_progress', { video_label: src, pct: pct });
+  var lastSent = gtagVideoMilestones[src] || 0;
+  for (var m = 10; m <= 100; m += 10) {
+    if (m <= pct && m > lastSent) {
+      sendGtagEvent('video_progress', { video_label: src, percent: m });
+      gtagVideoMilestones[src] = m;
+      lastSent = m;
+    }
+  }
 }
 
 document.querySelectorAll('.video-thumb').forEach(button => {
@@ -693,6 +727,7 @@ if (video) {
     var label = getVideoLabel(video.src);
     var pct = (video.duration > 0 && !isNaN(video.duration)) ? (video.currentTime / video.duration) * 100 : 0;
     recordVideoEvent(label, 'start', pct);
+    sendGtagEvent('video_play', { video_label: label });
   });
   video.addEventListener('timeupdate', function () {
     if (videoProgressThrottle) return;
@@ -713,6 +748,7 @@ if (video) {
     if (!video.src) return;
     var label = getVideoLabel(video.src);
     recordVideoEvent(label, 'ended', 100);
+    sendGtagEvent('video_ended', { video_label: label });
   });
 }
 
@@ -909,6 +945,8 @@ function openAppModal(panelId, opts) {
     history.replaceState(null, '', (window.location.pathname || '') + (window.location.search || '') + '#terms');
   } else if (['book-call', 'website-review', 'lead-50things', 'lead-offboarding', 'lead-socialproof'].indexOf(panelId) !== -1) {
     trackEvent('form_open', { form_id: panelId, trigger: lastModalTriggerType || '' });
+    var gtagFormOpen = getFormOpenGtagEvent(panelId);
+    if (gtagFormOpen) sendGtagEvent(gtagFormOpen);
   }
 
   const firstFocusable = activePanel
@@ -923,7 +961,9 @@ function closeAppModal(opts) {
   if (!appModal) return;
   if (opts && opts.source) {
     var activePanel = appModal.querySelector('.app-modal__panel.active');
-    trackEvent('modal_close', { source: opts.source, panel_id: activePanel ? activePanel.getAttribute('data-panel') : null });
+    var panelId = activePanel ? activePanel.getAttribute('data-panel') : null;
+    trackEvent('modal_close', { source: opts.source, panel_id: panelId });
+    sendGtagEvent('modal_close', { panel_id: panelId || '' });
   }
   hideBookCallCalendarView();
   appModal.classList.remove('active');
@@ -1562,6 +1602,8 @@ if (formWebsiteReview) {
     const payload = buildSubmitPayload(this);
     setSubmitButtonLoading(this, true);
     trackEvent('form_submit', { form_id: this.id || 'form-website-review', has_email: true });
+    var gtagSubmitWrv = getFormSubmitGtagEvent(this.id || 'form-website-review');
+    if (gtagSubmitWrv) sendGtagEvent(gtagSubmitWrv);
 
     fetch(window.API_BASE + '/website-review', {
       method: 'POST',
@@ -1597,6 +1639,8 @@ if (formBookCall) {
     const payload = buildSubmitPayload(this);
     setSubmitButtonLoading(this, true);
     trackEvent('form_submit', { form_id: this.id || 'form-book-call', has_email: true });
+    var gtagSubmitBookCall = getFormSubmitGtagEvent(this.id || 'form-book-call');
+    if (gtagSubmitBookCall) sendGtagEvent(gtagSubmitBookCall);
 
     fetch(window.API_BASE + '/book-a-call', {
       method: 'POST',
@@ -1662,6 +1706,8 @@ getEnabledLeadMagnetIds().forEach(function (id) {
     payload.mailchimp_tag = mailchimpTag;
     setSubmitButtonLoading(this, true);
     trackEvent('form_submit', { form_id: this.id || ('form-' + id), has_email: true });
+    var gtagSubmitLm = getFormSubmitGtagEvent(this.id || ('form-' + id));
+    if (gtagSubmitLm) sendGtagEvent(gtagSubmitLm);
 
     fetch(window.API_BASE + '/lead', {
       method: 'POST',
