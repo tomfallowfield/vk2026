@@ -748,8 +748,11 @@
       box-shadow: 0 4px 12px rgba(235, 189, 61, 0.4);
     }
     .btn.is-loading {
-      color: transparent;
+      color: transparent !important;
       pointer-events: none;
+    }
+    .btn.is-loading > * {
+      visibility: hidden;
     }
     .btn.is-loading::after {
       content: '';
@@ -772,6 +775,10 @@
     }
     .btn-secondary.is-loading::after {
       border-color: rgba(17, 17, 17, 0.5);
+      border-right-color: transparent;
+    }
+    body.cta-primary-black .btn-primary.is-loading::after {
+      border-color: rgba(255, 255, 255, 0.9);
       border-right-color: transparent;
     }
     @keyframes btn-throbber {
