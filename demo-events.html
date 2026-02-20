@@ -190,6 +190,25 @@
     .btn-delete:hover { background: rgba(248, 81, 73, 0.35); }
     .btn-delete:disabled { opacity: 0.4; cursor: not-allowed; }
     tbody input[type="checkbox"] { accent-color: var(--accent); cursor: pointer; }
+    .user-filter {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .user-filter .label { color: var(--muted); font-size: 12px; }
+    .user-filter select {
+      min-width: 220px;
+      padding: 0.4rem 0.6rem;
+      font: inherit;
+      font-size: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .user-filter select:focus { outline: none; border-color: var(--accent); }
   </style>
 </head>
 <body>
@@ -197,6 +216,12 @@
     <div>
       <h1>Visitor events</h1>
       <p class="meta">Live view · one row per event</p>
+      <div class="user-filter" id="userFilterWrap">
+        <span class="label" id="userFilterLabel">0 users currently on site</span>
+        <select id="userFilter" aria-label="Filter by user currently on site">
+          <option value="">Show all</option>
+        </select>
+      </div>
     </div>
     <div class="header-actions">
       <button type="button" class="btn-delete" id="deleteSelected" disabled title="Permanently delete selected events">Delete selected</button>
@@ -262,6 +287,7 @@
       var errEl = document.getElementById('error');
       var refreshTimer = null;
       var allEvents = [];
+      var CURRENT_USER_MS = 15 * 60 * 1000; // 15 min = "currently on site"
 
       var EVENT_GROUPS = {
         video: ['video_play', 'video_pause', 'video_ended', 'video_progress'],
@@ -296,6 +322,42 @@
         return (el && el.value) ? el.value.trim() : '';
       }
 
+      function getSelectedVisitorId() {
+        var el = document.getElementById('userFilter');
+        return (el && el.value) ? el.value : '';
+      }
+
+      /** Build label for a visitor: email if known, else "#shortId via UTM" (e.g. "#a1b2c3d4 via LinkedIn"). */
+      function visitorLabel(visitorId, email, name, utmSource) {
+        if (email && String(email).trim()) return String(email).trim();
+        var shortId = (visitorId && visitorId.length >= 8) ? visitorId.slice(-8) : (visitorId || '?');
+        var via = (utmSource && String(utmSource).trim()) ? ' via ' + String(utmSource).trim() : '';
+        return '#' + shortId + via;
+      }
+
+      /** From events, get unique "current" visitors (latest event within CURRENT_USER_MS). Returns [{ visitor_id, label, latestAt }, ...]. */
+      function getCurrentVisitors(events) {
+        if (!Array.isArray(events) || events.length === 0) return [];
+        var now = Date.now();
+        var byVisitor = {};
+        events.forEach(function (e) {
+          var vid = e.visitor_id || '';
+          if (!vid) return;
+          var at = e.occurred_at ? new Date(e.occurred_at).getTime() : 0;
+          if (!byVisitor[vid] || at > (byVisitor[vid].latestAt || 0)) {
+            byVisitor[vid] = {
+              visitor_id: vid,
+              label: visitorLabel(vid, e.visitor_email, e.visitor_name, e.utm_source),
+              latestAt: at
+            };
+          }
+        });
+        var list = Object.keys(byVisitor).map(function (k) { return byVisitor[k]; });
+        list = list.filter(function (v) { return (now - (v.latestAt || 0)) <= CURRENT_USER_MS; });
+        list.sort(function (a, b) { return (b.latestAt || 0) - (a.latestAt || 0); });
+        return list;
+      }
+
       function filterEvents(events) {
         if (!Array.isArray(events)) return [];
         var selected = getSelectedFilters();
@@ -305,6 +367,10 @@
           (EVENT_GROUPS[group] || []).forEach(function (t) { typesToShow.add(t); });
         });
         var byType = events.filter(function (e) { return typesToShow.has(e.event_type); });
+        var selectedVisitorId = getSelectedVisitorId();
+        if (selectedVisitorId) {
+          byType = byType.filter(function (e) { return (e.visitor_id || '') === selectedVisitorId; });
+        }
         var visitorSearch = getVisitorSearch();
         if (visitorSearch) {
           visitorSearch = visitorSearch.toLowerCase();
@@ -403,6 +469,22 @@
         render(allEvents);
       }
 
+      function updateUserFilterDropdown() {
+        var current = getCurrentVisitors(allEvents);
+        var labelEl = document.getElementById('userFilterLabel');
+        var selectEl = document.getElementById('userFilter');
+        if (!selectEl || !labelEl) return;
+        var currentId = getSelectedVisitorId();
+        var n = current.length;
+        labelEl.textContent = n === 1 ? '1 user currently on site' : n + ' users currently on site';
+        selectEl.innerHTML = '<option value="">Show all</option>' + current.map(function (v) {
+          return '<option value="' + (v.visitor_id || '').replace(/"/g, '&quot;') + '"' + (v.visitor_id === currentId ? ' selected' : '') + '>' + (v.label || v.visitor_id || '—').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</option>';
+        });
+        if (currentId && !current.some(function (v) { return v.visitor_id === currentId; })) {
+          selectEl.value = '';
+        }
+      }
+
       function fetchEvents() {
         fetch(API + (API.indexOf('?') !== -1 ? '&' : '?') + 'limit=100')
           .then(function (r) {
@@ -411,6 +493,7 @@
           })
           .then(function (events) {
             allEvents = Array.isArray(events) ? events : [];
+            updateUserFilterDropdown();
             render(allEvents);
           })
           .catch(function (err) {
@@ -420,6 +503,9 @@
             emptyEl.style.display = 'none';
           });
       }
+
+      var userFilterEl = document.getElementById('userFilter');
+      if (userFilterEl) userFilterEl.addEventListener('change', onFiltersChange);
 
       document.querySelectorAll('.filters input[name="filter"]').forEach(function (cb) {
         cb.addEventListener('change', onFiltersChange);

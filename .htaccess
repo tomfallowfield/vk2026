@@ -1,0 +1,10 @@
+# Password-protect the event viewer only (Apache).
+# Create .htpasswd in this directory, e.g.:
+#   htpasswd -c .htpasswd your_username
+# Then set AuthUserFile below to the absolute path to .htpasswd (this path is for production at vanillakiller.com).
+<Files "demo-events.html">
+  AuthType Basic
+  AuthName "Event viewer"
+  AuthUserFile /var/www/vanillakiller.com/public_html/.htpasswd
+  Require valid-user
+</Files>

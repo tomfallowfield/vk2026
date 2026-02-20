@@ -95,8 +95,10 @@ This pulls the latest from `origin main`, runs `npm install --production`, syncs
 
 1. On the server, create a database (e.g. `vk2026_analytics`) and run the schema:
    ```bash
-   mysql -u your_user -p your_db < server/db/schema.sql
+   mysql -e "CREATE DATABASE IF NOT EXISTS vk2026_analytics;"
+   mysql vk2026_analytics < server/db/schema.sql
    ```
+   (If you need the return-visit column added later: `mysql vk2026_analytics < server/db/migrations/001_add_return_visit_notified_at.sql`.)
 2. In the server’s `.env`, set:
    - `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
 3. Redeploy (or `pm2 restart vk2026`).

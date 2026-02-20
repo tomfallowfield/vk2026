@@ -117,6 +117,26 @@ sudo systemctl reload apache2
 
 **Check:** From your laptop: `curl -sI http://vanillakiller.com/` (or your server IP if DNS isn’t updated yet) should return 200.
 
+**Optional – Password-protect the event viewer:** To require a password for `https://vanillakiller.com/demo-events.html`, create a password file and protect that path in Apache. On the server:
+
+```bash
+cd /var/www/vanillakiller.com/public_html
+htpasswd -c .htpasswd your_username
+```
+
+Then in the **HTTPS** vhost (e.g. `vanillakiller.com-le-ssl.conf`), inside the `<VirtualHost *:443>` block, add **before** the `ProxyPass` lines:
+
+```apache
+<Location "/demo-events.html">
+    AuthType Basic
+    AuthName "Event viewer"
+    AuthUserFile /var/www/vanillakiller.com/public_html/.htpasswd
+    Require valid-user
+</Location>
+```
+
+Reload Apache: `sudo systemctl reload apache2`. The rest of the site stays public; only the event viewer will prompt for the password. (The repo’s `.htaccess` is for setups where Apache serves the document root directly; with full proxy to Node, the vhost `Location` above is what applies.)
+
 ---
 
 ## Task 6 – Get SSL with Let’s Encrypt (Certbot)
