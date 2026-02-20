@@ -101,4 +101,4 @@ This pulls the latest from `origin main`, runs `npm install --production`, syncs
    - `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
 3. Redeploy (or `pm2 restart vk2026`).
 
-Without MySQL config, analytics events are still written to `logs/events.log` (you can `tail -f logs/events.log`).
+Without MySQL config, analytics events are still written to `logs/events.log` (you can `tail -f logs/events.log`). For CVR, video views, time on site, bounce rate and drill-down by referrer/UTM, see [docs/ANALYTICS.md](docs/ANALYTICS.md) and `node scripts/analytics-report.js`.

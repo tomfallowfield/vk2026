@@ -264,6 +264,19 @@ async function setReturnVisitNotified(visitor_id) {
   );
 }
 
+/**
+ * Run a parameterized query (for analytics report queries). Returns rows.
+ * @param {string} sql - SQL with ? placeholders
+ * @param {Array} params - Query parameters
+ * @returns {Promise<Array>} Result rows
+ */
+async function executeQuery(sql, params = []) {
+  const p = getPool();
+  if (!p) return [];
+  const [rows] = await p.execute(sql, params);
+  return rows || [];
+}
+
 module.exports = {
   isConfigured,
   isValidEventType,
@@ -273,5 +286,6 @@ module.exports = {
   deleteEvents,
   getVisitorForReturnCheck,
   setReturnVisitNotified,
+  executeQuery,
   ALLOWED_EVENT_TYPES
 };

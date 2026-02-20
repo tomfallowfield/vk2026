@@ -1026,7 +1026,8 @@ function openModalFromUrl() {
   if (!panelId || !VALID_MODAL_IDS.has(panelId)) return;
   if (panelId === 'website-review' && !settings.wrv_offer) return;
   if (panelId === 'book-call' && !settings.book_call_offer) return;
-  if (VALID_MODAL_IDS.has(panelId) && getEnabledLeadMagnetIds().indexOf(panelId) === -1) return;
+  var leadMagnetIds = ['lead-50things', 'lead-offboarding', 'lead-socialproof'];
+  if (leadMagnetIds.indexOf(panelId) !== -1 && getEnabledLeadMagnetIds().indexOf(panelId) === -1) return;
   lastModalTriggerType = 'url';
   setTimeout(() => {
     openAppModal(panelId);
@@ -1547,13 +1548,7 @@ function setSubmitButtonLoading(form, loading) {
   if (!btn) return;
   btn.disabled = loading;
   btn.classList.toggle('is-loading', loading);
-  if (loading) {
-    btn._loadingOriginalContent = btn.innerHTML;
-    btn.innerHTML = '';
-  } else if (btn._loadingOriginalContent !== undefined) {
-    btn.innerHTML = btn._loadingOriginalContent;
-    delete btn._loadingOriginalContent;
-  }
+  // Keep button content in place so size doesn't change; CSS hides text (color: transparent) and shows throbber over it
 }
 
 // Website review form

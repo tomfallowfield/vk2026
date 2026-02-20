@@ -759,11 +759,12 @@
       width: 18px;
       height: 18px;
       margin: -9px 0 0 -9px;
-      border: 2px solid currentColor;
+      border: 2px solid rgba(17, 17, 17, 0.6);
       border-right-color: transparent;
       border-radius: 50%;
       animation: btn-throbber 0.6s linear infinite;
-      opacity: 0.9;
+      opacity: 1;
+      z-index: 1;
     }
     .btn-primary.is-loading::after {
       border-color: rgba(17, 17, 17, 0.5);
