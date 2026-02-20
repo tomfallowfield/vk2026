@@ -252,18 +252,42 @@ Tick these off so nothing’s missing when the domain flips to your server:
 
 ---
 
-## Deploy failing?
+## Auto-deploy not working? (push to main, no deploy)
 
-**See where it failed:** Run the script by hand and watch the output. Use the path where the app actually lives (e.g. still `html/vk2026` until you’ve done go-live):
+GitHub doesn’t email you when a workflow fails unless you turn on notifications. Check in this order:
+
+**1. Did the workflow run?**  
+Repo → **Actions** tab. Find the “Deploy on push” workflow. Did it run for your last push?  
+- **No run** – Push might have been to a different branch (workflow only runs on `main`). Or Actions are disabled for the repo.  
+- **Run failed (red)** – Click the run and open “Trigger deploy”. You’ll see the `curl` error: **401** = secret mismatch (fix `DEPLOY_WEBHOOK_SECRET` in repo Secrets and in server `.env`); **connection refused / timeout** = wrong `DEPLOY_WEBHOOK_URL` or server/firewall.  
+- **Run succeeded (green)** – The webhook returned 202, so the problem is on the **server**: `deploy.sh` ran in the background and may have failed. Go to step 2.
+
+**2. Run deploy on the server and watch output:**
 
 ```bash
-cd /var/www/html/vk2026 && ./deploy.sh
+cd /var/www/vanillakiller.com/public_html && ./deploy.sh
 ```
 
-- **Fails at "Pulling latest" or "Updating to origin/main"** – Server’s `main` may be behind or detached. Check `git status` and `git branch`. The script now uses `git reset --hard origin/main` after fetch so you always match the remote.
+If that fails, the same failure happened when the webhook ran (and was only logged on the server). Fix the error; next push will then deploy. You can also check `pm2 logs vk-form-handler` for “Deploy script error” or “Deploy completed successfully”.
+
+**3. Secrets (Settings → Secrets and variables → Actions)**  
+- **DEPLOY_WEBHOOK_URL** = `https://vanillakiller.com/api/webhooks/deploy`  
+- **DEPLOY_WEBHOOK_SECRET** = exactly the same string as `DEPLOY_WEBHOOK_SECRET` in the server’s `.env`
+
+---
+
+## Deploy script failing when run by hand
+
+**See where it failed:** Run the script and watch the output:
+
+```bash
+cd /var/www/vanillakiller.com/public_html && ./deploy.sh
+```
+
+- **Fails at "Pulling latest" or "Updating to origin/main"** – Server’s `main` may be behind or detached. Check `git status` and `git branch`. The script uses `git reset --hard origin/main` after fetch so you match the remote.
 - **Fails at "Installing dependencies"** – Run `npm install --omit=dev` yourself and check the error (network, Node version, or a broken dependency).
-- **Fails at "Restarting app..."** – PM2 might not have an app named `vk-form-handler` yet. The script now starts it if missing: `pm2 start server.js --name vk-form-handler`. If you use a different path, run that once from the app directory, then `pm2 save`.
-- **Webhook returns 202 but nothing happens** – On the server, check `pm2 logs vk-form-handler` and the process that runs the webhook (e.g. the same Node app). Ensure `DEPLOY_WEBHOOK_SECRET` in `.env` matches the secret in GitHub repo secrets.
+- **Fails at "Restarting app..."** – PM2 might not have an app named `vk-form-handler` yet. The script starts it if missing. Run `pm2 start server.js --name vk-form-handler` from the app directory once, then `pm2 save`.
+- **Webhook returns 202 but deploy doesn’t happen** – On the server, check `pm2 logs vk-form-handler` for “Deploy script error” or “Deploy completed successfully”. Ensure `DEPLOY_WEBHOOK_SECRET` in `.env` matches the secret in GitHub repo Secrets.
 
 ---
 
