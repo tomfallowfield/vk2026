@@ -150,7 +150,9 @@ async function writeEvents(events, visitor_id, requestContext) {
       device_display = ctx.device_display;
       browser_display = ctx.browser_display;
       location_display = ctx.location_display;
-    } catch (_) { /* optional */ }
+    } catch (err) {
+      console.error('Analytics visitor context (device/browser/location):', err.message);
+    }
   }
 
   const conn = await p.getConnection();
