@@ -1454,7 +1454,7 @@ function getSubmitErrorMessage(err, res, data) {
     return data.error;
   }
   if (res && !res.ok) {
-    if (res.status >= 500) return 'Server error. Please try again — if it keeps happening, check server logs (pm2 logs vk2026).';
+    if (res.status >= 500) return 'Server error. Please try again — if it keeps happening, check server logs (pm2 logs vk-form-handler).';
     return 'The server couldn\'t process your request. Please try again.';
   }
   return 'Your request couldn\'t be completed. Please try again.';

@@ -30,11 +30,11 @@ echo "Syncing wiki to Notion..."
 node scripts/sync-wiki-to-notion.js || true
 
 echo "Restarting app..."
-if pm2 describe vk2026 &>/dev/null; then
-  pm2 restart vk2026
+if pm2 describe vk-form-handler &>/dev/null; then
+  pm2 restart vk-form-handler
 else
-  echo "vk2026 not in pm2; starting..."
-  pm2 start server.js --name vk2026
+  echo "vk-form-handler not in pm2; starting..."
+  pm2 start server.js --name vk-form-handler
 fi
 
 echo "Saving pm2 state..."

@@ -8,6 +8,16 @@ Web server: **Apache**. SSL with Let’s Encrypt.
 
 ---
 
+## PM2 process names (before you restart)
+
+- **vk-deploy** – **Relic.** Current auto-deploy from GitHub does *not* use a separate PM2 process: GitHub POSTs to your app’s `/api/webhooks/deploy`, and the **same Node app** (the one that serves the site) runs `deploy.sh` internally. You can **remove** `vk-deploy` from PM2 (`pm2 delete vk-deploy`) unless you use it for something else (e.g. a cron job).
+- **vk2026** – This is the one Node app (site + forms + API + analytics). We’re renaming it to **vk-form-handler**.
+- **vk-analytics** – This repo only has **one** Node process; analytics is built into it. So there is no separate “vk-analytics” app in the codebase. The single app is named **vk-form-handler**. If you have another process on the server you want to call vk-analytics, rename that one separately.
+
+After the steps below you’ll have one app: **vk-form-handler**.
+
+---
+
 ## Before you start
 
 - **Backup:** On the server, copy the current app somewhere safe (e.g. `cp -a /var/www/html/vk2026 /var/www/html/vk2026.backup-$(date +%Y%m%d)`).
@@ -61,16 +71,17 @@ npm install --omit=dev
 
 ## Task 4 – Point PM2 at the new directory
 
-Stop and remove the old app from PM2, then start it from the new path:
+(Optional) Remove the old deploy relic and the old app name, then start the app from the new path with the new name:
 
 ```bash
-pm2 delete vk2026
+pm2 delete vk-deploy 2>/dev/null || true
+pm2 delete vk2026 2>/dev/null || true
 cd /var/www/vanillakiller.com/public_html
-pm2 start server.js --name vk2026
+pm2 start server.js --name vk-form-handler
 pm2 save
 ```
 
-**Check:** `pm2 list` shows `vk2026` running; `pm2 logs vk2026 --lines 5` shows no crash.
+**Check:** `pm2 list` shows `vk-form-handler` running; `pm2 logs vk-form-handler --lines 5` shows no crash.
 
 ---
 
@@ -167,7 +178,7 @@ cd /var/www/vanillakiller.com/public_html
 ./deploy.sh
 ```
 
-**Check:** Script finishes without errors; `pm2 list` still shows `vk2026` running; https://vanillakiller.com/ loads.
+**Check:** Script finishes without errors; `pm2 list` still shows `vk-form-handler` running; https://vanillakiller.com/ loads.
 
 ---
 
@@ -189,8 +200,8 @@ cd /var/www/html/vk2026 && ./deploy.sh
 
 - **Fails at "Pulling latest" or "Updating to origin/main"** – Server’s `main` may be behind or detached. Check `git status` and `git branch`. The script now uses `git reset --hard origin/main` after fetch so you always match the remote.
 - **Fails at "Installing dependencies"** – Run `npm install --omit=dev` yourself and check the error (network, Node version, or a broken dependency).
-- **Fails at "Restarting app..."** – PM2 might not have an app named `vk2026` yet. The script now starts it if missing: `pm2 start server.js --name vk2026`. If you use a different path, run that once from the app directory, then `pm2 save`.
-- **Webhook returns 202 but nothing happens** – On the server, check `pm2 logs vk2026` and the process that runs the webhook (e.g. the same Node app). Ensure `DEPLOY_WEBHOOK_SECRET` in `.env` matches the secret in GitHub repo secrets.
+- **Fails at "Restarting app..."** – PM2 might not have an app named `vk-form-handler` yet. The script now starts it if missing: `pm2 start server.js --name vk-form-handler`. If you use a different path, run that once from the app directory, then `pm2 save`.
+- **Webhook returns 202 but nothing happens** – On the server, check `pm2 logs vk-form-handler` and the process that runs the webhook (e.g. the same Node app). Ensure `DEPLOY_WEBHOOK_SECRET` in `.env` matches the secret in GitHub repo secrets.
 
 ---
 
@@ -202,10 +213,10 @@ cd /var/www/html/vk2026 && ./deploy.sh
 |-----------------|--------|
 | App directory   | `/var/www/html/vk2026` |
 | Manual deploy   | `cd /var/www/html/vk2026 && ./deploy.sh` |
-| PM2 app name    | `vk2026` |
+| PM2 app name    | `vk-form-handler` |
 | Site URL        | Your server URL (e.g. `https://yourserver/vk2026/` or IP) |
 | .env            | In app dir; set `SITE_BASE_URL` to match how you access the site |
-| Deploy webhook  | `https://yourserver/vk2026/api/webhooks/deploy` (or without `/vk2026` if not under path) |
+| Deploy webhook  | `https://yourserver/api/webhooks/deploy` (or with `/vk2026` if still under path) |
 
 **After go-live (vanillakiller.com):**
 
@@ -213,5 +224,6 @@ cd /var/www/html/vk2026 && ./deploy.sh
 |-----------------|--------|
 | App directory   | `/var/www/vanillakiller.com/public_html` |
 | Manual deploy   | `cd /var/www/vanillakiller.com/public_html && ./deploy.sh` |
+| PM2 app name    | `vk-form-handler` |
 | Site URL        | **https://vanillakiller.com** |
 | Deploy webhook  | `https://vanillakiller.com/api/webhooks/deploy` |
