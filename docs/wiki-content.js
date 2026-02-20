@@ -1,7 +1,9 @@
 /**
- * Website wiki content – single source of truth for the Notion wiki.
+ * Website wiki content – legacy structure (used by sync script).
+ * The Notion wiki is now maintained via prompts: see docs/WIKI-PROMPT.md for
+ * version, date, and the full Notion AI prompt (sync script is deprecated).
  * Exports: { rootBlocks, pages }.
- * Run: node scripts/sync-wiki-to-notion.js
+ * Run: node scripts/sync-wiki-to-notion.js (not recommended – use WIKI-PROMPT.md).
  */
 
 function rt(text) {
@@ -108,6 +110,51 @@ const pages = [
       ul('server/lib/notion-vkcrm.js – VKCRM create/update logic'),
       ul('server/lib/mailchimp.js – add/update contact, tags'),
       ul('README-API.md – form API and env setup'),
+    ],
+  },
+  {
+    title: 'Features & analytics',
+    blocks: [
+      h2('Analytics & visitor intelligence'),
+      rt('First-party event pipeline: events and visitors are stored in your own MySQL (visitors + events tables), with optional NDJSON backup to logs/events.log when DB is configured.'),
+      h3('Event types'),
+      ul('Clicks, form_open/form_submit, video_play/pause/ended/progress, faq_open, scope_open, time_on_site, menu_open/close, modal_close, cal_link_click, tc_open, privacy_open, easter_egg_star, theme_switch. All sent only after cookie consent.'),
+      h3('Visitor context'),
+      ul('On each event batch the server derives device (e.g. Mac, iPhone), browser (e.g. Chrome, Safari), and location (city/country from IP via geoip-lite) and stores them on the visitor row for the event viewer.'),
+      ul('First-touch referrer and UTM (source, medium, campaign, term, content) stored on both visitors and per event for attribution and reporting.'),
+      ul('When someone submits a form (book-a-call, website-review, lead), their cookie visitor_id is linked to email/name in visitors so you see "who" in the event stream and in reports.'),
+      h3('Time on site & return visits'),
+      ul('Time on site: heartbeat every 30s plus final send on tab hide/beforeunload; metadata.seconds supports averages and bounce logic.'),
+      ul('Return-visit alerts: when a known visitor (has email) comes back and sends an event, you get one notification per hour – email (SMTP), Slack message, and a row in a Notion "return visits" database.'),
+      h3('Reports & event viewer'),
+      ul('CLI report: node scripts/analytics-report.js [start] [end] --by utm|referrer --json for overall/LM/WRV/contact CVR, video views, time on site, bounce rate, with optional drill-down by referrer or UTM (first-touch).'),
+      ul('Event viewer (demo-events.html): live event table with auto-refresh, filter by type (video, form, FAQ, scope, time on site, clicks, modal, menu, calendar, legal, easter egg, theme), search by UTM or email/visitor ID, "current users" (events in last 15 min), visitor labels like "email or #shortId Mac/Chrome nr Bristol via LinkedIn", bulk delete. Optional view_key protects the page.'),
+      h3('Privacy & consent'),
+      ul('Cookie bar: optional banner; tracking (visitor cookie + event sending) runs only if the user accepts. Consent stored in localStorage; no tracking cookie if they decline.'),
+      ul('Visitor cookie stores visitor ID, visit count, referrer, button clicks, form submissions, and (if applicable) video progress; up to 365 days, only when consent is given.'),
+      div(),
+      h2('Forms & conversions'),
+      ul('Book a call → Notion VKCRM (call booking), Mailchimp (tag: submitted website contact form), Slack notification, and analytics enrichment.'),
+      ul('Website review → same Notion + Mailchimp + Slack + enrichment.'),
+      ul('Lead magnets (e.g. 50 things, offboarding, social proof) → Mailchimp with per-form tags for automations; Slack + enrichment.'),
+      ul('Honeypot (_hp) on forms to cut bot submissions.'),
+      ul('Idempotency: optional idempotency_key with 24h cache so double-submits return the same success response without duplicate CRM/email actions.'),
+      ul('Forms send _context.visitor_id (and optional referrer/UTM) so the server can enrich the analytics visitor and tie submissions to the same identity as events.'),
+      div(),
+      h2('Integrations & ops'),
+      ul('Notion VKCRM: form submissions create/update pages (submission type, timestamps, form/trigger metadata, name, email, website, LinkedIn, company, phone, message).'),
+      ul('Mailchimp: add/update contacts; contact forms get one tag, lead magnets get per-offer tags from settings.js.'),
+      ul('Slack: incoming webhook for form submissions (book a call, website review, lead), return-visit notifications, and (optional) deploy started/completed/failed.'),
+      ul('GitHub deploy webhook: POST /api/webhooks/deploy (secret-protected) runs deploy.sh (pull, install, optional wiki sync, PM2 restart); optional Slack deploy logging.'),
+      ul('Optional: booking-confirmed webhook, Notion wiki sync script, Strapi/CMS-style settings (e.g. settings.js / loaders).'),
+      div(),
+      h2('Site experience'),
+      ul('Modals: book a call, website review, lead magnets, terms, privacy; which modal and trigger are tracked as form_open / modal_close.'),
+      ul('Videos: play/pause/ended/progress and modal-close tracked with video_label and pct where relevant.'),
+      ul('Theme: light/dark with manual and system triggers, tracked as theme_switch.'),
+      ul('Easter egg: star placeholders and easter_egg_star events.'),
+      ul('Responsive: viewport and touch-friendly CTAs.'),
+      rt('In short: first-party analytics (events, visitors, device/browser/location, UTM, time on site, enrichment, CVR reports, live event viewer), consent-aware tracking, return-visit notifications, and form handling wired into Notion, Mailchimp, Slack, and that same analytics pipeline.'),
     ],
   },
   {

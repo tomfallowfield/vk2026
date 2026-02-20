@@ -1189,6 +1189,13 @@
       gap: 12px;
       margin-top: 0px;
       text-align: center;
+      min-width: 0;
+    }
+    .hero .hero-social-proof--below .hero-social-proof-text {
+      white-space: normal;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      max-width: 100%;
     }
 
     .hero-left .hero-lead,
@@ -1618,6 +1625,13 @@
         max-width: 100%;
         overflow-wrap: break-word;
         word-wrap: break-word;
+      }
+      .hero .hero-social-proof--below {
+        min-width: 0;
+        max-width: 100%;
+      }
+      .hero .hero-social-proof-text {
+        white-space: normal;
       }
     }
 
@@ -2057,8 +2071,11 @@
       font-size: 0.8rem;
       color: var(--brand-grey);
       font-weight: 500;
-      white-space: nowrap;
       min-width: 0; /* allow flex item to shrink so text can wrap on narrow screens */
+    }
+    /* Inline hero social proof (beside avatars): keep on one line when space allows */
+    .hero-social-proof:not(.hero-social-proof--below) .hero-social-proof-text {
+      white-space: nowrap;
     }
 
     .hero-features {
