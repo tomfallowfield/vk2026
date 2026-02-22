@@ -1123,15 +1123,6 @@ function getAutodialogPanelId() {
 // Trigger: exit intent (mouse leaving top of viewport, desktop only)
 if (getSettings().autodialog_to_be_shown_on_exit_intent) {
   document.addEventListener('mouseout', e => {
-    // #region agent log
-    var _rel = e.relatedTarget;
-    var _y = e.clientY;
-    if (!_rel && _y <= 30) {
-      var _d = { clientY: _y, relatedTarget: !!_rel, touch: isTouchDevice(), sessionSet: !!sessionStorage.getItem('appModalAutodialogShown'), panelId: getAutodialogPanelId() };
-      console.log('[autodialog] exit intent candidate', _d);
-      fetch('http://127.0.0.1:7242/ingest/f2cf9272-f115-412f-aa66-bbf2deac994d',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'4d6245'},body:JSON.stringify({sessionId:'4d6245',location:'main.js:exit_intent',message:'exit intent candidate',data:_d,timestamp:Date.now(),hypothesisId:'H1-H2'})}).catch(function(){});
-    }
-    // #endregion
     if (isTouchDevice()) return;
     if (e.relatedTarget) return;
     if (e.clientY > 10) return;
@@ -1148,23 +1139,14 @@ if (getSettings().autodialog_to_be_shown_on_exit_intent) {
 (function () {
   const settings = getSettings();
   const seconds = settings.autodialog_to_be_shown_after_delay_s;
-  const panelId = getAutodialogPanelId();
-  // #region agent log
-  console.log('[autodialog] delay init', { seconds: seconds, panelId: panelId });
-  fetch('http://127.0.0.1:7242/ingest/f2cf9272-f115-412f-aa66-bbf2deac994d',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'4d6245'},body:JSON.stringify({sessionId:'4d6245',location:'main.js:delay_init',message:'delay IIFE init',data:{seconds:seconds,panelId:panelId},timestamp:Date.now(),hypothesisId:'H4-H5'})}).catch(function(){});
-  // #endregion
   if (seconds <= 0) return;
+  const panelId = getAutodialogPanelId();
   if (!panelId) return;
 
   let inactivityTimer = null;
   function schedule() {
     if (inactivityTimer) clearTimeout(inactivityTimer);
     inactivityTimer = setTimeout(function () {
-      // #region agent log
-      var _ss = sessionStorage.getItem('appModalAutodialogShown');
-      console.log('[autodialog] delay timeout fired', { sessionSet: !!_ss });
-      fetch('http://127.0.0.1:7242/ingest/f2cf9272-f115-412f-aa66-bbf2deac994d',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'4d6245'},body:JSON.stringify({sessionId:'4d6245',location:'main.js:delay_callback',message:'delay timeout fired',data:{sessionSet:!!_ss},timestamp:Date.now(),hypothesisId:'H3'})}).catch(function(){});
-      // #endregion
       if (sessionStorage.getItem('appModalAutodialogShown')) return;
       sessionStorage.setItem('appModalAutodialogShown', '1');
       lastModalTriggerType = 'inactivity';
