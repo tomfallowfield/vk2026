@@ -1766,7 +1766,7 @@ getEnabledLeadMagnetIds().forEach(function (id) {
   const container = document.getElementById('hero-linkedin-faces');
   if (!container) return;
   const list = window.SITE_SETTINGS && Array.isArray(window.SITE_SETTINGS.linkedin_faces) ? window.SITE_SETTINGS.linkedin_faces : [];
-  const base = 'images/li_mugs/';
+  const base = 'images/li_mugs/thumbs/';
   list.forEach(function (person) {
     const name = (person.name && String(person.name).trim()) || '';
     const role = (person.role && String(person.role).trim()) || '';
@@ -1782,13 +1782,18 @@ getEnabledLeadMagnetIds().forEach(function (id) {
       tooltip.textContent = tooltipText;
       span.appendChild(tooltip);
     }
+    const thumbPhoto = photo.replace(/\.(png|webp)$/i, '.jpg');
     const img = document.createElement('img');
-    img.src = base + encodeURIComponent(photo);
+    img.src = base + encodeURIComponent(thumbPhoto);
     img.alt = name || '';
     img.width = 36;
     img.height = 36;
     img.loading = 'lazy';
     img.decoding = 'async';
+    img.onerror = function () {
+      this.onerror = null;
+      this.src = 'images/li_mugs/' + encodeURIComponent(photo);
+    };
     const imgWrap = document.createElement('span');
     imgWrap.className = 'avatar-img';
     imgWrap.appendChild(img);

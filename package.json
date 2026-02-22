@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "optimize-thumbs": "node scripts/optimize-vid-thumbs.js"
+    "optimize-thumbs": "node scripts/optimize-vid-thumbs.js",
+    "optimize-li-faces": "node scripts/optimize-li-faces.js"
   },
   "dependencies": {
     "@notionhq/client": "^2.2.15",

@@ -43,6 +43,8 @@ const DB_NAME = process.env.DB_NAME || 'vk2026_analytics';
 const NOTIFICATION_EMAIL_TO = process.env.NOTIFICATION_EMAIL_TO || '';
 const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL || '';
 const NOTION_RETURN_VISITS_DATABASE_ID = process.env.NOTION_RETURN_VISITS_DATABASE_ID || '';
+// Daily digest: Notion database for digest rows (Name title, Date date, Summary rich text)
+const NOTION_DAILY_DIGEST_DATABASE_ID = process.env.NOTION_DAILY_DIGEST_DATABASE_ID || '';
 // SMTP for return-visit email (e.g. SMTP_HOST=smtp.gmail.com SMTP_PORT=587 SMTP_USER= SMTP_PASS=)
 const SMTP_HOST = process.env.SMTP_HOST || '';
 const SMTP_PORT = parseInt(process.env.SMTP_PORT || '587', 10);
@@ -69,6 +71,7 @@ module.exports = {
   NOTIFICATION_EMAIL_TO,
   SLACK_WEBHOOK_URL,
   NOTION_RETURN_VISITS_DATABASE_ID,
+  NOTION_DAILY_DIGEST_DATABASE_ID,
   SMTP_HOST,
   SMTP_PORT,
   SMTP_SECURE,
