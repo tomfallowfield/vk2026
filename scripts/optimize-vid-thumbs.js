@@ -1,23 +1,29 @@
 #!/usr/bin/env node
 /**
- * Generate WebP version of the hero video thumbnail for smaller payload.
+ * Optimise the hero video thumbnail: resize to display size (1120×630 for 2x), then output WebP + JPEG.
  * Run: node scripts/optimize-vid-thumbs.js
- * Requires: npm install sharp (or run with npx: npx sharp-cli ...)
+ * Requires: npm install --save-dev sharp
  *
- * If you don't have sharp, you can generate WebP manually with:
- *   cwebp -q 80 vids/how-to-talk-about-your-business.jpg -o vids/how-to-talk-about-your-business.webp
- * or use an online converter / Squoosh.
+ * Reads: vids/how-to-talk-about-your-business.jpg (or .png)
+ * Writes: same base name .webp and .jpg (overwrites .jpg with resized version).
  */
 
 const path = require('path');
 const fs = require('fs');
 
-const inputPath = path.join(__dirname, '..', 'vids', 'how-to-talk-about-your-business.jpg');
-const outputPath = path.join(__dirname, '..', 'vids', 'how-to-talk-about-your-business.webp');
+const VIDS_DIR = path.join(__dirname, '..', 'vids');
+const BASE = 'how-to-talk-about-your-business';
+const WIDTH = 1120;  // 2× display width (560px)
+const HEIGHT = 630;  // 2× display height (315px)
+const WEBP_QUALITY = 82;
+const JPEG_QUALITY = 85;
 
-if (!fs.existsSync(inputPath)) {
-  console.error('Input not found:', inputPath);
-  process.exit(1);
+function findInput() {
+  const jpg = path.join(VIDS_DIR, BASE + '.jpg');
+  const png = path.join(VIDS_DIR, BASE + '.png');
+  if (fs.existsSync(jpg)) return jpg;
+  if (fs.existsSync(png)) return png;
+  return null;
 }
 
 async function run() {
@@ -26,21 +32,39 @@ async function run() {
     sharp = require('sharp');
   } catch (e) {
     console.error('This script requires "sharp". Install with: npm install --save-dev sharp');
-    console.error('Alternatively generate WebP manually:');
-    console.error('  cwebp -q 80 vids/how-to-talk-about-your-business.jpg -o vids/how-to-talk-about-your-business.webp');
+    process.exit(1);
+  }
+
+  const inputPath = findInput();
+  if (!inputPath) {
+    console.error('Input not found: ' + BASE + '.jpg or .png in vids/');
     process.exit(1);
   }
 
   const stat = fs.statSync(inputPath);
-  console.log('Input PNG size:', (stat.size / 1024).toFixed(1), 'KB');
+  console.log('Input:', inputPath, (stat.size / 1024).toFixed(1), 'KB');
 
-  await sharp(inputPath)
-    .webp({ quality: 82 })
-    .toFile(outputPath);
+  const pipeline = sharp(inputPath)
+    .resize(WIDTH, HEIGHT, { fit: 'inside', withoutEnlargement: true });
 
-  const outStat = fs.statSync(outputPath);
-  console.log('Output WebP size:', (outStat.size / 1024).toFixed(1), 'KB');
-  console.log('Saved:', outputPath);
+  const webpPath = path.join(VIDS_DIR, BASE + '.webp');
+  const jpgPath = path.join(VIDS_DIR, BASE + '.jpg');
+  const jpgTmp = path.join(VIDS_DIR, BASE + '.tmp.jpg');
+
+  await pipeline
+    .clone()
+    .webp({ quality: WEBP_QUALITY })
+    .toFile(webpPath);
+  console.log('WebP:', (fs.statSync(webpPath).size / 1024).toFixed(1), 'KB', webpPath);
+
+  await pipeline
+    .clone()
+    .jpeg({ quality: JPEG_QUALITY })
+    .toFile(jpgPath === inputPath ? jpgTmp : jpgPath);
+  if (jpgPath === inputPath) {
+    fs.renameSync(jpgTmp, jpgPath);
+  }
+  console.log('JPEG:', (fs.statSync(jpgPath).size / 1024).toFixed(1), 'KB', jpgPath);
 }
 
 run().catch((err) => {

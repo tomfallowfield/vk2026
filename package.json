@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "optimize-thumbs": "node scripts/optimize-vid-thumbs.js",
+    "optimize-creed": "node scripts/optimize-creed-img.js",
     "optimize-li-faces": "node scripts/optimize-li-faces.js",
     "digest": "node scripts/daily-digest.js",
     "digest:send": "node scripts/daily-digest.js yesterday --send"
