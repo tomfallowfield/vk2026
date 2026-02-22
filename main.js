@@ -910,6 +910,7 @@ function hideBookCallCalendarView() {
 function openAppModal(panelId, opts) {
   if (!appModal || !appModalPanels) return;
   opts = opts || {};
+  appModal.setAttribute('aria-hidden', 'false');
   appModalPanels.forEach(panel => resetPanelForm(panel));
   hideBookCallCalendarView();
 
@@ -918,7 +919,6 @@ function openAppModal(panelId, opts) {
 
   lastAppModalTrigger = document.activeElement;
   appModal.classList.add('active');
-  appModal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
 
   appModalPanels.forEach(panel => {
@@ -953,7 +953,9 @@ function openAppModal(panelId, opts) {
     ? (activePanel.querySelector(FOCUSABLE_SELECTOR) || appModalCloseBtn)
     : appModalCloseBtn;
   if (firstFocusable) {
-    setTimeout(() => firstFocusable.focus(), 50);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => firstFocusable.focus());
+    });
   }
 }
 
@@ -1116,40 +1118,66 @@ function getAutodialogPanelId() {
   if (!VALID_MODAL_IDS.has(form)) return null;
   if (form === 'website-review' && !settings.wrv_offer) return null;
   if (form === 'book-call' && !settings.book_call_offer) return null;
-  if (getEnabledLeadMagnetIds().indexOf(form) === -1) return null;
+  var leadMagnetIds = ['lead-50things', 'lead-offboarding', 'lead-socialproof'];
+  if (leadMagnetIds.indexOf(form) !== -1 && getEnabledLeadMagnetIds().indexOf(form) === -1) return null;
   return form;
 }
 
 // Trigger: exit intent (mouse leaving top of viewport, desktop only)
-if (getSettings().autodialog_to_be_shown_on_exit_intent) {
-  document.addEventListener('mouseout', e => {
-    if (isTouchDevice()) return;
-    if (e.relatedTarget) return;
-    if (e.clientY > 10) return;
-    if (sessionStorage.getItem('appModalAutodialogShown')) return;
-    const panelId = getAutodialogPanelId();
+(function () {
+  var s = getSettings();
+  if (!s.autodialog_to_be_shown_on_exit_intent) return;
+  document.addEventListener('mouseout', function (e) {
+    var touch = isTouchDevice();
+    var rel = e.relatedTarget;
+    var y = e.clientY;
+    var sessionSet = !!sessionStorage.getItem('appModalAutodialogShown');
+    var panelId = getAutodialogPanelId();
+    // Log when mouse leaves document (candidate for exit intent) and in top ~50px
+    if (!rel && y <= 50) {
+      console.log('[autodialog] exit intent candidate', {
+        clientY: y,
+        relatedTarget: !!rel,
+        touch: touch,
+        sessionSet: sessionSet,
+        panelId: panelId,
+        blockedBy: touch ? 'touch' : y > 10 ? 'clientY>10' : sessionSet ? 'sessionSet' : !panelId ? 'panelId' : 'wouldOpen'
+      });
+    }
+    if (touch) return;
+    if (rel) return;
+    if (y > 10) return;
+    if (sessionSet) return;
     if (!panelId) return;
     sessionStorage.setItem('appModalAutodialogShown', '1');
     lastModalTriggerType = 'exit_intent';
+    console.log('[autodialog] opening modal via exit_intent');
     openAppModal(panelId);
   });
-}
+})();
 
 // Trigger: after N seconds of inactivity
 (function () {
   const settings = getSettings();
   const seconds = settings.autodialog_to_be_shown_after_delay_s;
-  if (seconds <= 0) return;
   const panelId = getAutodialogPanelId();
+  console.log('[autodialog] delay init', { seconds: seconds, panelId: panelId, exitIntentOn: settings.autodialog_to_be_shown_on_exit_intent });
+  if (seconds <= 0) return;
   if (!panelId) return;
 
   let inactivityTimer = null;
   function schedule() {
     if (inactivityTimer) clearTimeout(inactivityTimer);
     inactivityTimer = setTimeout(function () {
-      if (sessionStorage.getItem('appModalAutodialogShown')) return;
+      var sessionSet = !!sessionStorage.getItem('appModalAutodialogShown');
+      console.log('[autodialog] delay timeout fired', { sessionSet: sessionSet });
+      if (sessionSet) {
+        console.log('[autodialog] delay skipped (modal already shown this session)');
+        return;
+      }
       sessionStorage.setItem('appModalAutodialogShown', '1');
       lastModalTriggerType = 'inactivity';
+      console.log('[autodialog] opening modal via inactivity');
       openAppModal(panelId);
     }, seconds * 1000);
   }

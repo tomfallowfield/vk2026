@@ -3234,22 +3234,46 @@
     /* Zebra stripes: alternate muted / white / rainbow between sections */
     .section-muted { background: #f7f3ea; }
     section#rescue { background: #fff; }
-    section#pricing {
+    /* Light mode: white/gold pattern, dark heading text */
+    html:not(.dark-mode) section#pricing {
+      background-color: #fffef7;
+      background-image: url('images/pricing-pattern-light.svg');
+      background-size: 150px 150px;
+      background-repeat: repeat;
+      color: #1a1a1a;
+    }
+    html:not(.dark-mode) section#pricing .container > .eyebrow,
+    html:not(.dark-mode) section#pricing .container > h2,
+    html:not(.dark-mode) section#pricing .container > .subhead {
+      color: #1a1a1a;
+    }
+    html:not(.dark-mode) section#pricing .container > .eyebrow {
+      background: linear-gradient(135deg, #f0efed 0%, #e5e4e2 100%);
+      border-color: #d4d2cf;
+      box-shadow: 0 2px 14px rgba(0, 0, 0, 0.08);
+    }
+    html:not(.dark-mode) section#pricing:hover .container > .eyebrow {
+      background: linear-gradient(135deg, #f9f8f5 0%, #f4f3ef 100%);
+      color: #111;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+    /* Dark mode: dark bg, white text */
+    html.dark-mode section#pricing {
       background: #141414 url('images/pricing-pattern.svg') repeat;
       background-size: 60px 36.043px;
       color: rgba(255, 255, 255, 0.92);
     }
-    section#pricing .container > .eyebrow,
-    section#pricing .container > h2,
-    section#pricing .container > .subhead {
+    html.dark-mode section#pricing .container > .eyebrow,
+    html.dark-mode section#pricing .container > h2,
+    html.dark-mode section#pricing .container > .subhead {
       color: #fff;
     }
-    section#pricing .container > .eyebrow {
+    html.dark-mode section#pricing .container > .eyebrow {
       background: rgba(255, 255, 255, 0.15);
       border-color: rgba(255, 255, 255, 0.25);
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
     }
-    section#pricing:hover .container > .eyebrow {
+    html.dark-mode section#pricing:hover .container > .eyebrow {
       background: rgba(255, 255, 255, 0.22);
       color: #fff;
       box-shadow: 0 2px 16px rgba(0, 0, 0, 0.28);
