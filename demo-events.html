@@ -94,7 +94,8 @@
     .event-type.form_open,
     .event-type.form_submit { background: #1f6feb; color: #fff; }
     .event-type.faq_open,
-    .event-type.scope_open { background: #8957e5; color: #fff; }
+    .event-type.scope_open,
+    .event-type.expander_open { background: #8957e5; color: #fff; }
     .event-type.modal_close,
     .event-type.video_modal_close { background: #9e6a03; color: #fff; }
     .event-type.menu_open,
@@ -237,6 +238,7 @@
     <label class="filter"><input type="checkbox" name="filter" value="form" checked> Form</label>
     <label class="filter"><input type="checkbox" name="filter" value="faq" checked> FAQ open</label>
     <label class="filter"><input type="checkbox" name="filter" value="scope" checked> Scope open</label>
+    <label class="filter"><input type="checkbox" name="filter" value="expander" checked> Expander open</label>
     <label class="filter"><input type="checkbox" name="filter" value="time_on_site" checked> Time on site</label>
     <label class="filter"><input type="checkbox" name="filter" value="click" checked> Clicks</label>
     <label class="filter"><input type="checkbox" name="filter" value="modal" checked> Modal close</label>
@@ -294,6 +296,7 @@
         form: ['form_open', 'form_submit'],
         faq: ['faq_open'],
         scope: ['scope_open'],
+        expander: ['expander_open'],
         time_on_site: ['time_on_site'],
         click: ['click'],
         modal: ['modal_close', 'video_modal_close'],
@@ -430,6 +433,7 @@
         if (meta.modal_panel) parts.push('modal: ' + meta.modal_panel);
         if (meta.faq_question) parts.push('FAQ: ' + (meta.faq_question.length > 40 ? meta.faq_question.slice(0, 40) + '…' : meta.faq_question));
         if (meta.scope_item_label || meta.scope_item_id) parts.push('scope: ' + (meta.scope_item_label || meta.scope_item_id));
+        if (meta.section) parts.push(meta.section + (meta.index != null ? ' #' + meta.index : ''));
         if (meta.trigger) parts.push(meta.trigger);
         if (meta.to) parts.push('→ ' + meta.to);
         if (meta.star_name) parts.push('star: ' + meta.star_name);

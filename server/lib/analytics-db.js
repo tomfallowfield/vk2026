@@ -11,6 +11,7 @@ const ALLOWED_EVENT_TYPES = new Set([
   'form_submit',
   'faq_open',
   'scope_open',
+  'expander_open',
   'easter_egg_star',
   'tc_open',
   'privacy_open',

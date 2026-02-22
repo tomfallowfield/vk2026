@@ -16,7 +16,7 @@
     autodialog_to_be_shown_after_delay_s: 30,
 
     // --- Environment ---
-    site_env: 'temp',
+    site_env: 'prod',
 
     // --- API ---
     // Override API base URL (e.g. per environment). If set, used instead of default /vk2026/api.

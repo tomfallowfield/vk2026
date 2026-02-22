@@ -1,0 +1,6 @@
+{"sessionId":"4d6245","location":"main.js:delay_init","message":"delay IIFE init","data":{"seconds":30,"panelId":null},"timestamp":1771611999587,"hypothesisId":"H4-H5"}
+{"sessionId":"4d6245","location":"main.js:exit_intent","message":"exit intent candidate","data":{"clientY":-81,"relatedTarget":false,"touch":false,"sessionSet":false,"panelId":null},"timestamp":1771612001418,"hypothesisId":"H1-H2"}
+{"sessionId":"4d6245","location":"main.js:exit_intent","message":"exit intent candidate","data":{"clientY":-8,"relatedTarget":false,"touch":false,"sessionSet":false,"panelId":null},"timestamp":1771612002071,"hypothesisId":"H1-H2"}
+{"sessionId":"4d6245","location":"main.js:exit_intent","message":"exit intent candidate","data":{"clientY":-41,"relatedTarget":false,"touch":false,"sessionSet":false,"panelId":null},"timestamp":1771612003730,"hypothesisId":"H1-H2"}
+{"sessionId":"4d6245","location":"main.js:exit_intent","message":"exit intent candidate","data":{"clientY":-29,"relatedTarget":false,"touch":false,"sessionSet":false,"panelId":null},"timestamp":1771612004678,"hypothesisId":"H1-H2"}
+{"sessionId":"4d6245","location":"main.js:exit_intent","message":"exit intent candidate","data":{"clientY":-24,"relatedTarget":false,"touch":false,"sessionSet":false,"panelId":null},"timestamp":1771612005808,"hypothesisId":"H1-H2"}

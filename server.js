@@ -27,6 +27,26 @@ app.use(cors({
 app.use(cookieParser());
 app.use(express.json({ limit: '100kb' }));
 
+// Optional: password-protect event viewer (Node alternative to .htaccess). Uses DEMO_VIEW_KEY as the Basic Auth password.
+(function () {
+  const viewKey = (process.env.DEMO_VIEW_KEY || '').trim();
+  if (!viewKey) return;
+  app.use(function demoEventsAuth(req, res, next) {
+    const p = req.path;
+    if (p !== '/demo-events.html' && p !== '/vk2026/demo-events.html') return next();
+    const auth = req.headers.authorization;
+    if (auth && auth.startsWith('Basic ')) {
+      try {
+        const decoded = Buffer.from(auth.slice(6), 'base64').toString('utf8');
+        const pass = decoded.includes(':') ? decoded.replace(/^[^:]*:/, '') : decoded;
+        if (pass === viewKey) return next();
+      } catch (_) {}
+    }
+    res.set('WWW-Authenticate', 'Basic realm="Event viewer"');
+    res.status(401).send('Unauthorized');
+  });
+})();
+
 app.use('/', express.static(path.join(__dirname), { index: 'index.html' }));
 // Serve same static files under /vk2026 so /vk2026/demo-events.html and /vk2026/ work
 app.use('/vk2026', express.static(path.join(__dirname), { index: 'index.html' }));

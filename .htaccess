@@ -1,4 +1,12 @@
 # Password-protect the event viewer only (Apache).
+# This works when Apache serves the document root directly. If you use a reverse proxy to Node,
+# .htaccess is not applied to proxied requests: put the protection in the Apache vhost instead, e.g.:
+#   <Location "/demo-events.html">
+#     AuthType Basic
+#     AuthName "Event viewer"
+#     AuthUserFile /var/www/vanillakiller.com/public_html/.htpasswd
+#     Require valid-user
+#   </Location>
 # Create .htpasswd in this directory, e.g.:
 #   htpasswd -c .htpasswd your_username
 # Then set AuthUserFile below to the absolute path to .htpasswd (this path is for production at vanillakiller.com).
