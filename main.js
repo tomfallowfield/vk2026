@@ -615,18 +615,12 @@ const modal = document.getElementById('videoModal');
 const video = document.getElementById('modalVideo');
 const closeBtn = modal.querySelector('.video-close');
 
-// Load clouds.jpg for how-it-feels section after hero video has loaded; bg fades in on section hover (CSS)
+// Load clouds.jpg when how-it-feels section is near viewport (or after 2s). Does not preload the video (~50MB).
 (function () {
-  var heroVideoSrc = 'vids/how-to-talk-about-your-business.mp4';
   var cloudsUrl = 'images/clouds.jpg';
   var bgEl = document.getElementById('how-it-feels-bg');
   if (!bgEl) return;
-  var preloadVideo = document.createElement('video');
-  preloadVideo.preload = 'auto';
-  preloadVideo.src = heroVideoSrc;
-  function onVideoReady() {
-    preloadVideo.removeEventListener('canplaythrough', onVideoReady);
-    preloadVideo.removeEventListener('error', onVideoError);
+  function showClouds() {
     var img = new Image();
     img.onload = function () {
       bgEl.style.backgroundImage = 'url(' + cloudsUrl + ')';
@@ -634,19 +628,22 @@ const closeBtn = modal.querySelector('.video-close');
     img.onerror = function () { /* clouds.jpg missing or failed */ };
     img.src = cloudsUrl;
   }
-  function onVideoError() {
-    preloadVideo.removeEventListener('canplaythrough', onVideoReady);
-    preloadVideo.removeEventListener('error', onVideoError);
-    var img = new Image();
-    img.onload = function () {
-      bgEl.style.backgroundImage = 'url(' + cloudsUrl + ')';
-    };
-    img.onerror = function () {};
-    img.src = cloudsUrl;
+  var done = false;
+  function maybeShowClouds() {
+    if (done) return;
+    done = true;
+    showClouds();
   }
-  preloadVideo.addEventListener('canplaythrough', onVideoReady);
-  preloadVideo.addEventListener('error', onVideoError);
-  preloadVideo.load();
+  setTimeout(maybeShowClouds, 2000);
+  if (typeof IntersectionObserver !== 'undefined') {
+    var obs = new IntersectionObserver(
+      function (entries) {
+        if (entries[0].isIntersecting) maybeShowClouds();
+      },
+      { rootMargin: '100px', threshold: 0 }
+    );
+    obs.observe(bgEl);
+  }
 })();
 
 var videoProgressThrottle = null;
@@ -946,7 +943,7 @@ function openAppModal(panelId, opts) {
   } else if (['book-call', 'website-review', 'lead-50things', 'lead-offboarding', 'lead-socialproof'].indexOf(panelId) !== -1) {
     trackEvent('form_open', { form_id: panelId, trigger: lastModalTriggerType || '' });
     var gtagFormOpen = getFormOpenGtagEvent(panelId);
-    if (gtagFormOpen) sendGtagEvent(gtagFormOpen);
+    if (gtagFormOpen) sendGtagEvent(gtagFormOpen, { trigger: lastModalTriggerType || '' });
   }
 
   const firstFocusable = activePanel
@@ -1151,6 +1148,8 @@ function getAutodialogPanelId() {
     if (!panelId) return;
     sessionStorage.setItem('appModalAutodialogShown', '1');
     lastModalTriggerType = 'exit_intent';
+    trackEvent('autodialog_triggered', { trigger: 'exit_intent', form_id: panelId });
+    sendGtagEvent('autodialog_triggered', { trigger: 'exit_intent', form_id: panelId });
     console.log('[autodialog] opening modal via exit_intent');
     openAppModal(panelId);
   });
@@ -1177,6 +1176,8 @@ function getAutodialogPanelId() {
       }
       sessionStorage.setItem('appModalAutodialogShown', '1');
       lastModalTriggerType = 'inactivity';
+      trackEvent('autodialog_triggered', { trigger: 'inactivity', form_id: panelId });
+      sendGtagEvent('autodialog_triggered', { trigger: 'inactivity', form_id: panelId });
       console.log('[autodialog] opening modal via inactivity');
       openAppModal(panelId);
     }, seconds * 1000);
@@ -1629,9 +1630,9 @@ if (formWebsiteReview) {
     const panel = getActiveAppModalPanel();
     const payload = buildSubmitPayload(this);
     setSubmitButtonLoading(this, true);
-    trackEvent('form_submit', { form_id: this.id || 'form-website-review', has_email: true });
+    trackEvent('form_submit', { form_id: this.id || 'form-website-review', has_email: true, modal_trigger_type: lastModalTriggerType || null });
     var gtagSubmitWrv = getFormSubmitGtagEvent(this.id || 'form-website-review');
-    if (gtagSubmitWrv) sendGtagEvent(gtagSubmitWrv);
+    if (gtagSubmitWrv) sendGtagEvent(gtagSubmitWrv, { modal_trigger_type: lastModalTriggerType || '' });
 
     fetch(window.API_BASE + '/website-review', {
       method: 'POST',
@@ -1666,9 +1667,9 @@ if (formBookCall) {
     const panel = getActiveAppModalPanel();
     const payload = buildSubmitPayload(this);
     setSubmitButtonLoading(this, true);
-    trackEvent('form_submit', { form_id: this.id || 'form-book-call', has_email: true });
+    trackEvent('form_submit', { form_id: this.id || 'form-book-call', has_email: true, modal_trigger_type: lastModalTriggerType || null });
     var gtagSubmitBookCall = getFormSubmitGtagEvent(this.id || 'form-book-call');
-    if (gtagSubmitBookCall) sendGtagEvent(gtagSubmitBookCall);
+    if (gtagSubmitBookCall) sendGtagEvent(gtagSubmitBookCall, { modal_trigger_type: lastModalTriggerType || '' });
 
     fetch(window.API_BASE + '/book-a-call', {
       method: 'POST',
@@ -1733,9 +1734,9 @@ getEnabledLeadMagnetIds().forEach(function (id) {
     payload.source = this.getAttribute('data-source') || id;
     payload.mailchimp_tag = mailchimpTag;
     setSubmitButtonLoading(this, true);
-    trackEvent('form_submit', { form_id: this.id || ('form-' + id), has_email: true });
+    trackEvent('form_submit', { form_id: this.id || ('form-' + id), has_email: true, modal_trigger_type: lastModalTriggerType || null });
     var gtagSubmitLm = getFormSubmitGtagEvent(this.id || ('form-' + id));
-    if (gtagSubmitLm) sendGtagEvent(gtagSubmitLm);
+    if (gtagSubmitLm) sendGtagEvent(gtagSubmitLm, { modal_trigger_type: lastModalTriggerType || '' });
 
     fetch(window.API_BASE + '/lead', {
       method: 'POST',

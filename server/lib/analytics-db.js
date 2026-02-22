@@ -7,6 +7,7 @@ const ALLOWED_EVENT_TYPES = new Set([
   'video_pause',
   'video_ended',
   'video_progress',
+  'autodialog_triggered',
   'form_open',
   'form_submit',
   'faq_open',

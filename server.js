@@ -47,9 +47,24 @@ app.use(express.json({ limit: '100kb' }));
   });
 })();
 
-app.use('/', express.static(path.join(__dirname), { index: 'index.html' }));
+// Static files with cache headers: short for HTML (so deploys show quickly), long for assets and video
+const staticOpts = {
+  index: 'index.html',
+  setHeaders: (res, filePath) => {
+    const p = path.relative(path.join(__dirname), filePath);
+    if (p === 'index.html' || p === 'demo-events.html') {
+      res.set('Cache-Control', 'public, max-age=0, must-revalidate');
+    } else if (/\.(css|js|svg|woff2?)$/i.test(p)) {
+      // 1 week; use longer + immutable if you add cache-busting (e.g. styles.css?v=2)
+      res.set('Cache-Control', 'public, max-age=604800');
+    } else if (/\.(mp4|webm|jpg|jpeg|png|gif|webp|ico)$/i.test(p)) {
+      res.set('Cache-Control', 'public, max-age=2592000, immutable');
+    }
+  }
+};
+app.use('/', express.static(path.join(__dirname), staticOpts));
 // Serve same static files under /vk2026 so /vk2026/demo-events.html and /vk2026/ work
-app.use('/vk2026', express.static(path.join(__dirname), { index: 'index.html' }));
+app.use('/vk2026', express.static(path.join(__dirname), staticOpts));
 
 const limiter = rateLimit({
   windowMs: 60 * 1000,
