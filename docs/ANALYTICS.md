@@ -65,6 +65,53 @@ The report uses [server/lib/analytics-queries.js](../server/lib/analytics-querie
 
 Raw SQL patterns (for ad-hoc use or different tools) are in [server/db/analytics-queries.sql](../server/db/analytics-queries.sql).
 
+## Daily digest
+
+A **midnight–midnight** daily digest includes: unique visitors, avg time on site, bounce rate, overall conversions & CVR%, WRV count & CVR%, contact form submissions & CVR%, lead magnet downloads & CVR%. Google meeting bookings are planned (integration TBD).
+
+### CLI (table output)
+
+Requires MySQL configured. From the project root:
+
+```bash
+# Today so far (midnight → now)
+npm run digest
+# or
+node scripts/daily-digest.js
+
+# Full day yesterday
+node scripts/daily-digest.js yesterday
+
+# Specific date
+node scripts/daily-digest.js 2025-02-21
+
+# Send to Slack + email + Notion (yesterday's full day)
+npm run digest:send
+# or
+node scripts/daily-digest.js yesterday --send
+
+# Raw JSON
+node scripts/daily-digest.js yesterday --json
+```
+
+### Sending (Slack, email, Notion)
+
+Use `--send` (or `-s`) to post the digest to all configured channels:
+
+- **Slack**: set `SLACK_WEBHOOK_URL` (incoming webhook).
+- **Email**: set `NOTIFICATION_EMAIL_TO` and SMTP (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`).
+- **Notion**: create a database with properties **Name** (title), **Date** (date), **Summary** (rich text), then set `NOTION_DAILY_DIGEST_DATABASE_ID` and `NOTION_TOKEN`. Each run adds one row.
+
+To run the digest every day (e.g. 00:05 UTC), add a cron job:
+
+```bash
+5 0 * * * cd /path/to/vk2026 && node scripts/daily-digest.js yesterday --send
+```
+
+### Google meeting bookings
+
+Count of "book a call" / Google Meet bookings from the site is not yet available; integration is planned. The digest shows "— (integration TBD)" for that metric until implemented.
+
 ## Decisions
 
 - **Bounce**: We use a single definition (one event in period OR max time_on_site &lt; 30s). Document any change if you adjust it.

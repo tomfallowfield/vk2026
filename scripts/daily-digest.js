@@ -84,10 +84,11 @@ function tableRow(label, value) {
 }
 
 function formatTable(digest) {
+  const lines = [];
   if (digest.error) {
-    return 'Error: ' + digest.error;
+    lines.push('  Error: ' + digest.error, '');
   }
-  const lines = [
+  lines.push(
     '',
     '  Daily digest · ' + (digest.date || '—') + '  ' + (digest.period && digest.period.start ? '(' + digest.period.start + ' → ' + digest.period.end + ')' : ''),
     '  ' + '—'.repeat(58),
@@ -107,7 +108,7 @@ function formatTable(digest) {
     tableRow('Lead magnet CVR', digest.lead_magnet_cvr_pct != null ? digest.lead_magnet_cvr_pct + '%' : null),
     '  ' + '—'.repeat(58),
     ''
-  ];
+  );
   return lines.join('\n');
 }
 
