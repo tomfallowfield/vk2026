@@ -4,22 +4,31 @@ overview: Design and implementation plan for a portable analytics and conversion
 todos:
   - id: db-and-config
     content: Create MySQL schema (sites, visitors, sessions, events, daily_aggregates) and add config/env
+    status: pending
   - id: api-events
     content: Implement POST /analytics/events and GET /analytics/tracker.js
+    status: pending
   - id: tracker-script
     content: Build and minify tracker JS (identity, queue, events, batching) and loader vk-analytics.js
+    status: pending
   - id: wire-vk-site
     content: Add script tag to index.html and emit form/cookie events from main.js
+    status: pending
   - id: daily-aggregation
     content: Script analytics-daily.js to compute daily_aggregates per site/date
+    status: pending
   - id: digest-email
     content: Digest email template and Nodemailer send in daily job
+    status: pending
   - id: notion-daily
     content: Create Notion Analytics Daily database and push one row per site/date
+    status: pending
   - id: cron-setup
     content: Cron at 00:05 UK to run analytics-daily.js
+    status: pending
   - id: testing-docs
     content: Manual testing and ANALYTICS.md / README updates
+    status: pending
 isProject: false
 ---
 
@@ -50,6 +59,8 @@ flowchart TB
   end
 ```
 
+
+
 - **Client**: One script tag loads `vk-analytics.js` (loader). Loader fetches the latest tracker script from your server, injects it, and passes `data-site-id`. Tracker generates session/visitor IDs, attaches listeners (click, scroll, form open/submit, video, cookie banner), batches events, and POSTs to your API.
 - **Server**: Express route receives event batches, validates `site_id`, writes to MySQL. Daily job at 00:05 UK aggregates by UK calendar day, sends digest email, and creates one row per site per day in a dedicated Notion database.
 
@@ -62,7 +73,7 @@ Existing pieces: [server.js](server.js), [server/config.js](server/config.js), [
 - **DB**: MySQL 8 (as requested).
 - **Server**: Existing Node + Express; add analytics routes and static route for tracker.
 - **Tracker**: Vanilla JS, single file, minified to under ~30kb.
-- **Scheduler**: cron at 00:05 UK (`5 0 * * *` with `TZ=Europe/London`).
+- **Scheduler**: cron at 00:05 UK (`5 0 * * `* with `TZ=Europe/London`).
 - **Email**: Nodemailer + SMTP (existing or SendGrid/SES).
 - **Notion**: Existing `@notionhq/client`; new database "VK Analytics Daily" for summary rows.
 
@@ -149,3 +160,4 @@ No dashboard in Phase 1.
 6. **Batch vs real-time**: Batch client-side (30s or 20 events or beforeunload); server writes events immediately.
 7. **Abuse**: Rate limit, validate site_id, cap events per session/minute.
 8. **Scale (10+ clients)**: Single DB with site_id indexes; aggregation is per-site; add read replica or shard later if needed.
+

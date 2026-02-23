@@ -202,6 +202,24 @@ async function writeEvents(events, visitor_id, requestContext) {
 }
 
 /**
+ * Record a form_submit event server-side (e.g. when form is submitted via API).
+ * Use this so the daily digest counts conversions even when the client didn't send the event (e.g. cookie declined).
+ * @param {string} visitor_id
+ * @param {string} form_id - e.g. 'form-book-call', 'form-website-review', 'form-lead-50things'
+ * @param {{ userAgent?: string, ip?: string }} [requestContext] - optional
+ * @returns {Promise<number>} 1 if written, 0 otherwise
+ */
+async function recordFormSubmit(visitor_id, form_id, requestContext) {
+  if (!visitor_id || !form_id) return 0;
+  const event = {
+    event_type: 'form_submit',
+    timestamp: new Date().toISOString(),
+    metadata: { form_id: String(form_id).trim(), has_email: true }
+  };
+  return writeEvents([event], visitor_id, requestContext);
+}
+
+/**
  * Enrich visitor with email/name.
  * @param {string} visitor_id
  * @param {object} data - { email, name }
@@ -300,6 +318,21 @@ async function getRecentEvents(limit) {
 }
 
 /**
+ * Check if a visitor_id already exists (so we can detect "new" visitors before writing events).
+ * @param {string} visitor_id
+ * @returns {Promise<boolean>}
+ */
+async function visitorExists(visitor_id) {
+  const p = getPool();
+  if (!p || !visitor_id) return false;
+  const [rows] = await p.execute(
+    'SELECT 1 FROM visitors WHERE visitor_id = ? LIMIT 1',
+    [truncate(visitor_id, 64)]
+  );
+  return Array.isArray(rows) && rows.length > 0;
+}
+
+/**
  * Get visitor email, name, and return_visit_notified_at for return-visit notification check.
  * @param {string} visitor_id
  * @returns {Promise<{ email: string, name: string, return_visit_notified_at: Date|null }|null>}
@@ -350,9 +383,11 @@ module.exports = {
   isConfigured,
   isValidEventType,
   writeEvents,
+  recordFormSubmit,
   enrichVisitor,
   getRecentEvents,
   deleteEvents,
+  visitorExists,
   getVisitorForReturnCheck,
   setReturnVisitNotified,
   executeQuery,

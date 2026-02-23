@@ -28,6 +28,8 @@ Referrer and UTM are stored on both tables. **visitors** holds first-touch (firs
 | **Time on site** | From `event_type = 'time_on_site'`; `metadata.seconds`. Per-visitor max seconds in period; report as average or percentiles. |
 | **Bounce rate** | **Bounce** = visitor has exactly one event in period OR max `time_on_site` seconds &lt; 30. Bounce rate = bounces / total visitors. |
 
+Form submissions are recorded **server-side** when a form is submitted via the API (book-a-call, website-review, lead), so the digest counts conversions even when the client didn’t send an analytics event (e.g. cookie declined).
+
 ## Running the report
 
 Requires MySQL configured (`DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` in `.env`).
@@ -64,6 +66,38 @@ The report uses [server/lib/analytics-queries.js](../server/lib/analytics-querie
 - `runReport(start, end, { groupBy })` – runs all of the above.
 
 Raw SQL patterns (for ad-hoc use or different tools) are in [server/db/analytics-queries.sql](../server/db/analytics-queries.sql).
+
+## Demo events viewer & new-visitor Slack
+
+### Protecting the demo-events page (secret key)
+
+To restrict the event viewer so only you can open it:
+
+1. **Set a secret in `.env`:**
+   ```bash
+   DEMO_VIEW_KEY=your-secret-string
+   ```
+   Use a long random string (e.g. from a password manager).
+
+2. **What this does:**
+   - **Page:** Opening `https://yoursite.com/demo-events.html` (or `/vk2026/demo-events.html`) will prompt for **HTTP Basic Auth**. Use any username and your `DEMO_VIEW_KEY` as the password.
+   - **API:** `GET /api/analytics/events` and `POST /api/analytics/events/delete` require `?view_key=your-secret-string` in the URL. The demo-events page appends this from the current URL when you open it with `?view_key=...`.
+
+3. **How to open the viewer:**  
+   Use a bookmarked URL that includes the key so you don’t type it each time:
+   - Production: `https://vanillakiller.com/demo-events.html?view_key=YOUR_SECRET`
+   - You’ll still get one Basic Auth prompt (same password: `DEMO_VIEW_KEY`). After that, the page will pass `view_key` to the API automatically.
+
+### New-visitor Slack notifications
+
+When a **new** visitor lands (first event batch for that `visitor_id`), the server sends a Slack message like:
+
+**Chrome/Mac nr Leeds from LinkedIn** ← link to demo-events filtered to that visitor
+
+- **Browser/device** and **location** come from User-Agent and IP (geoip-lite). **Source** is UTM (e.g. LinkedIn) or “direct”.
+- The message is a link: clicking it opens the demo-events page with that visitor’s ID in the “Email or visitor” filter, so you see only their events.
+
+Requires `SLACK_WEBHOOK_URL` in `.env`. The link includes `view_key` when `DEMO_VIEW_KEY` is set, so the URL works when the viewer is protected.
 
 ## Daily digest
 

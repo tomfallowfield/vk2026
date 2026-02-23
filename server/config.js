@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+// Production = vanillakiller.com/ (root). Dev/staging = /vk2026/.
 const SITE_BASE_URL = process.env.SITE_BASE_URL || 'http://localhost:3000/vk2026';
 const PORT = parseInt(process.env.PORT || '3000', 10);
 

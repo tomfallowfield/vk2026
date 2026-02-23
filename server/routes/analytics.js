@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { writeEvents, enrichVisitor, getRecentEvents, deleteEvents, isConfigured, isValidEventType } = require('../lib/analytics-db');
+const { writeEvents, enrichVisitor, getRecentEvents, deleteEvents, isConfigured, isValidEventType, visitorExists } = require('../lib/analytics-db');
 const { logEvents } = require('../lib/analytics-logger');
 const { maybeNotifyReturnVisit } = require('../lib/return-visit-notify');
+const { notifyNewVisitor } = require('../lib/new-visitor-notify');
+const { getVisitorContext } = require('../lib/visitor-context');
+const config = require('../config');
 
 const MAX_EVENTS_PER_REQUEST = 20;
 
@@ -71,7 +74,21 @@ router.post('/events', async (req, res) => {
 
   try {
     const requestContext = { userAgent: req.get('user-agent'), ip: req.ip };
+    const wasNewVisitor = isConfigured() ? !(await visitorExists(visitor_id)) : false;
     await writeEvents(valid, visitor_id, requestContext);
+    if (wasNewVisitor && config.SLACK_WEBHOOK_URL) {
+      const ctx = getVisitorContext(requestContext);
+      const first = valid[0];
+      const utmSource = (first && first.utm_source && String(first.utm_source).trim()) ? first.utm_source : null;
+      void notifyNewVisitor({
+        visitor_id,
+        browser_display: ctx.browser_display,
+        location_display: ctx.location_display,
+        utm_source: utmSource,
+        baseUrl: config.SITE_BASE_URL,
+        viewKey: process.env.DEMO_VIEW_KEY || ''
+      });
+    }
   } catch (err) {
     console.error('Analytics writeEvents:', err.message);
     // Still log to file on DB error

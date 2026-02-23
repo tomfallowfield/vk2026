@@ -282,6 +282,7 @@
       var API = (pathPrefix ? pathPrefix + '/' : '/') + 'api/analytics/events';
       var params = new URLSearchParams(window.location.search);
       var viewKey = params.get('view_key');
+      var visitorFromUrl = params.get('visitor');
       if (viewKey) API += '?view_key=' + encodeURIComponent(viewKey);
       var liveCheck = document.getElementById('live');
       var tbody = document.getElementById('body');
@@ -503,6 +504,10 @@
           })
           .then(function (events) {
             allEvents = Array.isArray(events) ? events : [];
+            if (visitorFromUrl) {
+              var searchEl = document.getElementById('visitorSearch');
+              if (searchEl) { searchEl.value = visitorFromUrl; }
+            }
             updateUserFilterDropdown();
             render(allEvents);
           })

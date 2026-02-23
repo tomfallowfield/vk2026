@@ -1130,17 +1130,6 @@ function getAutodialogPanelId() {
     var y = e.clientY;
     var sessionSet = !!sessionStorage.getItem('appModalAutodialogShown');
     var panelId = getAutodialogPanelId();
-    // Log when mouse leaves document (candidate for exit intent) and in top ~50px
-    if (!rel && y <= 50) {
-      console.log('[autodialog] exit intent candidate', {
-        clientY: y,
-        relatedTarget: !!rel,
-        touch: touch,
-        sessionSet: sessionSet,
-        panelId: panelId,
-        blockedBy: touch ? 'touch' : y > 10 ? 'clientY>10' : sessionSet ? 'sessionSet' : !panelId ? 'panelId' : 'wouldOpen'
-      });
-    }
     if (touch) return;
     if (rel) return;
     if (y > 10) return;
@@ -1150,7 +1139,6 @@ function getAutodialogPanelId() {
     lastModalTriggerType = 'exit_intent';
     trackEvent('autodialog_triggered', { trigger: 'exit_intent', form_id: panelId });
     sendGtagEvent('autodialog_triggered', { trigger: 'exit_intent', form_id: panelId });
-    console.log('[autodialog] opening modal via exit_intent');
     openAppModal(panelId);
   });
 })();
@@ -1160,7 +1148,6 @@ function getAutodialogPanelId() {
   const settings = getSettings();
   const seconds = settings.autodialog_to_be_shown_after_delay_s;
   const panelId = getAutodialogPanelId();
-  console.log('[autodialog] delay init', { seconds: seconds, panelId: panelId, exitIntentOn: settings.autodialog_to_be_shown_on_exit_intent });
   if (seconds <= 0) return;
   if (!panelId) return;
 
@@ -1169,16 +1156,11 @@ function getAutodialogPanelId() {
     if (inactivityTimer) clearTimeout(inactivityTimer);
     inactivityTimer = setTimeout(function () {
       var sessionSet = !!sessionStorage.getItem('appModalAutodialogShown');
-      console.log('[autodialog] delay timeout fired', { sessionSet: sessionSet });
-      if (sessionSet) {
-        console.log('[autodialog] delay skipped (modal already shown this session)');
-        return;
-      }
+      if (sessionSet) return;
       sessionStorage.setItem('appModalAutodialogShown', '1');
       lastModalTriggerType = 'inactivity';
       trackEvent('autodialog_triggered', { trigger: 'inactivity', form_id: panelId });
       sendGtagEvent('autodialog_triggered', { trigger: 'inactivity', form_id: panelId });
-      console.log('[autodialog] opening modal via inactivity');
       openAppModal(panelId);
     }, seconds * 1000);
   }

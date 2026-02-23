@@ -4,7 +4,7 @@ const { logSubmission, logFormSubmissionLine } = require('../lib/logger');
 const { validateBookACall, validateWebsiteReview, validateLead } = require('../lib/validate');
 const { addOrUpdateContact } = require('../lib/mailchimp');
 const { createOrUpdateVkCrmPage } = require('../lib/notion-vkcrm');
-const { enrichVisitor, isConfigured: isAnalyticsConfigured } = require('../lib/analytics-db');
+const { enrichVisitor, recordFormSubmit, isConfigured: isAnalyticsConfigured } = require('../lib/analytics-db');
 const { sendSlackMessage } = require('../lib/slack');
 const config = require('../config');
 
@@ -95,8 +95,11 @@ router.post('/book-a-call', async (req, res) => {
   if (!mcResult.success && config.MAILCHIMP_API_KEY) {
     console.error('Mailchimp book-a-call:', mcResult.error);
   }
-  if (isAnalyticsConfigured() && payload._context?.visitor_id && data.email) {
-    enrichVisitor(payload._context.visitor_id, { email: data.email, name: data.name }).catch(() => {});
+  const visitorId = payload._context?.visitor_id;
+  if (isAnalyticsConfigured() && visitorId && data.email) {
+    enrichVisitor(visitorId, { email: data.email, name: data.name }).catch(() => {});
+    const reqCtx = { userAgent: req.get('user-agent'), ip: req.ip };
+    recordFormSubmit(visitorId, payload.form_id || 'form-book-call', reqCtx).catch(() => {});
   }
   const slackLine = ['Book a call', data.name || '(no name)', data.email].filter(Boolean).join(' · ');
   sendSlackMessage('📞 ' + slackLine).catch(() => {});
@@ -154,8 +157,11 @@ router.post('/website-review', async (req, res) => {
     if (!mcResult.success && config.MAILCHIMP_API_KEY) {
       console.error('Mailchimp website-review:', mcResult.error);
     }
-    if (isAnalyticsConfigured() && payload._context?.visitor_id && data.email) {
-      enrichVisitor(payload._context.visitor_id, { email: data.email, name: data.name }).catch(() => {});
+    const visitorId = payload._context?.visitor_id;
+    if (isAnalyticsConfigured() && visitorId && data.email) {
+      enrichVisitor(visitorId, { email: data.email, name: data.name }).catch(() => {});
+      const reqCtx = { userAgent: req.get('user-agent'), ip: req.ip };
+      recordFormSubmit(visitorId, payload.form_id || 'form-website-review', reqCtx).catch(() => {});
     }
     const slackLine = ['Website review', data.name || '(no name)', data.email, data.website].filter(Boolean).join(' · ');
     sendSlackMessage('🔍 ' + slackLine).catch(() => {});
@@ -193,8 +199,12 @@ router.post('/lead', async (req, res) => {
   if (!mcResult.success && config.MAILCHIMP_API_KEY) {
     console.error('Mailchimp lead:', mcResult.error);
   }
-  if (isAnalyticsConfigured() && payload._context?.visitor_id && data.email) {
-    enrichVisitor(payload._context.visitor_id, { email: data.email, name: data.name }).catch(() => {});
+  const visitorId = payload._context?.visitor_id;
+  if (isAnalyticsConfigured() && visitorId && data.email) {
+    enrichVisitor(visitorId, { email: data.email, name: data.name }).catch(() => {});
+    const formId = (payload.form_id && String(payload.form_id).trim()) || ('form-lead-' + (data.source || 'lead'));
+    const reqCtx = { userAgent: req.get('user-agent'), ip: req.ip };
+    recordFormSubmit(visitorId, formId, reqCtx).catch(() => {});
   }
   const slackLine = ['Lead: ' + (data.source || 'lead'), data.email, data.name].filter(Boolean).join(' · ');
   sendSlackMessage('📥 ' + slackLine).catch(() => {});
