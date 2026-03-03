@@ -115,9 +115,18 @@
     }
     /* Dark mode: keep same pricing section as light – dark bg, white text */
     html.dark-mode section#pricing {
-      background: #141414 url('images/pricing-pattern.svg') repeat;
-      background-size: 60px 36.043px;
+      background-color: #141414;
       color: rgba(255, 255, 255, 0.92);
+    }
+    html.dark-mode section#pricing .pricing-pattern-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: url('images/pricing-pattern.svg');
+      background-size: 60px 36.043px;
+      background-repeat: repeat;
+      background-position: center 0;
     }
     html.dark-mode section#pricing .container > .eyebrow,
     html.dark-mode section#pricing .container > h2,
@@ -208,24 +217,22 @@
 
     /* Hero: sky image with semi-transparent black overlay */
     html.dark-mode .hero {
-      background-color: #142840;
-      background-image:
-        linear-gradient(to bottom, rgba(0,0,0,var(--dark-sky-overlay)), rgba(0,0,0,var(--dark-sky-overlay))),
-        url('images/clouds.jpg');
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
+      background-color: transparent;
     }
 
-    /* Body bg = clouds with same overlay so overscroll matches */
-    html.dark-mode body {
+    /* Parallax sky in dark mode (clouds + overlay); clouds scaled very tall so repeat seam is far below */
+    html.dark-mode .parallax-sky {
       background-color: #142840;
       background-image:
         linear-gradient(to bottom, rgba(0,0,0,var(--dark-sky-overlay)), rgba(0,0,0,var(--dark-sky-overlay))),
         url('images/clouds.jpg');
-      background-position: center top;
-      background-size: cover;
-      background-repeat: no-repeat;
+      background-position: center top, center top;
+      background-size: cover, 100% 800%;
+      background-repeat: no-repeat, repeat-y;
+    }
+
+    html.dark-mode body {
+      background-color: #142840;
     }
 
     /* Hero eyebrow: dark bg, white text */
@@ -284,13 +291,7 @@
     }
     /* Feels + testimonial block: always same sky as hero (dark overlay + clouds), white text */
     html.dark-mode .feels-and-testimonial-block {
-      background-color: #142840;
-      background-image:
-        linear-gradient(to bottom, rgba(0,0,0,var(--dark-sky-overlay)), rgba(0,0,0,var(--dark-sky-overlay))),
-        url('images/clouds.jpg');
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
+      background-color: transparent;
     }
     html.dark-mode .feels-and-testimonial-block::before {
       display: none;
@@ -444,9 +445,7 @@
 
     /* Testimonial sections: sky (same as hero in dark mode), dark overlay, white text */
     html.dark-mode .testimonial-section {
-      background:
-        linear-gradient(to bottom, rgba(0,0,0,var(--dark-sky-overlay)), rgba(0,0,0,var(--dark-sky-overlay))),
-        url('images/clouds.jpg') center / cover no-repeat;
+      background: transparent;
     }
     html.dark-mode .testimonial-section .testimonial,
     html.dark-mode .testimonial-section .testimonial-wrap,
@@ -555,20 +554,26 @@
       overflow-x: hidden;
     }
 
-    body {
-      margin: 0;
-      padding-top: 52px; /* match header height so content isn’t under sticky header */
-      font-family: Inter, system-ui, sans-serif;
-/*      background: var(--bg-main);
-      color: var(--text-main);*/
-      /* Same sky + overlay as hero so overscroll above header has no hard edge */
+    /* Parallax sky: fixed layer; clouds scaled very tall so repeat seam is far below viewport */
+    .parallax-sky {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
       background-color: #a8c8e8;
       background-image:
         linear-gradient(to bottom, rgba(255,255,255,0.72) 0%, rgba(245,250,255,0.62) 35%, rgba(220,235,255,0.58) 100%),
         url('images/clouds.jpg');
-      background-position: center top;
-      background-size: cover;
-      background-repeat: no-repeat;
+      background-position: center top, center top;
+      background-size: cover, 100% 800%;
+      background-repeat: no-repeat, repeat-y;
+      pointer-events: none;
+    }
+
+    body {
+      margin: 0;
+      padding-top: 52px; /* match header height so content isn’t under sticky header */
+      font-family: Inter, system-ui, sans-serif;
+      background-color: #a8c8e8;
       color: var(--ink);
       line-height: 1.6;
     }
@@ -1054,13 +1059,7 @@
         box-sizing: border-box;
       }
       .hero {
-        background-color: #a8c8e8;
-        background-image:
-          linear-gradient(to bottom, rgba(255,255,255,0.72) 0%, rgba(245,250,255,0.62) 35%, rgba(220,235,255,0.58) 100%),
-          url('images/clouds.jpg');
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
+        background-color: transparent;
       }
       
 
@@ -3235,12 +3234,26 @@
     .section-muted { background: #f7f3ea; }
     section#rescue { background: #fff; }
     /* Light mode: white/gold pattern, dark heading text */
+    section#pricing {
+      position: relative;
+    }
     html:not(.dark-mode) section#pricing {
       background-color: #fffef7;
+      color: #1a1a1a;
+    }
+    html:not(.dark-mode) section#pricing .pricing-pattern-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
       background-image: url('images/pricing-pattern-light.svg');
       background-size: 150px 150px;
       background-repeat: repeat;
-      color: #1a1a1a;
+      background-position: center 0;
+    }
+    #pricing .container {
+      position: relative;
+      z-index: 1;
     }
     html:not(.dark-mode) section#pricing .container > .eyebrow,
     html:not(.dark-mode) section#pricing .container > h2,
@@ -3259,9 +3272,18 @@
     }
     /* Dark mode: dark bg, white text */
     html.dark-mode section#pricing {
-      background: #141414 url('images/pricing-pattern.svg') repeat;
-      background-size: 60px 36.043px;
+      background-color: #141414;
       color: rgba(255, 255, 255, 0.92);
+    }
+    html.dark-mode section#pricing .pricing-pattern-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: url('images/pricing-pattern.svg');
+      background-size: 60px 36.043px;
+      background-repeat: repeat;
+      background-position: center 0;
     }
     html.dark-mode section#pricing .container > .eyebrow,
     html.dark-mode section#pricing .container > h2,
@@ -3293,17 +3315,11 @@
       background: transparent;
     }
 
-    /* Testimonial sections: sky (same as hero), light overlay for dark text */
+    /* Testimonial sections: sky via global parallax layer (transparent so .parallax-sky shows) */
     .testimonial-section {
       position: relative;
       overflow: hidden;
-      background-color: #a8c8e8;
-      background-image:
-        linear-gradient(to bottom, rgba(220,235,255,0.58), rgba(220,235,255,0.58)),
-        url('images/clouds.jpg');
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
+      background-color: transparent;
     }
     .testimonial-section .container {
       position: relative;
@@ -3365,6 +3381,19 @@ section#resources:hover .eyebrow {
   color: #222;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
+/* Inline text links (About/guide, FAQs, body copy): black with underline */
+section#guide a:not(.btn),
+.faq-panel a,
+.section-muted .container p a {
+  color: #111;
+  text-decoration: underline;
+}
+section#guide a:not(.btn):hover,
+.faq-panel a:hover,
+.section-muted .container p a:hover {
+  color: #000;
+}
+
 /* No eyebrow hover in bottom sky block */
 .feels-and-testimonial-block section#how-it-feels:hover .container > .eyebrow {
   background: rgba(255, 255, 255, 0.9);
@@ -4350,17 +4379,12 @@ html.dark-mode .feels-and-testimonial-block section#how-it-feels:hover .containe
       position: relative;
       overflow: hidden;
     }
-    /* Light mode: same stacked background as hero (faded sky, no blue flash) */
+    /* Light mode: transparent so global .parallax-sky shows (same parallax as hero) */
     html:not(.dark-mode) .feels-and-testimonial-block {
-      background-color: #a8c8e8;
-      background-image:
-        linear-gradient(to bottom, rgba(255,255,255,0.72) 0%, rgba(245,250,255,0.62) 35%, rgba(220,235,255,0.58) 100%),
-        url('images/clouds.jpg');
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
+      background-color: transparent;
     }
     html:not(.dark-mode) .feels-and-testimonial-block .how-it-feels-bg {
+      background: none;
       visibility: hidden;
     }
     html:not(.dark-mode) .feels-and-testimonial-block::before {
@@ -4370,11 +4394,8 @@ html.dark-mode .feels-and-testimonial-block section#how-it-feels:hover .containe
       position: absolute;
       inset: 0;
       z-index: 0;
-      background-color: #a8c8e8;
-      background-image: url('images/clouds.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+      /* No background so global .parallax-sky shows through with parallax */
+      background: none;
     }
     .feels-and-testimonial-block::before {
       content: '';

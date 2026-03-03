@@ -73,7 +73,7 @@ Existing pieces: [server.js](server.js), [server/config.js](server/config.js), [
 - **DB**: MySQL 8 (as requested).
 - **Server**: Existing Node + Express; add analytics routes and static route for tracker.
 - **Tracker**: Vanilla JS, single file, minified to under ~30kb.
-- **Scheduler**: cron at 00:05 UK (`5 0 * * `* with `TZ=Europe/London`).
+- **Scheduler**: cron at 00:05 UK (`5 0 `* * * with `TZ=Europe/London`).
 - **Email**: Nodemailer + SMTP (existing or SendGrid/SES).
 - **Notion**: Existing `@notionhq/client`; new database "VK Analytics Daily" for summary rows.
 

@@ -23,6 +23,10 @@ function getSettings() {
     book_call_offer: s.book_call_offer !== false,
     lead_magnets_enabled: s.lead_magnets_enabled !== false,
     show_pricing: s.show_pricing !== false,
+    pricing_messaging_overhaul: typeof s.pricing_messaging_overhaul === 'string' ? s.pricing_messaging_overhaul : '£2,250',
+    pricing_lead_magnet_additional: typeof s.pricing_lead_magnet_additional === 'string' ? s.pricing_lead_magnet_additional : '£1,000',
+    pricing_multi_page_expansion_additional: typeof s.pricing_multi_page_expansion_additional === 'string' ? s.pricing_multi_page_expansion_additional : '£1,750',
+    pricing_deployment_additional: typeof s.pricing_deployment_additional === 'string' ? s.pricing_deployment_additional : "Let's talk",
     cookie_consent_enabled: s.cookie_consent_enabled !== false,
     show_email: s.show_email !== false,
     cta_primary_black: s.cta_primary_black === true,
@@ -1205,12 +1209,30 @@ function getAutodialogPanelId() {
       }
     });
   }
+  // Pricing: when off, keep section and delivery times visible; hide only menu links and all price amounts.
   if (!settings.show_pricing) {
-    const pricingSection = document.getElementById('pricing');
-    if (pricingSection) pricingSection.style.setProperty('display', 'none');
     document.querySelectorAll('a[href="#pricing"]').forEach(function (el) {
       el.style.setProperty('display', 'none');
     });
+    document.querySelectorAll('.addon-price').forEach(function (el) {
+      el.style.setProperty('display', 'none');
+    });
+    var deploymentSample = document.querySelector('#pricing .deployment-sample-prices');
+    if (deploymentSample) deploymentSample.style.setProperty('display', 'none');
+    var pricingEyebrow = document.querySelector('#pricing > .container > .eyebrow');
+    if (pricingEyebrow) pricingEyebrow.style.setProperty('display', 'none');
+  } else {
+    // Inject prices from settings
+    var corePrice = document.querySelector('.addon-price[data-price="messaging_overhaul"]');
+    if (corePrice) {
+      corePrice.innerHTML = 'Investment: ' + settings.pricing_messaging_overhaul + ' <span class="addon-price-note">0% payment plans available</span>';
+    }
+    var leadMagnetPrice = document.querySelector('.addon-price[data-price="lead_magnet"]');
+    if (leadMagnetPrice) leadMagnetPrice.textContent = 'Additional: ' + settings.pricing_lead_magnet_additional;
+    var multiPagePrice = document.querySelector('.addon-price[data-price="multi_page"]');
+    if (multiPagePrice) multiPagePrice.textContent = 'Additional: ' + settings.pricing_multi_page_expansion_additional;
+    var deploymentPrice = document.querySelector('.addon-price[data-price="deployment"]');
+    if (deploymentPrice) deploymentPrice.textContent = 'Additional: £ ' + settings.pricing_deployment_additional;
   }
 })();
 
@@ -1861,10 +1883,27 @@ getEnabledLeadMagnetIds().forEach(function (id) {
     var heroHeader = hero && hero.querySelector('.hero-header');
     var heroLeft = hero && hero.querySelector('.hero-left');
     var heroRight = hero && hero.querySelector('.hero-right');
+    var parallaxSky = document.querySelector('.parallax-sky');
+    var pricingPatternBg = document.querySelector('.pricing-pattern-bg');
 
     // Parallax: subtle movement for hero layers while scrolling through hero
     var ticking = false;
     var lastScrollY = window.scrollY || window.pageYOffset;
+    var skyFactor = 0.4;   // sky moves at 40% of scroll speed (slower)
+    var patternFactor = 0.4; // pattern moves at 40% of scroll speed (lag = 1 - 0.4)
+
+    function updateBackgroundParallax() {
+      var scrollY = window.scrollY || window.pageYOffset;
+      if (parallaxSky) {
+        // Use background-position so the layer always fills the viewport (clouds visible everywhere).
+        // Transform would move the layer up and leave solid blue at the bottom.
+        var skyY = -scrollY * skyFactor;
+        parallaxSky.style.backgroundPosition = 'center top, center ' + skyY + 'px';
+      }
+      if (pricingPatternBg) {
+        pricingPatternBg.style.backgroundPosition = 'center ' + (scrollY * (1 - patternFactor)) + 'px';
+      }
+    }
 
     function updateParallax() {
       if (!hero || !heroHeader) return;
@@ -1896,14 +1935,19 @@ getEnabledLeadMagnetIds().forEach(function (id) {
       lastScrollY = window.scrollY || window.pageYOffset;
       if (!ticking) {
         ticking = true;
-        requestAnimationFrame(updateParallax);
+        requestAnimationFrame(function () {
+          updateParallax();
+          updateBackgroundParallax();
+        });
       }
     }
 
     var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (hero && heroHeader && !prefersReducedMotion) {
+    var hasParallax = (hero && heroHeader) || parallaxSky || pricingPatternBg;
+    if (hasParallax && !prefersReducedMotion) {
       window.addEventListener('scroll', onScroll, { passive: true });
       updateParallax();
+      updateBackgroundParallax();
     }
 
     // Scroll reveal: add .scroll-reveal to blocks, then .is-visible when in view

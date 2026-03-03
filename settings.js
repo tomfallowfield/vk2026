@@ -52,7 +52,19 @@
     },
 
     // --- UI toggles ---
-    show_pricing: true,
+    // Show pricing? When off: pricing section stays visible (delivery times still show), but Pricing is removed from menu and all price amounts/tiers are hidden.
+    show_pricing: false,
+
+    // --- Pricing (used when show_pricing is true) ---
+    // Messaging overhaul (core service) price. Displayed as "Investment: {value}".
+    pricing_messaging_overhaul: '£2,250',
+    // Lead magnet add-on. Displayed as "Additional: {value}".
+    pricing_lead_magnet_additional: '£1,000',
+    // Multi-page expansion add-on. Displayed as "Additional: {value}".
+    pricing_multi_page_expansion_additional: '£1,750',
+    // Deployment add-on. Displayed as "Additional: £ {value}" (e.g. "Let's talk").
+    pricing_deployment_additional: "Let's talk",
+
     cookie_consent_enabled: true,
     // Easter egg competition: 10 hidden communicator names. true = show; false = off (use random star placeholders, no tooltips/injections).
     easter_eggs_competition_showing: true,
