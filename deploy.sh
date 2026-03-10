@@ -26,9 +26,6 @@ git reset --hard origin/main
 echo "Installing dependencies..."
 npm install --omit=dev
 
-echo "Syncing wiki to Notion..."
-node scripts/sync-wiki-to-notion.js || true
-
 echo "Restarting app..."
 if pm2 describe vk-form-handler &>/dev/null; then
   pm2 restart vk-form-handler
