@@ -60,37 +60,72 @@
 
     if (chart) chart.destroy();
 
+    var maxVisitors = Math.max.apply(null, totals.concat([1]));
+
     chart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: labels,
-        datasets: [{
-          label: 'Conversion Rate %',
-          data: rates,
-          backgroundColor: 'rgba(16, 185, 129, 0.2)',
-          borderColor: 'rgb(16, 185, 129)',
-          borderWidth: 1.5,
-          borderRadius: 4,
-          maxBarThickness: 40
-        }]
+        datasets: [
+          {
+            label: 'Conversion Rate %',
+            data: rates,
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            borderColor: 'rgb(16, 185, 129)',
+            borderWidth: 1.5,
+            borderRadius: 4,
+            maxBarThickness: 40,
+            yAxisID: 'y',
+            order: 2
+          },
+          {
+            label: 'Unique Visitors',
+            data: totals,
+            type: 'line',
+            borderColor: '#666',
+            backgroundColor: 'rgba(102, 102, 102, 0.08)',
+            borderWidth: 1.5,
+            pointRadius: 3,
+            pointBackgroundColor: '#666',
+            fill: true,
+            tension: 0.3,
+            yAxisID: 'y1',
+            order: 1
+          }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
         plugins: {
-          legend: { display: false },
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'end',
+            labels: {
+              boxWidth: 12,
+              boxHeight: 12,
+              padding: 16,
+              font: { family: "'DM Sans', sans-serif", size: 11 },
+              color: '#666'
+            }
+          },
           tooltip: {
             callbacks: {
               afterLabel: function (ctx) {
-                var i = ctx.dataIndex;
-                return converted[i] + ' converted / ' + totals[i] + ' visitors';
+                if (ctx.datasetIndex === 0) {
+                  var i = ctx.dataIndex;
+                  return converted[i] + ' converted / ' + totals[i] + ' visitors';
+                }
+                return '';
               }
             }
           }
         },
         scales: {
           y: {
+            position: 'left',
             beginAtZero: true,
             max: Math.max(Math.ceil(Math.max.apply(null, rates.concat([10])) / 5) * 5, 10),
             ticks: {
@@ -99,6 +134,17 @@
               color: '#999'
             },
             grid: { color: '#F0F0F0' },
+            border: { display: false }
+          },
+          y1: {
+            position: 'right',
+            beginAtZero: true,
+            max: Math.ceil(maxVisitors * 1.2),
+            ticks: {
+              font: { family: "'DM Sans', sans-serif", size: 11 },
+              color: '#999'
+            },
+            grid: { display: false },
             border: { display: false }
           },
           x: {
