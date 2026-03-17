@@ -13,7 +13,7 @@
 
   <!-- Sidebar -->
   <aside class="sidebar">
-    <div class="sidebar-logo">VK <span>Analytics</span></div>
+    <div class="sidebar-logo"><img src="/favicon.svg" alt="VK" class="sidebar-logo-img"> <span>Analytics</span></div>
     <nav class="sidebar-nav">
       <a href="/analytics/" class="active">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2H3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1ZM13 2h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1ZM6 9H3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1ZM13 9h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Z"/></svg>
@@ -35,6 +35,27 @@
     </div>
 
     <div class="stats-bar" id="stats-bar"></div>
+
+    <div class="filter-bar" id="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Status</span>
+        <div class="toggle-group">
+          <button class="active" data-filter="status" data-value="all">All</button>
+          <button data-filter="status" data-value="converted">Converted</button>
+          <button data-filter="status" data-value="unconverted">Unconverted</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Visits</span>
+        <div class="toggle-group">
+          <button class="active" data-filter="visits" data-value="all">All</button>
+          <button data-filter="visits" data-value="1">1</button>
+          <button data-filter="visits" data-value="2">2</button>
+          <button data-filter="visits" data-value="3">3</button>
+          <button data-filter="visits" data-value="gt1">&gt;1</button>
+        </div>
+      </div>
+    </div>
 
     <div id="content">
       <div class="loading"><div class="spinner"></div> Loading visitors...</div>

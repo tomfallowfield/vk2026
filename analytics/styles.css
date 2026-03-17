@@ -54,6 +54,14 @@ body {
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-logo-img {
+  width: 28px;
+  height: auto;
 }
 
 .sidebar-logo span {
@@ -127,6 +135,113 @@ body {
   margin-top: 2px;
 }
 
+/* --- Filter bar --- */
+.filter-bar {
+  display: flex;
+  gap: 20px;
+  padding: 0 32px 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* --- Event filter in slide-over --- */
+.event-filter {
+  margin-bottom: 16px;
+}
+
+.event-filter-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-family: var(--font);
+  transition: background 0.12s;
+  width: 100%;
+  text-align: left;
+}
+
+.event-filter-toggle:hover { background: var(--border-light); }
+
+.event-filter-toggle .chevron {
+  margin-left: auto;
+  transition: transform 0.15s;
+  font-size: 10px;
+}
+
+.event-filter-toggle.open .chevron { transform: rotate(180deg); }
+
+.event-filter-options {
+  display: none;
+  padding: 8px 0;
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background: var(--surface);
+}
+
+.event-filter-options.open { display: block; }
+
+.event-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.event-filter-option:hover { background: var(--border-light); }
+
+.event-filter-option input[type="checkbox"] {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.event-filter-option .ef-count {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+/* --- Event metadata detail --- */
+.event-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  padding-left: 2px;
+}
+
+.event-meta span {
+  background: var(--border-light);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-right: 4px;
+}
+
 /* --- Stats bar --- */
 .stats-bar {
   display: flex;
@@ -165,12 +280,37 @@ body {
   margin-top: 2px;
 }
 
+/* --- Date groups --- */
+.date-group {
+  padding: 0 32px 20px;
+}
+
+.date-group-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-group-count {
+  background: var(--border-light);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 7px;
+  border-radius: 100px;
+}
+
 /* --- Visitor cards grid --- */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 12px;
-  padding: 0 32px 32px;
 }
 
 .visitor-card {
