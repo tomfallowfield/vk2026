@@ -119,7 +119,13 @@ function buildSessionTimeline(context, submittedAt, submissionType) {
   const subLabel = submissionType === 'call_booking' ? 'Book a call form submitted' : 'WRV requested';
   events.push({ ts: subTs, line: subLabel });
   events.sort((a, b) => a.ts - b.ts);
-  return events.map(e => `[${formatTs(e.ts)}] ${e.line}`);
+
+  // Padded column format for code block
+  return events.map(e => {
+    const timestamp = formatTs(e.ts);
+    const desc = e.line;
+    return `${timestamp}    ${desc}`;
+  });
 }
 
 function buildGeneralNotes(payload, submissionType, submittedAt, context = {}, includeRawPayload = false, isUpdate = false, matchedBy = '') {
@@ -129,12 +135,7 @@ function buildGeneralNotes(payload, submissionType, submittedAt, context = {}, i
     lines.push(`Record: update (matched existing by ${label}).`);
     lines.push('');
   }
-  const timeline = buildSessionTimeline(context, submittedAt, submissionType);
-  if (timeline.length > 0) {
-    lines.push('Session timeline:');
-    timeline.forEach(t => lines.push('  ' + t));
-    lines.push('');
-  }
+  // Timeline is now rendered separately as a code block — see notesToBodyBlocks
   lines.push('Source: Website');
   lines.push(submissionType === 'call_booking' ? 'Submission type: Call booking' : 'Submission type: WRV request');
   lines.push(`Submitted at: ${submittedAt || new Date().toISOString()}`);
@@ -203,23 +204,54 @@ function buildGeneralNotes(payload, submissionType, submittedAt, context = {}, i
 const RICH_TEXT_CHUNK = 2000;
 
 /**
- * Convert notes string into Notion block children for page body (paragraphs).
- * @param {string} notesText
- * @returns {Array<{ type: string, paragraph?: { rich_text: Array<{ type: string, text: { content: string } }> }, divider?: object }>}
+ * Convert notes string into Notion block children for page body.
+ * Timeline is rendered as a code block; remaining notes as paragraphs.
+ * @param {string} notesText - general notes (non-timeline metadata)
+ * @param {string[]} [timelineLines] - padded timeline lines for code block
+ * @returns {Array<object>} Notion block children
  */
-function notesToBodyBlocks(notesText) {
-  if (!notesText || typeof notesText !== 'string') return [];
+function notesToBodyBlocks(notesText, timelineLines) {
   const blocks = [];
-  for (let i = 0; i < notesText.length; i += RICH_TEXT_CHUNK) {
-    const content = notesText.slice(i, i + RICH_TEXT_CHUNK);
-    blocks.push({
-      type: 'paragraph',
-      paragraph: {
-        rich_text: [{ type: 'text', text: { content } }]
+
+  // Timeline as a code block (padded plain text)
+  if (timelineLines && timelineLines.length > 0) {
+    const timelineContent = timelineLines.join('\n');
+    // Split into chunks if needed (Notion code block rich_text limit)
+    for (let i = 0; i < timelineContent.length; i += RICH_TEXT_CHUNK) {
+      if (i === 0) {
+        blocks.push({
+          type: 'code',
+          code: {
+            rich_text: [{ type: 'text', text: { content: timelineContent.slice(0, RICH_TEXT_CHUNK) } }],
+            language: 'plain text'
+          }
+        });
+      } else {
+        // Additional chunks as paragraphs (edge case for very long timelines)
+        blocks.push({
+          type: 'paragraph',
+          paragraph: {
+            rich_text: [{ type: 'text', text: { content: timelineContent.slice(i, i + RICH_TEXT_CHUNK) } }]
+          }
+        });
       }
-    });
+    }
   }
-  return blocks.length ? blocks : [];
+
+  // Notes as paragraphs
+  if (notesText && typeof notesText === 'string') {
+    for (let i = 0; i < notesText.length; i += RICH_TEXT_CHUNK) {
+      const content = notesText.slice(i, i + RICH_TEXT_CHUNK);
+      blocks.push({
+        type: 'paragraph',
+        paragraph: {
+          rich_text: [{ type: 'text', text: { content } }]
+        }
+      });
+    }
+  }
+
+  return blocks;
 }
 
 /**
@@ -318,7 +350,8 @@ async function createOrUpdateVkCrmPage(payload, context = {}) {
     modal_trigger_type: payload.modal_trigger_type || context.modal_trigger_type
   };
   const notesForBody = buildGeneralNotes(payloadWithTrigger, submissionType, submittedAt, context, false, isUpdate, matchedBy);
-  const bodyBlocks = notesToBodyBlocks(notesForBody);
+  const timelineLines = buildSessionTimeline(context, submittedAt, submissionType);
+  const bodyBlocks = notesToBodyBlocks(notesForBody, timelineLines);
 
   const isDateTime = submittedAt.length > 10 && submittedAt.indexOf('T') !== -1;
   const dateStart = isDateTime ? submittedAt : submittedAt.slice(0, 10);

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VK Analytics — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: #FAFAFA;
+      color: #111;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      padding: 40px 32px;
+      background: #fff;
+      border: 1px solid #E5E5E5;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .login-card h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .login-card p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 28px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #444;
+      margin-bottom: 6px;
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      border: 1px solid #D4D4D4;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input[type="password"]:focus {
+      border-color: #111;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.06);
+    }
+    button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 10px 0;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    button:hover { opacity: 0.85; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .error {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #DC2626;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <form class="login-card" id="login-form">
+    <h1>VK Analytics</h1>
+    <p>Enter the dashboard password to continue.</p>
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" autocomplete="current-password" autofocus required>
+    <button type="submit" id="btn">Sign in</button>
+    <div class="error" id="error"></div>
+  </form>
+  <script>
+    const form = document.getElementById('login-form');
+    const btn = document.getElementById('btn');
+    const errorEl = document.getElementById('error');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Signing in…';
+      try {
+        const res = await fetch('/api/analytics/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: document.getElementById('password').value })
+        });
+        if (res.ok) {
+          window.location.href = '/analytics/';
+        } else {
+          const data = await res.json().catch(() => ({}));
+          errorEl.textContent = data.error || 'Invalid password';
+          errorEl.style.display = 'block';
+        }
+      } catch {
+        errorEl.textContent = 'Connection error. Try again.';
+        errorEl.style.display = 'block';
+      }
+      btn.disabled = false;
+      btn.textContent = 'Sign in';
+    });
+  </script>
+</body>
+</html>

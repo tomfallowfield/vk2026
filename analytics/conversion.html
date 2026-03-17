@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VK Analytics — Conversion Rate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/analytics/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">VK <span>Analytics</span></div>
+    <nav class="sidebar-nav">
+      <a href="/analytics/">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2H3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1ZM13 2h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1ZM6 9H3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1ZM13 9h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Z"/></svg>
+        Visitors
+      </a>
+      <a href="/analytics/conversion.html" class="active">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l3-4 3 2 4-6"/><path d="M14 4v4h-4"/></svg>
+        Conversion Rate
+      </a>
+    </nav>
+    <div class="sidebar-footer">v1.0</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="header">
+      <h1>Conversion Rate</h1>
+      <p>Track how effectively visitors are converting over time.</p>
+    </div>
+
+    <div class="stats-bar" id="stats-bar"></div>
+
+    <div class="chart-container">
+      <div class="chart-controls">
+        <h3>Historical CVR</h3>
+        <div class="toggle-group">
+          <button class="active" data-period="week">Weekly</button>
+          <button data-period="month">Monthly</button>
+        </div>
+      </div>
+      <canvas id="cvr-chart" height="260"></canvas>
+    </div>
+
+    <div class="annotation-form" id="annotation-form">
+      <input type="text" id="annotation-note" placeholder="Add a note for this period (e.g. &quot;Changed homepage headline&quot;)" maxlength="500">
+      <button id="annotation-submit">Add Note</button>
+    </div>
+
+    <div class="annotations-list" id="annotations-list"></div>
+  </main>
+
+  <script src="/analytics/conversion.js"></script>
+</body>
+</html>

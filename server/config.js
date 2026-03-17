@@ -51,6 +51,10 @@ const SMTP_SECURE = process.env.SMTP_SECURE === 'true';
 const SMTP_USER = process.env.SMTP_USER || '';
 const SMTP_PASS = process.env.SMTP_PASS || '';
 
+// Analytics dashboard
+const ANALYTICS_PASSWORD = process.env.ANALYTICS_PASSWORD || '';
+const ANALYTICS_SESSION_SECRET = process.env.ANALYTICS_SESSION_SECRET || ANALYTICS_PASSWORD;
+
 module.exports = {
   SITE_BASE_URL,
   PORT,
@@ -75,5 +79,7 @@ module.exports = {
   SMTP_PORT,
   SMTP_SECURE,
   SMTP_USER,
-  SMTP_PASS
+  SMTP_PASS,
+  ANALYTICS_PASSWORD,
+  ANALYTICS_SESSION_SECRET
 };

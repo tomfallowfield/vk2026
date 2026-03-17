@@ -5,9 +5,17 @@ const { logEvents } = require('../lib/analytics-logger');
 const { maybeNotifyReturnVisit } = require('../lib/return-visit-notify');
 const { notifyNewVisitor } = require('../lib/new-visitor-notify');
 const { getVisitorContext } = require('../lib/visitor-context');
+const { handleLogin, requireDashAuth } = require('../lib/analytics-auth');
+const dashboardRouter = require('./dashboard');
 const config = require('../config');
 
 const MAX_EVENTS_PER_REQUEST = 20;
+
+// Login (no auth required)
+router.post('/login', handleLogin);
+
+// Dashboard API (auth required)
+router.use('/dashboard', requireDashAuth, dashboardRouter);
 
 /**
  * GET /events?limit=200&view_key=...

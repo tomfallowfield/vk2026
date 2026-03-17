@@ -22,7 +22,12 @@ const ALLOWED_EVENT_TYPES = new Set([
   'menu_close',
   'modal_close',
   'video_modal_close',
-  'theme_switch'
+  'theme_switch',
+  'page_view',
+  'scroll_50',
+  'time_60s',
+  'service_open',
+  'form_focus'
 ]);
 
 let pool = null;

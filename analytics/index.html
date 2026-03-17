@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VK Analytics — Visitors</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/analytics/styles.css">
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">VK <span>Analytics</span></div>
+    <nav class="sidebar-nav">
+      <a href="/analytics/" class="active">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2H3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1ZM13 2h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1ZM6 9H3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1ZM13 9h-3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1Z"/></svg>
+        Visitors
+      </a>
+      <a href="/analytics/conversion.html">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l3-4 3 2 4-6"/><path d="M14 4v4h-4"/></svg>
+        Conversion Rate
+      </a>
+    </nav>
+    <div class="sidebar-footer">v1.0</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="header">
+      <h1>Visitors</h1>
+      <p id="header-sub">Loading...</p>
+    </div>
+
+    <div class="stats-bar" id="stats-bar"></div>
+
+    <div id="content">
+      <div class="loading"><div class="spinner"></div> Loading visitors...</div>
+    </div>
+  </main>
+
+  <!-- Slide-over -->
+  <div class="slide-over-backdrop" id="slide-over-backdrop">
+    <div class="slide-over" id="slide-over">
+      <div class="slide-over-header">
+        <h2 id="slide-over-name">Visitor</h2>
+        <button class="slide-over-close" id="slide-over-close" aria-label="Close">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+        </button>
+      </div>
+      <div class="slide-over-body" id="slide-over-body">
+        <div class="loading"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/analytics/dashboard.js"></script>
+</body>
+</html>

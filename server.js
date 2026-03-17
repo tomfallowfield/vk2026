@@ -8,6 +8,7 @@ const { isConfigured: isVkCrmConfigured } = require('./server/lib/notion-vkcrm')
 const submissionsRouter = require('./server/routes/submissions');
 const webhooksRouter = require('./server/routes/webhooks');
 const analyticsRouter = require('./server/routes/analytics');
+const { requireDashAuth } = require('./server/lib/analytics-auth');
 
 const app = express();
 const PORT = config.PORT;
@@ -46,6 +47,16 @@ app.use(express.json({ limit: '100kb' }));
     res.status(401).send('Unauthorized');
   });
 })();
+
+// Protect /analytics/* pages (except login.html, tracker.js, and static assets)
+app.use(function dashboardAuthGate(req, res, next) {
+  const p = req.path;
+  if (!p.startsWith('/analytics/') && !p.startsWith('/vk2026/analytics/')) return next();
+  const rel = p.replace(/^\/(vk2026\/)?analytics\//, '');
+  // Allow login page, tracker script, and static assets through without auth
+  if (rel === 'login.html' || rel === 'tracker.js' || /\.(css|js|woff2?|svg|png|ico)$/i.test(rel)) return next();
+  requireDashAuth(req, res, next);
+});
 
 // Static files with cache headers: short for HTML (so deploys show quickly), long for assets and video
 const staticOpts = {
