@@ -22,8 +22,7 @@ router.get('/visitors', async (req, res) => {
               v.referrer, v.utm_source
        FROM visitors v
        ORDER BY v.last_seen_at DESC
-       LIMIT ? OFFSET ?`,
-      [limit, offset]
+       LIMIT ${limit} OFFSET ${offset}`
     );
 
     const [countRow] = await executeQuery('SELECT COUNT(*) AS total FROM visitors');
@@ -106,7 +105,7 @@ router.get('/visitors/:visitor_id', async (req, res) => {
        FROM events WHERE visitor_id = ?
        ORDER BY occurred_at DESC
        LIMIT 500`,
-      [vid]
+      [String(vid)]
     );
 
     // Parse metadata JSON
@@ -187,10 +186,9 @@ router.get('/conversion', async (req, res) => {
                 COUNT(*) AS total,
                 SUM(CASE WHEN email IS NOT NULL AND email != '' THEN 1 ELSE 0 END) AS converted
          FROM visitors
-         WHERE first_seen_at >= DATE_SUB(CURDATE(), INTERVAL ? WEEK)
+         WHERE first_seen_at >= DATE_SUB(CURDATE(), INTERVAL ${periods} WEEK)
          GROUP BY YEARWEEK(first_seen_at, 3)
-         ORDER BY period`,
-        [periods]
+         ORDER BY period`
       );
     } else {
       series = await executeQuery(
@@ -199,10 +197,9 @@ router.get('/conversion', async (req, res) => {
                 COUNT(*) AS total,
                 SUM(CASE WHEN email IS NOT NULL AND email != '' THEN 1 ELSE 0 END) AS converted
          FROM visitors
-         WHERE first_seen_at >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)
+         WHERE first_seen_at >= DATE_SUB(CURDATE(), INTERVAL ${periods} MONTH)
          GROUP BY DATE_FORMAT(first_seen_at, '%Y-%m')
-         ORDER BY period`,
-        [periods]
+         ORDER BY period`
       );
     }
 
