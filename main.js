@@ -1,12 +1,15 @@
-// API base URL (same origin). Uses settings.api_base if set; else if page is under a path (e.g. /vk2026/) uses that + '/api' so forms and tracking work.
+// API base URL (same origin). Uses settings.api_base if set; else if page is under a known mount prefix (e.g. /vk2026/) uses that + '/api' so forms and tracking work.
 window.API_BASE = (function () {
   const s = window.SITE_SETTINGS || {};
   if (typeof s.api_base === 'string' && s.api_base.trim()) return s.api_base.trim();
   if (typeof window.API_BASE === 'string' && window.API_BASE.trim()) return window.API_BASE.trim();
+  // Only treat the first path segment as an API prefix when it's a known staging mount point.
+  // Page paths like /paola must keep using /api at the root.
+  const MOUNT_PREFIXES = ['vk2026'];
   try {
     const pathname = (typeof location !== 'undefined' && location.pathname) ? location.pathname : '';
     const segment = pathname.replace(/^\/+|\/+$/g, '').split('/')[0];
-    if (segment) return '/' + segment + '/api';
+    if (segment && MOUNT_PREFIXES.indexOf(segment) !== -1) return '/' + segment + '/api';
   } catch (_) {}
   return '/api';
 })();
@@ -325,6 +328,7 @@ function sendGtagEvent(eventName, eventParams) {
 function getFormOpenGtagEvent(panelId) {
   if (panelId === 'book-call') return 'book_call_form_open';
   if (panelId === 'website-review') return 'wrv_form_open';
+  if (panelId === 'paola') return 'paola_form_open';
   if (typeof panelId === 'string' && panelId.indexOf('lead-') === 0) return panelId.replace(/-/g, '_') + '_form_open';
   return null;
 }
@@ -333,6 +337,7 @@ function getFormSubmitGtagEvent(formId) {
   if (!formId || typeof formId !== 'string') return null;
   if (formId === 'form-website-review') return 'wrv_form_submit';
   if (formId === 'form-book-call') return 'book_call_form_submit';
+  if (formId === 'form-paola') return 'paola_form_submit';
   if (formId.indexOf('form-lead-') === 0) {
     var id = formId.slice('form-'.length);
     return id.replace(/-/g, '_') + '_form_submit';
@@ -944,7 +949,7 @@ function openAppModal(panelId, opts) {
   } else if (panelId === 'terms-and-conditions') {
     trackEvent('tc_open', {});
     history.replaceState(null, '', (window.location.pathname || '') + (window.location.search || '') + '#terms');
-  } else if (['book-call', 'website-review', 'lead-50things', 'lead-offboarding', 'lead-socialproof'].indexOf(panelId) !== -1) {
+  } else if (['book-call', 'website-review', 'paola', 'lead-50things', 'lead-offboarding', 'lead-socialproof'].indexOf(panelId) !== -1) {
     trackEvent('form_open', { form_id: panelId, trigger: lastModalTriggerType || '' });
     var gtagFormOpen = getFormOpenGtagEvent(panelId);
     if (gtagFormOpen) sendGtagEvent(gtagFormOpen, { trigger: lastModalTriggerType || '' });
@@ -1054,6 +1059,7 @@ document.addEventListener('keydown', e => {
 const VALID_MODAL_IDS = new Set([
   'book-call',
   'website-review',
+  'paola',
   'lead-50things',
   'lead-offboarding',
   'lead-socialproof'
@@ -1092,7 +1098,22 @@ function openAppModalFromHash() {
   }
   return false;
 }
-if (!openAppModalFromHash()) {
+
+// Open modal from URL pathname (e.g. /paola opens the financial-advisers panel)
+function openModalFromPathname() {
+  const path = (window.location.pathname || '').toLowerCase().replace(/\/+$/, '');
+  const PATH_TO_PANEL = { '/paola': 'paola' };
+  const panelId = PATH_TO_PANEL[path];
+  if (!panelId || !VALID_MODAL_IDS.has(panelId)) return false;
+  lastModalTriggerType = 'url';
+  setTimeout(() => {
+    openAppModal(panelId);
+    sessionStorage.setItem('appModalAutodialogShown', '1');
+  }, 0);
+  return true;
+}
+
+if (!openAppModalFromHash() && !openModalFromPathname()) {
   openModalFromUrl();
 }
 
@@ -1637,6 +1658,44 @@ if (formWebsiteReview) {
     trackEvent('form_submit', { form_id: this.id || 'form-website-review', has_email: true, modal_trigger_type: lastModalTriggerType || null });
     var gtagSubmitWrv = getFormSubmitGtagEvent(this.id || 'form-website-review');
     if (gtagSubmitWrv) sendGtagEvent(gtagSubmitWrv, { modal_trigger_type: lastModalTriggerType || '' });
+
+    fetch(window.API_BASE + '/website-review', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+      .then(res => res.json().then(data => ({ ok: res.ok, data, res })).catch(() => ({ ok: false, data: {}, res })))
+      .then(({ ok, data, res }) => {
+        if (panel) {
+          if (ok) {
+            recordFormSubmission(this.id);
+            showSuccessScreen(panel, data.message || 'Thanks – we\'ll be in touch with your review soon.');
+          } else {
+            showPanelError(panel, getSubmitErrorMessage(null, res, data));
+          }
+        }
+      })
+      .catch((err) => {
+        if (panel) showPanelError(panel, getSubmitErrorMessage(err));
+      })
+      .finally(() => { setSubmitButtonLoading(this, false); });
+  });
+}
+
+// Paola referral form (financial advisers / planners) – posts to the same WRV endpoint;
+// backend uses form_id to set Lead source = "Paola" and WRV Notes = "webinar" in Notion.
+const formPaola = document.getElementById('form-paola');
+if (formPaola) {
+  formPaola.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (guardMaintenance(e)) return;
+    if (!validateForm(this)) return;
+    const panel = getActiveAppModalPanel();
+    const payload = buildSubmitPayload(this);
+    setSubmitButtonLoading(this, true);
+    trackEvent('form_submit', { form_id: this.id || 'form-paola', has_email: true, modal_trigger_type: lastModalTriggerType || null });
+    var gtagSubmitPaola = getFormSubmitGtagEvent(this.id || 'form-paola');
+    if (gtagSubmitPaola) sendGtagEvent(gtagSubmitPaola, { modal_trigger_type: lastModalTriggerType || '' });
 
     fetch(window.API_BASE + '/website-review', {
       method: 'POST',

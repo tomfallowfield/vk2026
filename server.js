@@ -77,6 +77,14 @@ app.use('/', express.static(path.join(__dirname), staticOpts));
 // Serve same static files under /vk2026 so /vk2026/demo-events.html and /vk2026/ work
 app.use('/vk2026', express.static(path.join(__dirname), staticOpts));
 
+// Clean URL aliases that serve index.html (modal opens client-side based on pathname).
+// Add new entries here to expose more landing-page URLs.
+const PATH_ALIASES = ['/paola', '/vk2026/paola'];
+app.get(PATH_ALIASES, (req, res) => {
+  res.set('Cache-Control', 'public, max-age=0, must-revalidate');
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 const limiter = rateLimit({
   windowMs: 60 * 1000,
   max: 10,

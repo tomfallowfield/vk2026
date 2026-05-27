@@ -130,6 +130,7 @@ router.post('/website-review', async (req, res) => {
   logSubmission('website-review', payload);
   logFormSubmissionLine(payload._server?.timestamp || new Date().toISOString(), data.email || '', 'website-review', payload);
   console.log('WRV received:', data.name || '(no name)');
+  const isPaola = payload.form_id === 'form-paola';
   try {
     const vkcrmPayload = {
       submission_type: 'wrv_request',
@@ -142,7 +143,9 @@ router.post('/website-review', async (req, res) => {
       linkedin_url: data.linkedin_url,
       email: data.email,
       company_name: data.company,
-      comments: data.comments
+      comments: data.comments,
+      lead_source: isPaola ? ['Paola'] : undefined,
+      wrv_notes: isPaola ? 'webinar' : undefined
     };
     const notionResult = await createOrUpdateVkCrmPage(vkcrmPayload, payload._context || {});
     if (!notionResult.success) {

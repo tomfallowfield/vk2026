@@ -358,6 +358,10 @@ async function createOrUpdateVkCrmPage(payload, context = {}) {
 
   const statusName = submissionType === 'call_booking' ? STATUS_INCOMING_WEB_ENQUIRY : STATUS_WRV_REQUESTED;
 
+  const leadSourceNames = Array.isArray(payload.lead_source) && payload.lead_source.length
+    ? payload.lead_source.filter(n => typeof n === 'string' && n.trim()).map(n => ({ name: n.trim() }))
+    : [{ name: 'website' }];
+
   const properties = {
     WRV: { title: [{ text: { content: title.slice(0, 2000) } }] },
     'Website URL': normalisedWebsite ? { url: normalisedWebsite } : undefined,
@@ -368,9 +372,12 @@ async function createOrUpdateVkCrmPage(payload, context = {}) {
         ...(isDateTime ? { end: null, time_zone: null } : {})
       }
     },
-    'Lead source': { multi_select: [{ name: 'website' }] },
+    'Lead source': { multi_select: leadSourceNames },
     Status: { status: { name: statusName } },
-    'General notes': { rich_text: [{ type: 'text', text: { content: '' } }] }
+    'General notes': { rich_text: [{ type: 'text', text: { content: '' } }] },
+    'WRV Notes': typeof payload.wrv_notes === 'string' && payload.wrv_notes.trim()
+      ? { rich_text: [{ type: 'text', text: { content: payload.wrv_notes.trim().slice(0, 2000) } }] }
+      : undefined
   };
 
   const body = { properties: {} };
