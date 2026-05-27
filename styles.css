@@ -2471,9 +2471,18 @@
       align-items: flex-start;
     }
 
-    /* Paola panel: vertically center the name against the avatar (no org/role beneath) */
+    /* Paola panel: vertically center the name against the avatar (no org/role beneath).
+       Avatar img has a 12px bottom margin from a global rule, which offsets margin-box
+       centering by 6px - zero it here. Line-height matches avatar so glyph centerline aligns. */
     .app-modal__panel[data-panel="paola"] .app-modal__testimonial-item .app-modal__testimonial-meta {
       align-items: center;
+    }
+    .app-modal__panel[data-panel="paola"] .app-modal__testimonial-item .app-modal__testimonial-avatar {
+      margin: 0;
+    }
+    .app-modal__panel[data-panel="paola"] .app-modal__testimonial-item .app-modal__testimonial-name {
+      margin: 0;
+      line-height: 48px;
     }
 
     .app-modal__testimonial-item .app-modal__testimonial-avatar {
