@@ -2471,6 +2471,11 @@
       align-items: flex-start;
     }
 
+    /* Paola panel: vertically center the name against the avatar (no org/role beneath) */
+    .app-modal__panel[data-panel="paola"] .app-modal__testimonial-item .app-modal__testimonial-meta {
+      align-items: center;
+    }
+
     .app-modal__testimonial-item .app-modal__testimonial-avatar {
       width: 48px;
       height: 48px;
